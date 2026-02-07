@@ -1,0 +1,42 @@
+[
+  {
+    "ID_POSICION": 1,
+    "NOMBRE": "MF",
+    "DESCRIPCION": "Mediocampista"
+  },
+  {
+    "ID_POSICION": 2,
+    "NOMBRE": "CM",
+    "DESCRIPCION": "Mediocampista Central"
+  },
+  {
+    "ID_POSICION": 3,
+    "NOMBRE": "FW",
+    "DESCRIPCION": "Delantero / Forward"
+  },
+  {
+    "ID_POSICION": 4,
+    "NOMBRE": "GK",
+    "DESCRIPCION": "Portero / Guardameta"
+  },
+  {
+    "ID_POSICION": 5,
+    "NOMBRE": "DF",
+    "DESCRIPCION": "Defensa"
+  },
+  {
+    "ID_POSICION": 6,
+    "NOMBRE": "FB",
+    "DESCRIPCION": "Lateral / Fullback"
+  },
+  {
+    "ID_POSICION": 7,
+    "NOMBRE": "CB",
+    "DESCRIPCION": "Defensa Central"
+  },
+  {
+    "ID_POSICION": 8,
+    "NOMBRE": "AM",
+    "DESCRIPCION": "Mediocampista Ofensivo / Attacking Midfielder"
+  }
+]

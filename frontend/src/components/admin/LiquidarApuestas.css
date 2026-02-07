@@ -1,0 +1,350 @@
+/* Liquidar Apuestas - Admin */
+.liquidar-apuestas-container {
+  min-height: 100vh;
+  background: linear-gradient(to bottom, #f8f9fa 0%, #e9ecef 100%);
+  padding: 40px 20px;
+}
+
+.partidos-grid {
+  max-width: 1400px;
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+  gap: 24px;
+}
+
+.partido-card-liquidar {
+  background: white;
+  border-radius: 16px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+  transition: all 0.3s ease;
+}
+
+.partido-card-liquidar:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+}
+
+.card-header {
+  background: linear-gradient(135deg, #00BFFF 0%, #DC143C 100%);
+  padding: 16px 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+}
+
+.torneo-badge {
+  background: rgba(255, 255, 255, 0.95);
+  color: #DC143C;
+  padding: 6px 12px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.fecha-badge {
+  color: white;
+  font-size: 13px;
+  font-weight: 600;
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.2);
+}
+
+.card-body {
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.equipos-resultado {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.equipo-row {
+  flex: 1;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px;
+  background: #f8f9fa;
+  border-radius: 8px;
+}
+
+.equipo-nombre {
+  font-size: 16px;
+  font-weight: 700;
+  color: #2c3e50;
+}
+
+.equipo-goles {
+  font-size: 24px;
+  font-weight: 800;
+  color: #DC143C;
+  min-width: 40px;
+  text-align: center;
+}
+
+.vs-divider {
+  font-size: 18px;
+  font-weight: 800;
+  color: #6c757d;
+}
+
+.resultado-badge {
+  padding: 12px 16px;
+  border-radius: 12px;
+  text-align: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  font-size: 16px;
+  font-weight: 700;
+  border: 2px solid transparent;
+}
+
+.resultado-badge.resultado-local {
+  background: rgba(0, 191, 255, 0.1);
+  border-color: #00BFFF;
+  color: #007799;
+}
+
+.resultado-badge.resultado-empate {
+  background: rgba(255, 193, 7, 0.1);
+  border-color: #ffc107;
+  color: #c79100;
+}
+
+.resultado-badge.resultado-visita {
+  background: rgba(220, 20, 60, 0.1);
+  border-color: #DC143C;
+  color: #B01030;
+}
+
+.resultado-icon {
+  font-size: 20px;
+}
+
+.card-footer {
+  padding: 20px;
+  border-top: 2px solid #f0f0f0;
+}
+
+.btn-liquidar {
+  width: 100%;
+  padding: 14px;
+  background: linear-gradient(135deg, #28a745 0%, #20833a 100%);
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-size: 15px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.btn-liquidar:hover {
+  background: linear-gradient(135deg, #20833a 0%, #196f2f 100%);
+  box-shadow: 0 4px 12px rgba(40, 167, 69, 0.3);
+  transform: translateY(-2px);
+}
+
+/* Modal */
+.modal-partido {
+  padding: 20px;
+  background: #f8f9fa;
+  border-radius: 12px;
+  margin-bottom: 20px;
+}
+
+.modal-equipos {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+.modal-equipo-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 18px;
+  font-weight: 700;
+  color: #2c3e50;
+}
+
+.modal-goles {
+  font-size: 24px;
+  color: #DC143C;
+}
+
+.modal-divider {
+  text-align: center;
+  font-size: 18px;
+  font-weight: 800;
+  color: #6c757d;
+}
+
+.modal-resultado {
+  text-align: center;
+}
+
+.resultado-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 20px;
+  border-radius: 20px;
+  font-size: 16px;
+  font-weight: 700;
+  border: 2px solid transparent;
+}
+
+.resultado-tag.resultado-local {
+  background: rgba(0, 191, 255, 0.2);
+  border-color: #00BFFF;
+  color: #007799;
+}
+
+.resultado-tag.resultado-empate {
+  background: rgba(255, 193, 7, 0.2);
+  border-color: #ffc107;
+  color: #c79100;
+}
+
+.resultado-tag.resultado-visita {
+  background: rgba(220, 20, 60, 0.2);
+  border-color: #DC143C;
+  color: #B01030;
+}
+
+.modal-warning {
+  padding: 20px;
+  background: #fff3cd;
+  border: 2px solid #ffc107;
+  border-radius: 12px;
+  color: #856404;
+}
+
+.modal-warning p {
+  margin: 8px 0;
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+.modal-warning strong {
+  color: #721c24;
+}
+
+.btn-confirmar-liquidar {
+  flex: 1;
+  padding: 16px;
+  border: none;
+  border-radius: 8px;
+  font-size: 16px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  background: linear-gradient(135deg, #28a745 0%, #20833a 100%);
+  color: white;
+}
+
+.btn-confirmar-liquidar:hover:not(:disabled) {
+  background: linear-gradient(135deg, #20833a 0%, #196f2f 100%);
+  box-shadow: 0 4px 12px rgba(40, 167, 69, 0.3);
+}
+
+.btn-confirmar-liquidar:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.empty-state {
+  max-width: 600px;
+  margin: 60px auto;
+  padding: 60px 20px;
+  background: white;
+  border-radius: 16px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  text-align: center;
+}
+
+.empty-icon {
+  font-size: 64px;
+  margin-bottom: 20px;
+}
+
+.empty-state p {
+  font-size: 18px;
+  color: #6c757d;
+  margin: 0;
+}
+
+/* Responsive */
+@media (max-width: 1024px) {
+  .partidos-grid {
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  }
+}
+
+@media (max-width: 768px) {
+  .liquidar-apuestas-container {
+    padding: 20px 10px;
+  }
+
+  .partidos-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .card-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+  }
+
+  .equipos-resultado {
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .equipo-row {
+    width: 100%;
+  }
+
+  .vs-divider {
+    display: none;
+  }
+}
+
+@media (max-width: 480px) {
+  .page-title {
+    font-size: 24px;
+  }
+
+  .equipo-nombre {
+    font-size: 14px;
+  }
+
+  .equipo-goles {
+    font-size: 20px;
+  }
+
+  .modal-equipo-row {
+    font-size: 16px;
+  }
+
+  .modal-goles {
+    font-size: 20px;
+  }
+}

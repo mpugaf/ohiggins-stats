@@ -1,0 +1,685 @@
+/* ===== LAYOUT PRINCIPAL - FORZAR ANCHO COMPLETO ===== */
+.partidos-list {
+  display: flex !important;
+  flex-direction: column !important;
+  width: 100% !important;
+  max-width: 100% !important;
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+  margin: 0 !important;
+  padding: 0 !important;
+  box-sizing: border-box !important;
+}
+
+/* ===== CONTROLES DE FILTROS - HORIZONTALES ARRIBA ===== */
+.list-controls {
+  display: flex !important;
+  flex-direction: column !important;
+  width: 100% !important;
+  padding: 20px !important;
+  background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+  border-bottom: 2px solid #dee2e6;
+  box-sizing: border-box !important;
+}
+
+.filters-container {
+  display: flex !important;
+  flex-direction: row !important;
+  flex-wrap: wrap !important;
+  gap: 15px;
+  align-items: flex-end;
+  margin-bottom: 15px;
+  width: 100% !important;
+  box-sizing: border-box !important;
+}
+
+.filter-item {
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 6px;
+  flex: 1 1 auto;
+  min-width: 180px;
+  max-width: 300px;
+}
+
+.filter-item label {
+  font-size: 0.85rem;
+  color: #495057;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.filter-select,
+.filter-date {
+  padding: 10px 12px;
+  border: 2px solid #ced4da;
+  border-radius: 8px;
+  background: white;
+  font-size: 0.95rem;
+  transition: all 0.3s ease;
+  cursor: pointer;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.filter-select:hover,
+.filter-date:hover {
+  border-color: #007bff;
+  box-shadow: 0 2px 4px rgba(0, 123, 255, 0.1);
+}
+
+.filter-select:focus,
+.filter-date:focus {
+  outline: none;
+  border-color: #007bff;
+  box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.15);
+}
+
+/* Estilos para campos deshabilitados */
+.filter-select:disabled,
+.filter-date:disabled {
+  background-color: #e9ecef;
+  color: #6c757d;
+  cursor: not-allowed;
+  opacity: 0.6;
+  border-color: #ced4da;
+}
+
+.filter-select:disabled:hover,
+.filter-date:disabled:hover {
+  border-color: #ced4da;
+  box-shadow: none;
+}
+
+/* Indicador de filtro activo */
+.filter-active-indicator {
+  display: inline-block;
+  margin-left: 6px;
+  color: #28a745;
+  font-weight: 700;
+  font-size: 1rem;
+  animation: pulse-check 1.5s ease-in-out infinite;
+}
+
+@keyframes pulse-check {
+  0%, 100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.7;
+    transform: scale(1.1);
+  }
+}
+
+.filter-actions {
+  display: flex !important;
+  flex-direction: row !important;
+  gap: 10px;
+  align-items: flex-end;
+  flex: 0 0 auto;
+  margin-left: auto;
+}
+
+.btn-clear {
+  background-color: #6c757d;
+  color: white;
+  padding: 10px 16px;
+  font-size: 0.9rem;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.btn-clear:hover {
+  background-color: #5a6268;
+}
+
+.btn-refresh {
+  background-color: #007bff;
+  color: white;
+  padding: 10px 16px;
+  font-size: 0.9rem;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.btn-refresh:hover {
+  background-color: #0056b3;
+}
+
+.results-summary {
+  display: flex !important;
+  justify-content: space-between;
+  align-items: center;
+  padding-top: 15px;
+  border-top: 1px solid #dee2e6;
+  width: 100% !important;
+  box-sizing: border-box !important;
+}
+
+.results-count {
+  color: #495057;
+  font-size: 0.95rem;
+  font-weight: 600;
+}
+
+.filter-indicator {
+  background-color: #007bff;
+  color: white;
+  padding: 4px 12px;
+  border-radius: 12px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  text-transform: uppercase;
+}
+
+/* ===== CONTENEDOR DE TABLA - ANCHO COMPLETO ===== */
+.table-container {
+  display: block !important;
+  width: 100% !important;
+  max-width: 100% !important;
+  overflow-x: auto !important;
+  overflow-y: auto !important;
+  max-height: 65vh;
+  position: relative;
+  border: 1px solid #dee2e6;
+  border-radius: 0 0 12px 12px;
+  box-sizing: border-box !important;
+}
+
+/* Barra de scroll personalizada */
+.table-container::-webkit-scrollbar {
+  width: 12px;
+}
+
+.table-container::-webkit-scrollbar-track {
+  background: #f1f3f5;
+  border-radius: 10px;
+}
+
+.table-container::-webkit-scrollbar-thumb {
+  background: linear-gradient(135deg, #007bff 0%, #0056b3 100%);
+  border-radius: 10px;
+  border: 2px solid #f1f3f5;
+}
+
+.table-container::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(135deg, #0056b3 0%, #004085 100%);
+}
+
+.table-container {
+  scrollbar-width: auto;
+  scrollbar-color: #007bff #f1f3f5;
+}
+
+/* ===== TABLA - ANCHO COMPLETO ===== */
+.partidos-table {
+  width: 100% !important;
+  max-width: 100% !important;
+  min-width: 100% !important;
+  border-collapse: collapse;
+  font-size: 0.95rem;
+  table-layout: auto !important;
+  display: table !important;
+  box-sizing: border-box !important;
+}
+
+.partidos-table th {
+  background: linear-gradient(135deg, #343a40 0%, #495057 100%);
+  color: white;
+  padding: 14px 12px;
+  text-align: left;
+  font-weight: 600;
+  font-size: 0.9rem;
+  white-space: nowrap;
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.partidos-table .acciones-col {
+  padding: 8px 4px !important;
+}
+
+.partidos-table th.sortable {
+  cursor: pointer;
+  user-select: none;
+  transition: all 0.2s ease;
+}
+
+.partidos-table th.sortable:hover {
+  background: linear-gradient(135deg, #23272b 0%, #343a40 100%);
+  transform: translateY(-1px);
+}
+
+.partidos-table th.text-center {
+  text-align: center;
+}
+
+.sort-indicator {
+  margin-left: 5px;
+  font-size: 0.85rem;
+  opacity: 0.9;
+}
+
+.partidos-table td {
+  padding: 12px 10px;
+  border-bottom: 1px solid #e9ecef;
+  vertical-align: middle;
+  background-color: white;
+  transition: all 0.2s ease;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.partidos-table td.text-center {
+  text-align: center;
+}
+
+.partido-row {
+  transition: all 0.2s ease;
+}
+
+.partido-row.clickable {
+  cursor: pointer;
+}
+
+.partido-row:hover {
+  background-color: #f0f7ff !important;
+  box-shadow: 0 2px 8px rgba(0, 123, 255, 0.1);
+}
+
+.partido-row:hover td {
+  background-color: #f0f7ff;
+}
+
+.partido-row.clickable:hover {
+  transform: scale(1.002);
+}
+
+/* ===== COLUMNAS DE LA TABLA ===== */
+.fecha-col {
+  width: 13%;
+  min-width: 120px;
+}
+
+.torneo-col {
+  width: 18%;
+  min-width: 140px;
+}
+
+.jornada-col {
+  width: 9%;
+  min-width: 80px;
+}
+
+.enfrentamiento-col {
+  width: 26%;
+  min-width: 200px;
+}
+
+.resultado-col {
+  width: 8%;
+  min-width: 80px;
+}
+
+.estadio-col {
+  width: 14%;
+  min-width: 120px;
+}
+
+.estado-col {
+  width: 9%;
+  min-width: 100px;
+}
+
+.acciones-col {
+  width: 60px;
+  min-width: 60px;
+  max-width: 60px;
+  padding: 8px 4px !important;
+}
+
+/* Estilos de contenido de celdas */
+.fecha-info,
+.torneo-info,
+.estadio-info {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.fecha-dia,
+.nombre-torneo,
+.nombre-estadio {
+  font-weight: 600;
+  color: #333;
+  font-size: 0.95rem;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.temporada-rueda,
+.ciudad {
+  font-size: 0.8rem;
+  color: #6c757d;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.jornada-badge {
+  display: inline-block;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  padding: 5px 12px;
+  border-radius: 12px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.jornada-empty {
+  color: #adb5bd;
+  font-size: 1.2rem;
+}
+
+.enfrentamiento-horizontal {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  justify-content: flex-start;
+}
+
+.equipo-nombre {
+  font-weight: 600;
+  font-size: 0.95rem;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  flex: 1;
+  max-width: 45%;
+}
+
+.equipo-nombre.local {
+  color: #007bff;
+}
+
+.equipo-nombre.visita {
+  color: #6c757d;
+}
+
+.vs-separator {
+  color: #6c757d;
+  font-weight: 700;
+  font-size: 0.85rem;
+  flex-shrink: 0;
+}
+
+.resultado {
+  display: inline-block;
+  font-weight: 700;
+  font-size: 1.2rem;
+  padding: 4px 12px;
+  border-radius: 6px;
+}
+
+.resultado.programado {
+  color: #6c757d;
+  background-color: #f8f9fa;
+  font-size: 1rem;
+}
+
+.resultado.victoria-local {
+  color: #28a745;
+  background-color: #e8f5e8;
+}
+
+.resultado.victoria-visita {
+  color: #dc3545;
+  background-color: #ffebee;
+}
+
+.resultado.empate {
+  color: #f57c00;
+  background-color: #fff3e0;
+}
+
+.estado-badge {
+  display: inline-block;
+  padding: 6px 12px;
+  border-radius: 14px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  white-space: nowrap;
+}
+
+.estado-programado {
+  background-color: #e3f2fd;
+  color: #1976d2;
+  border: 1px solid #bbdefb;
+}
+
+.estado-en-curso {
+  background-color: #fff3e0;
+  color: #f57c00;
+  border: 1px solid #ffe0b2;
+  animation: pulse 2s infinite;
+}
+
+.estado-finalizado {
+  background-color: #e8f5e8;
+  color: #2e7d32;
+  border: 1px solid #c8e6c9;
+}
+
+.estado-suspendido {
+  background-color: #fce4ec;
+  color: #c2185b;
+  border: 1px solid #f8bbd0;
+}
+
+.estado-cancelado {
+  background-color: #ffebee;
+  color: #d32f2f;
+  border: 1px solid #ffcdd2;
+}
+
+@keyframes pulse {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.7;
+  }
+}
+
+.action-buttons {
+  display: flex;
+  gap: 4px;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+}
+
+.btn-delete {
+  background-color: #dc3545;
+  color: white;
+  padding: 6px 8px;
+  font-size: 1rem;
+  line-height: 1;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  box-shadow: 0 2px 4px rgba(220, 53, 69, 0.3);
+  transition: all 0.2s ease;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+}
+
+.btn-delete:hover {
+  background-color: #c82333;
+  box-shadow: 0 4px 8px rgba(220, 53, 69, 0.4);
+  transform: translateY(-2px) scale(1.05);
+}
+
+.btn-delete:active {
+  transform: translateY(0) scale(0.98);
+}
+
+/* ===== ESTADOS VACÍOS Y LOADING ===== */
+.loading-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 300px;
+  color: #6c757d;
+}
+
+.spinner {
+  width: 40px;
+  height: 40px;
+  border: 4px solid #f3f3f3;
+  border-top: 4px solid #007bff;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  margin-bottom: 15px;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+.no-data {
+  text-align: center;
+  color: #6c757d;
+  font-style: italic;
+  padding: 40px 20px;
+}
+
+/* ===== RESPONSIVE ===== */
+@media (max-width: 1024px) {
+  .filters-container {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .filter-actions {
+    grid-column: span 2;
+    justify-content: flex-end;
+  }
+}
+
+@media (max-width: 768px) {
+  .list-controls {
+    padding: 15px;
+  }
+
+  .filters-container {
+    flex-direction: column !important;
+  }
+
+  .filter-item {
+    max-width: 100%;
+    width: 100%;
+  }
+
+  .filter-actions {
+    width: 100%;
+    margin-left: 0;
+  }
+
+  .btn-clear,
+  .btn-refresh {
+    flex: 1;
+  }
+
+  .results-summary {
+    flex-direction: column;
+    gap: 10px;
+    align-items: flex-start;
+  }
+
+  .partidos-table {
+    font-size: 0.85rem;
+  }
+
+  .partidos-table th,
+  .partidos-table td {
+    padding: 10px 8px;
+  }
+
+  .enfrentamiento-horizontal {
+    flex-direction: column;
+    gap: 4px;
+    align-items: flex-start;
+  }
+
+  .vs-separator {
+    display: none;
+  }
+
+  .equipo-nombre {
+    max-width: 100%;
+    font-size: 0.85rem;
+  }
+
+  .table-container {
+    max-height: 50vh;
+  }
+
+  .fecha-col {
+    min-width: 110px;
+  }
+
+  .torneo-col {
+    min-width: 130px;
+  }
+
+  .estadio-col {
+    min-width: 110px;
+  }
+
+  .enfrentamiento-col {
+    min-width: 160px;
+  }
+
+  .jornada-col {
+    min-width: 70px;
+  }
+
+  .resultado-col {
+    min-width: 70px;
+  }
+
+  .estado-col {
+    min-width: 90px;
+  }
+
+  .acciones-col {
+    min-width: 50px;
+    width: 50px;
+  }
+
+  .btn-delete {
+    width: 32px;
+    height: 32px;
+    padding: 4px 6px;
+    font-size: 0.9rem;
+  }
+}

@@ -1,0 +1,470 @@
+/* ============================================================ */
+/* Estilos para Asignación Masiva */
+/* ============================================================ */
+
+.asignacion-masiva-container {
+  padding: 20px;
+  max-width: 1200px;
+  margin: 0 auto;
+  background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+  min-height: 100vh;
+}
+
+.page-header {
+  background: white;
+  padding: 30px;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  margin-bottom: 20px;
+  position: relative;
+}
+
+.page-header h1 {
+  margin: 0 0 10px 0;
+  color: #2c3e50;
+  font-size: 28px;
+  font-weight: 700;
+}
+
+.page-header p {
+  margin: 0 0 15px 0;
+  color: #6c757d;
+  font-size: 16px;
+}
+
+.btn-back {
+  background: linear-gradient(135deg, #6c757d 0%, #5a6268 100%);
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.btn-back:hover {
+  background: linear-gradient(135deg, #5a6268 0%, #545b62 100%);
+  transform: translateY(-2px);
+}
+
+/* Alertas */
+.alert {
+  padding: 15px 20px;
+  border-radius: 8px;
+  margin-bottom: 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  animation: slideDown 0.3s ease;
+}
+
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.alert-error {
+  background: #fff5f5;
+  border-left: 4px solid #dc3545;
+  color: #dc3545;
+}
+
+.alert-success {
+  background: #f0f9ff;
+  border-left: 4px solid #28a745;
+  color: #28a745;
+}
+
+.close-btn {
+  background: none;
+  border: none;
+  font-size: 24px;
+  cursor: pointer;
+  color: inherit;
+  opacity: 0.7;
+  transition: opacity 0.2s;
+}
+
+.close-btn:hover {
+  opacity: 1;
+}
+
+/* Formulario */
+.form-card {
+  background: white;
+  padding: 30px;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  margin-bottom: 20px;
+}
+
+.form-section {
+  padding: 25px 0;
+  border-bottom: 2px solid #e9ecef;
+}
+
+.form-section:last-of-type {
+  border-bottom: none;
+}
+
+.form-section h3 {
+  margin: 0 0 20px 0;
+  color: #2c3e50;
+  font-size: 20px;
+  font-weight: 700;
+}
+
+.form-row {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 20px;
+  margin-bottom: 15px;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.form-group label {
+  font-size: 14px;
+  font-weight: 600;
+  color: #495057;
+}
+
+.form-group select,
+.form-group input {
+  padding: 10px 12px;
+  border: 2px solid #dee2e6;
+  border-radius: 8px;
+  font-size: 14px;
+  transition: all 0.3s ease;
+  background: white;
+}
+
+.form-group select:focus,
+.form-group input:focus {
+  outline: none;
+  border-color: #00BFFF;
+  box-shadow: 0 0 0 3px rgba(0, 191, 255, 0.1);
+}
+
+.form-group select:disabled,
+.form-group input:disabled {
+  background: #f8f9fa;
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+/* Torneos Grid */
+.torneos-actions {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  margin-bottom: 20px;
+  flex-wrap: wrap;
+}
+
+.torneos-count {
+  margin-left: auto;
+  font-size: 14px;
+  font-weight: 600;
+  color: #6c757d;
+  padding: 8px 15px;
+  background: #f8f9fa;
+  border-radius: 20px;
+}
+
+.btn-secondary {
+  background: linear-gradient(135deg, #6c757d 0%, #5a6268 100%);
+  color: white;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 8px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.btn-secondary:hover {
+  background: linear-gradient(135deg, #5a6268 0%, #545b62 100%);
+  transform: translateY(-2px);
+}
+
+.torneos-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 15px;
+}
+
+.torneo-checkbox-card {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 15px;
+  border: 2px solid #dee2e6;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  background: white;
+  user-select: none;
+}
+
+.torneo-checkbox-card:hover {
+  border-color: #00BFFF;
+  box-shadow: 0 2px 8px rgba(0, 191, 255, 0.2);
+  background: rgba(0, 191, 255, 0.02);
+  transform: translateY(-2px);
+}
+
+.torneo-checkbox-card:active {
+  transform: translateY(0);
+}
+
+.torneo-checkbox-card.checked {
+  border-color: #00BFFF;
+  background: rgba(0, 191, 255, 0.05);
+}
+
+.torneo-checkbox-card input[type="checkbox"] {
+  width: 20px;
+  height: 20px;
+  cursor: pointer;
+  margin-top: 2px;
+  flex-shrink: 0;
+  accent-color: #00BFFF;
+}
+
+.torneo-checkbox-card input[type="checkbox"]:checked ~ .torneo-info {
+  color: #00BFFF;
+}
+
+.torneo-info {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  flex: 1;
+}
+
+.torneo-info strong {
+  font-size: 15px;
+  color: #2c3e50;
+}
+
+.torneo-meta {
+  font-size: 13px;
+  color: #6c757d;
+}
+
+/* Resumen Card */
+.resumen-card {
+  background: linear-gradient(135deg, #e3f2fd 0%, #bbdefb 100%);
+  padding: 20px;
+  border-radius: 12px;
+  border: 2px solid #2196f3;
+  margin: 20px 0;
+}
+
+.resumen-card h3 {
+  margin: 0 0 15px 0;
+  color: #1976d2;
+  font-size: 18px;
+  font-weight: 700;
+}
+
+.resumen-content {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.resumen-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.resumen-label {
+  font-weight: 600;
+  color: #1565c0;
+  min-width: 180px;
+}
+
+.resumen-value {
+  color: #0d47a1;
+  font-weight: 500;
+}
+
+/* Botones */
+.form-actions {
+  display: flex;
+  justify-content: center;
+  padding-top: 20px;
+}
+
+.btn-primary {
+  background: linear-gradient(135deg, #00BFFF 0%, #0099CC 100%);
+  color: white;
+  border: none;
+  padding: 12px 30px;
+  border-radius: 8px;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 8px rgba(0, 191, 255, 0.3);
+}
+
+.btn-primary.btn-large {
+  padding: 15px 40px;
+  font-size: 18px;
+}
+
+.btn-primary:hover:not(:disabled) {
+  background: linear-gradient(135deg, #0099CC 0%, #007AA3 100%);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 191, 255, 0.4);
+}
+
+.btn-primary:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* Resultados */
+.resultados-card {
+  background: white;
+  padding: 30px;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  margin-bottom: 20px;
+  animation: slideDown 0.5s ease;
+}
+
+.resultados-card h3 {
+  margin: 0 0 20px 0;
+  color: #2c3e50;
+  font-size: 22px;
+  font-weight: 700;
+}
+
+.resultados-summary {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 20px;
+  margin-bottom: 30px;
+}
+
+.summary-stat {
+  text-align: center;
+  padding: 20px;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.summary-stat.success {
+  background: linear-gradient(135deg, #d4edda 0%, #c3f0d4 100%);
+  border: 2px solid #28a745;
+}
+
+.summary-stat.warning {
+  background: linear-gradient(135deg, #fff3cd 0%, #ffe8a1 100%);
+  border: 2px solid #ffc107;
+}
+
+.summary-stat.info {
+  background: linear-gradient(135deg, #d1ecf1 0%, #bee5eb 100%);
+  border: 2px solid #17a2b8;
+}
+
+.stat-number {
+  font-size: 36px;
+  font-weight: 700;
+  margin-bottom: 8px;
+}
+
+.stat-label {
+  font-size: 14px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.resultado-seccion {
+  margin-bottom: 20px;
+  padding: 15px;
+  background: #f8f9fa;
+  border-radius: 8px;
+}
+
+.resultado-seccion h4 {
+  margin: 0 0 12px 0;
+  color: #2c3e50;
+  font-size: 16px;
+  font-weight: 700;
+}
+
+.resultado-seccion ul {
+  margin: 0;
+  padding-left: 20px;
+}
+
+.resultado-seccion li {
+  margin-bottom: 8px;
+  color: #495057;
+  line-height: 1.6;
+}
+
+/* Empty State */
+.empty-state {
+  padding: 40px;
+  text-align: center;
+  color: #6c757d;
+  background: #f8f9fa;
+  border-radius: 8px;
+  border: 2px dashed #dee2e6;
+}
+
+.empty-state p {
+  margin: 0;
+  font-size: 16px;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .asignacion-masiva-container {
+    padding: 15px;
+  }
+
+  .form-row {
+    grid-template-columns: 1fr;
+  }
+
+  .torneos-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .resultados-summary {
+    grid-template-columns: 1fr;
+  }
+
+  .torneos-actions {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .torneos-count {
+    margin-left: 0;
+    text-align: center;
+  }
+}

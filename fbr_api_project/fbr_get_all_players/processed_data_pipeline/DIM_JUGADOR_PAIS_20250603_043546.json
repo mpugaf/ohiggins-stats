@@ -1,0 +1,110 @@
+[
+  {
+    "ID_JUGADOR": 1,
+    "ID_PAIS": 1
+  },
+  {
+    "ID_JUGADOR": 2,
+    "ID_PAIS": 2
+  },
+  {
+    "ID_JUGADOR": 3,
+    "ID_PAIS": 2
+  },
+  {
+    "ID_JUGADOR": 4,
+    "ID_PAIS": 3
+  },
+  {
+    "ID_JUGADOR": 5,
+    "ID_PAIS": 2
+  },
+  {
+    "ID_JUGADOR": 6,
+    "ID_PAIS": 1
+  },
+  {
+    "ID_JUGADOR": 7,
+    "ID_PAIS": 2
+  },
+  {
+    "ID_JUGADOR": 8,
+    "ID_PAIS": 2
+  },
+  {
+    "ID_JUGADOR": 9,
+    "ID_PAIS": 2
+  },
+  {
+    "ID_JUGADOR": 10,
+    "ID_PAIS": 4
+  },
+  {
+    "ID_JUGADOR": 11,
+    "ID_PAIS": 2
+  },
+  {
+    "ID_JUGADOR": 12,
+    "ID_PAIS": 1
+  },
+  {
+    "ID_JUGADOR": 13,
+    "ID_PAIS": 2
+  },
+  {
+    "ID_JUGADOR": 14,
+    "ID_PAIS": 5
+  },
+  {
+    "ID_JUGADOR": 15,
+    "ID_PAIS": 4
+  },
+  {
+    "ID_JUGADOR": 16,
+    "ID_PAIS": 1
+  },
+  {
+    "ID_JUGADOR": 17,
+    "ID_PAIS": 1
+  },
+  {
+    "ID_JUGADOR": 19,
+    "ID_PAIS": 2
+  },
+  {
+    "ID_JUGADOR": 20,
+    "ID_PAIS": 2
+  },
+  {
+    "ID_JUGADOR": 21,
+    "ID_PAIS": 2
+  },
+  {
+    "ID_JUGADOR": 22,
+    "ID_PAIS": 2
+  },
+  {
+    "ID_JUGADOR": 23,
+    "ID_PAIS": 2
+  },
+  {
+    "ID_JUGADOR": 24,
+    "ID_PAIS": 2
+  },
+  {
+    "ID_JUGADOR": 25,
+    "ID_PAIS": 2
+  },
+  {
+    "ID_JUGADOR": 26,
+    "ID_PAIS": 2
+  },
+  {
+    "ID_JUGADOR": 27,
+    "ID_PAIS": 2
+  },
+  {
+    "ID_JUGADOR": 28,
+    "ID_PAIS": 2
+  }
+]

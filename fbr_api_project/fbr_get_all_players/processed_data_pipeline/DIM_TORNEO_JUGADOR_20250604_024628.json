@@ -1,0 +1,170 @@
+[
+  {
+    "ID_TORNEO_JUGADOR": 1,
+    "ID_JUGADOR": 1,
+    "ID_EQUIPO": 1,
+    "ID_TORNEO": 1
+  },
+  {
+    "ID_TORNEO_JUGADOR": 2,
+    "ID_JUGADOR": 2,
+    "ID_EQUIPO": 1,
+    "ID_TORNEO": 1
+  },
+  {
+    "ID_TORNEO_JUGADOR": 3,
+    "ID_JUGADOR": 3,
+    "ID_EQUIPO": 1,
+    "ID_TORNEO": 1
+  },
+  {
+    "ID_TORNEO_JUGADOR": 4,
+    "ID_JUGADOR": 4,
+    "ID_EQUIPO": 1,
+    "ID_TORNEO": 1
+  },
+  {
+    "ID_TORNEO_JUGADOR": 5,
+    "ID_JUGADOR": 5,
+    "ID_EQUIPO": 1,
+    "ID_TORNEO": 1
+  },
+  {
+    "ID_TORNEO_JUGADOR": 6,
+    "ID_JUGADOR": 6,
+    "ID_EQUIPO": 1,
+    "ID_TORNEO": 1
+  },
+  {
+    "ID_TORNEO_JUGADOR": 7,
+    "ID_JUGADOR": 7,
+    "ID_EQUIPO": 1,
+    "ID_TORNEO": 1
+  },
+  {
+    "ID_TORNEO_JUGADOR": 8,
+    "ID_JUGADOR": 8,
+    "ID_EQUIPO": 1,
+    "ID_TORNEO": 1
+  },
+  {
+    "ID_TORNEO_JUGADOR": 9,
+    "ID_JUGADOR": 9,
+    "ID_EQUIPO": 1,
+    "ID_TORNEO": 1
+  },
+  {
+    "ID_TORNEO_JUGADOR": 10,
+    "ID_JUGADOR": 10,
+    "ID_EQUIPO": 1,
+    "ID_TORNEO": 1
+  },
+  {
+    "ID_TORNEO_JUGADOR": 11,
+    "ID_JUGADOR": 11,
+    "ID_EQUIPO": 1,
+    "ID_TORNEO": 1
+  },
+  {
+    "ID_TORNEO_JUGADOR": 12,
+    "ID_JUGADOR": 12,
+    "ID_EQUIPO": 1,
+    "ID_TORNEO": 1
+  },
+  {
+    "ID_TORNEO_JUGADOR": 13,
+    "ID_JUGADOR": 13,
+    "ID_EQUIPO": 1,
+    "ID_TORNEO": 1
+  },
+  {
+    "ID_TORNEO_JUGADOR": 14,
+    "ID_JUGADOR": 14,
+    "ID_EQUIPO": 1,
+    "ID_TORNEO": 1
+  },
+  {
+    "ID_TORNEO_JUGADOR": 15,
+    "ID_JUGADOR": 15,
+    "ID_EQUIPO": 1,
+    "ID_TORNEO": 1
+  },
+  {
+    "ID_TORNEO_JUGADOR": 16,
+    "ID_JUGADOR": 16,
+    "ID_EQUIPO": 1,
+    "ID_TORNEO": 1
+  },
+  {
+    "ID_TORNEO_JUGADOR": 17,
+    "ID_JUGADOR": 17,
+    "ID_EQUIPO": 1,
+    "ID_TORNEO": 1
+  },
+  {
+    "ID_TORNEO_JUGADOR": 18,
+    "ID_JUGADOR": 18,
+    "ID_EQUIPO": 1,
+    "ID_TORNEO": 1
+  },
+  {
+    "ID_TORNEO_JUGADOR": 19,
+    "ID_JUGADOR": 19,
+    "ID_EQUIPO": 1,
+    "ID_TORNEO": 1
+  },
+  {
+    "ID_TORNEO_JUGADOR": 20,
+    "ID_JUGADOR": 20,
+    "ID_EQUIPO": 1,
+    "ID_TORNEO": 1
+  },
+  {
+    "ID_TORNEO_JUGADOR": 21,
+    "ID_JUGADOR": 21,
+    "ID_EQUIPO": 1,
+    "ID_TORNEO": 1
+  },
+  {
+    "ID_TORNEO_JUGADOR": 22,
+    "ID_JUGADOR": 22,
+    "ID_EQUIPO": 1,
+    "ID_TORNEO": 1
+  },
+  {
+    "ID_TORNEO_JUGADOR": 23,
+    "ID_JUGADOR": 23,
+    "ID_EQUIPO": 1,
+    "ID_TORNEO": 1
+  },
+  {
+    "ID_TORNEO_JUGADOR": 24,
+    "ID_JUGADOR": 24,
+    "ID_EQUIPO": 1,
+    "ID_TORNEO": 1
+  },
+  {
+    "ID_TORNEO_JUGADOR": 25,
+    "ID_JUGADOR": 25,
+    "ID_EQUIPO": 1,
+    "ID_TORNEO": 1
+  },
+  {
+    "ID_TORNEO_JUGADOR": 26,
+    "ID_JUGADOR": 26,
+    "ID_EQUIPO": 1,
+    "ID_TORNEO": 1
+  },
+  {
+    "ID_TORNEO_JUGADOR": 27,
+    "ID_JUGADOR": 27,
+    "ID_EQUIPO": 1,
+    "ID_TORNEO": 1
+  },
+  {
+    "ID_TORNEO_JUGADOR": 28,
+    "ID_JUGADOR": 28,
+    "ID_EQUIPO": 1,
+    "ID_TORNEO": 1
+  }
+]

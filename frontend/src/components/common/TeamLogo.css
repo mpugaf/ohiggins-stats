@@ -1,0 +1,47 @@
+/* Componente TeamLogo */
+.team-logo {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 8px;
+  background: white;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+  flex-shrink: 0;
+  padding: 4px;
+}
+
+.team-logo img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  display: block;
+}
+
+/* Tamaños */
+.team-logo-small {
+  width: 32px;
+  height: 32px;
+}
+
+.team-logo-medium {
+  width: 48px;
+  height: 48px;
+}
+
+.team-logo-large {
+  width: 64px;
+  height: 64px;
+}
+
+.team-logo-xlarge {
+  width: 96px;
+  height: 96px;
+}
+
+/* Efecto hover */
+.team-logo:hover {
+  transform: scale(1.05);
+  box-shadow: 0 4px 12px rgba(0, 191, 255, 0.3);
+  transition: all 0.2s ease;
+}

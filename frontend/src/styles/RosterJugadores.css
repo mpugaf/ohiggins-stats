@@ -1,0 +1,692 @@
+/* frontend/src/styles/RosterJugadores.css - Estilo tabla Excel */
+
+.roster-jugadores-container {
+  max-width: 1600px;
+  margin: 0 auto;
+  padding: 20px;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', sans-serif;
+}
+
+.roster-header {
+  text-align: center;
+  margin-bottom: 30px;
+  padding-bottom: 20px;
+  border-bottom: 3px solid #0056b3;
+}
+
+.roster-header h1 {
+  color: #0056b3;
+  margin-bottom: 10px;
+  font-size: 2.5rem;
+}
+
+.roster-header .subtitle {
+  color: #6c757d;
+  font-size: 1.1rem;
+  margin: 0;
+}
+
+.filtros-container {
+  background-color: #f8f9fa;
+  border: 1px solid #dee2e6;
+  border-radius: 8px;
+  padding: 25px;
+  margin-bottom: 30px;
+}
+
+.filtro-group {
+  margin-bottom: 20px;
+}
+
+.filtro-group:last-child {
+  margin-bottom: 0;
+}
+
+.filtro-group label {
+  display: block;
+  font-weight: 600;
+  color: #495057;
+  margin-bottom: 8px;
+  font-size: 1rem;
+}
+
+.filtro-group input[type="checkbox"] {
+  margin-right: 8px;
+}
+
+.filtro-group input[type="checkbox"]:not(:disabled) {
+  cursor: pointer;
+}
+
+.filtro-group input[type="checkbox"]:disabled {
+  cursor: not-allowed;
+}
+
+.filtro-group .form-control {
+  width: 100%;
+  padding: 10px 15px;
+  font-size: 1rem;
+  border: 1px solid #ced4da;
+  border-radius: 5px;
+  background-color: white;
+  transition: border-color 0.3s ease;
+}
+
+.filtro-group .form-control:focus {
+  border-color: #0056b3;
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(0, 86, 179, 0.1);
+}
+
+.filtro-group .form-control:disabled {
+  background-color: #e9ecef;
+  cursor: not-allowed;
+}
+
+.text-muted {
+  color: #6c757d;
+  font-size: 0.875rem;
+  display: block;
+  margin-top: 5px;
+}
+
+.alert {
+  padding: 15px 20px;
+  border-radius: 5px;
+  margin-bottom: 20px;
+  border: 1px solid transparent;
+}
+
+.alert-danger {
+  background-color: #f8d7da;
+  color: #721c24;
+  border-color: #f5c6cb;
+}
+
+.alert-info {
+  background-color: #d1ecf1;
+  color: #0c5460;
+  border-color: #bee5eb;
+  text-align: center;
+  font-size: 1.1rem;
+}
+
+.loading-spinner {
+  text-align: center;
+  padding: 50px 20px;
+}
+
+.spinner {
+  border: 4px solid #f3f3f3;
+  border-top: 4px solid #0056b3;
+  border-radius: 50%;
+  width: 50px;
+  height: 50px;
+  animation: spin 1s linear infinite;
+  margin: 0 auto 20px;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+.loading-spinner p {
+  color: #6c757d;
+  font-size: 1.1rem;
+}
+
+.roster-info {
+  background: linear-gradient(135deg, #0056b3 0%, #003d82 100%);
+  color: white;
+  padding: 25px;
+  border-radius: 8px;
+  margin-bottom: 30px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.roster-info h2 {
+  margin: 0 0 10px 0;
+  font-size: 1.8rem;
+  font-weight: 700;
+}
+
+.roster-info .total-jugadores {
+  margin: 0;
+  font-size: 1.1rem;
+  opacity: 0.95;
+}
+
+.roster-info .total-jugadores strong {
+  font-size: 1.3rem;
+  font-weight: 700;
+}
+
+/* Tabla tipo Excel */
+.tabla-container {
+  background-color: white;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+  margin-bottom: 30px;
+}
+
+.tabla-jugadores {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.95rem;
+}
+
+.tabla-jugadores thead {
+  background: linear-gradient(135deg, #0056b3 0%, #003d82 100%);
+  color: white;
+  position: sticky;
+  top: 0;
+  z-index: 10;
+}
+
+.tabla-jugadores th {
+  padding: 15px 12px;
+  text-align: left;
+  font-weight: 600;
+  font-size: 0.9rem;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  border-right: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.tabla-jugadores th:last-child {
+  border-right: none;
+}
+
+.tabla-jugadores tbody tr {
+  border-bottom: 1px solid #dee2e6;
+  transition: all 0.2s ease;
+  cursor: default;
+}
+
+/* Filas editables (solo para admin) */
+.tabla-jugadores tbody tr.editable {
+  cursor: pointer;
+}
+
+.tabla-jugadores tbody tr.editable:hover {
+  background-color: #f8f9fa;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  transform: scale(1.01);
+}
+
+.tabla-jugadores tbody tr:nth-child(even) {
+  background-color: #fafbfc;
+}
+
+.tabla-jugadores tbody tr:nth-child(even):hover {
+  background-color: #f1f3f5;
+}
+
+.tabla-jugadores td {
+  padding: 12px;
+  border-right: 1px solid #e9ecef;
+  vertical-align: middle;
+}
+
+.tabla-jugadores td:last-child {
+  border-right: none;
+}
+
+/* Columnas específicas */
+.col-numero {
+  width: 60px;
+  text-align: center;
+  font-weight: 700;
+  font-size: 1.1rem;
+  color: #0056b3;
+}
+
+.col-nombre {
+  min-width: 200px;
+  font-weight: 600;
+  color: #212529;
+}
+
+.col-apodo {
+  min-width: 150px;
+  color: #6c757d;
+  font-style: italic;
+}
+
+.col-posiciones {
+  min-width: 120px;
+  font-family: 'Courier New', monospace;
+  font-weight: 600;
+  color: #28a745;
+}
+
+.col-nacionalidad {
+  width: 100px;
+  text-align: center;
+  font-weight: 600;
+  color: #495057;
+}
+
+.col-pie {
+  width: 120px;
+  text-align: center;
+  color: #495057;
+}
+
+.col-fecha {
+  width: 120px;
+  text-align: center;
+  color: #6c757d;
+}
+
+.col-edad {
+  width: 80px;
+  text-align: center;
+  font-weight: 600;
+  color: #495057;
+}
+
+.mensaje-inicial {
+  text-align: center;
+  padding: 60px 20px;
+  background-color: #f8f9fa;
+  border: 2px dashed #dee2e6;
+  border-radius: 8px;
+  margin-top: 30px;
+}
+
+.mensaje-inicial p {
+  color: #6c757d;
+  font-size: 1.2rem;
+  margin: 0;
+}
+
+/* Modal de Edición */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.6);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  animation: fadeIn 0.3s ease;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.modal-content {
+  background-color: white;
+  border-radius: 12px;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+  max-width: 600px;
+  width: 90%;
+  max-height: 90vh;
+  overflow-y: auto;
+  animation: slideUp 0.3s ease;
+}
+
+@keyframes slideUp {
+  from {
+    transform: translateY(50px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+.modal-header {
+  background: linear-gradient(135deg, #0056b3 0%, #003d82 100%);
+  color: white;
+  padding: 20px 25px;
+  border-radius: 12px 12px 0 0;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.modal-header h3 {
+  margin: 0;
+  font-size: 1.5rem;
+  font-weight: 700;
+}
+
+.close-btn {
+  background: rgba(255, 255, 255, 0.2);
+  border: none;
+  color: white;
+  font-size: 1.5rem;
+  width: 35px;
+  height: 35px;
+  border-radius: 50%;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+}
+
+.close-btn:hover {
+  background: rgba(255, 255, 255, 0.3);
+  transform: rotate(90deg);
+}
+
+.jugador-edit-info {
+  padding: 20px 25px;
+  border-bottom: 1px solid #e9ecef;
+  background-color: #f8f9fa;
+}
+
+.jugador-edit-info h4 {
+  margin: 0 0 5px 0;
+  color: #212529;
+  font-size: 1.3rem;
+  font-weight: 700;
+}
+
+.jugador-edit-info p {
+  margin: 0;
+  color: #6c757d;
+  font-style: italic;
+}
+
+.modal-content form {
+  padding: 25px;
+}
+
+.form-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+  margin-bottom: 20px;
+}
+
+.form-group {
+  margin-bottom: 20px;
+}
+
+.form-group label {
+  display: block;
+  font-weight: 600;
+  color: #495057;
+  margin-bottom: 8px;
+  font-size: 0.95rem;
+}
+
+.form-group input,
+.form-group select {
+  width: 100%;
+  padding: 10px 12px;
+  font-size: 1rem;
+  border: 2px solid #dee2e6;
+  border-radius: 6px;
+  background-color: white;
+  color: #212529;
+  transition: all 0.2s ease;
+}
+
+.form-group input:focus,
+.form-group select:focus {
+  border-color: #0056b3;
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(0, 86, 179, 0.1);
+}
+
+.posiciones-selector {
+  max-height: 200px;
+  overflow-y: auto;
+  border: 2px solid #dee2e6;
+  border-radius: 8px;
+  padding: 12px;
+  background-color: #fafbfc;
+}
+
+.checkbox-item {
+  padding: 8px 0;
+  display: flex;
+  align-items: center;
+}
+
+.checkbox-item input[type="checkbox"] {
+  width: 18px;
+  height: 18px;
+  margin-right: 10px;
+  cursor: pointer;
+}
+
+.checkbox-item label {
+  cursor: pointer;
+  margin: 0;
+  color: #495057;
+  font-weight: normal;
+}
+
+.checkbox-item label strong {
+  color: #0056b3;
+  font-weight: 700;
+}
+
+.posiciones-seleccionadas {
+  margin-top: 10px;
+  padding: 10px;
+  background-color: #e7f3ff;
+  border-radius: 6px;
+}
+
+.posiciones-seleccionadas small {
+  color: #0056b3;
+  font-weight: 600;
+}
+
+.form-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+  margin-top: 25px;
+  padding-top: 20px;
+  border-top: 1px solid #e9ecef;
+}
+
+.btn-primary,
+.btn-secondary {
+  padding: 12px 24px;
+  font-size: 1rem;
+  font-weight: 600;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.btn-primary {
+  background: linear-gradient(135deg, #0056b3 0%, #003d82 100%);
+  color: white;
+}
+
+.btn-primary:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 86, 179, 0.3);
+}
+
+.btn-secondary {
+  background-color: #6c757d;
+  color: white;
+}
+
+.btn-secondary:hover {
+  background-color: #5a6268;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(108, 117, 125, 0.3);
+}
+
+/* Grid de equipos en modo comparación */
+.equipos-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+  margin-top: 15px;
+}
+
+/* Modo Comparación */
+.roster-comparison-container {
+  margin-top: 30px;
+}
+
+.roster-comparison-header {
+  text-align: center;
+  background: linear-gradient(135deg, #28a745 0%, #1e7e34 100%);
+  color: white;
+  padding: 20px;
+  border-radius: 8px;
+  margin-bottom: 30px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.roster-comparison-header h3 {
+  margin: 0 0 8px 0;
+  font-size: 1.8rem;
+  font-weight: 700;
+}
+
+.roster-comparison-header .torneo-info {
+  margin: 0;
+  font-size: 1rem;
+  opacity: 0.95;
+}
+
+.roster-comparison-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 30px;
+}
+
+.roster-column {
+  min-width: 0; /* Evita overflow en grid */
+}
+
+/* Ajustar tablas en modo comparación */
+.roster-comparison-grid .tabla-jugadores {
+  font-size: 0.85rem;
+}
+
+.roster-comparison-grid .tabla-jugadores th,
+.roster-comparison-grid .tabla-jugadores td {
+  padding: 10px 8px;
+}
+
+.roster-comparison-grid .col-nombre {
+  min-width: 150px;
+}
+
+.roster-comparison-grid .col-apodo {
+  min-width: 100px;
+}
+
+.roster-comparison-grid .col-posiciones {
+  min-width: 100px;
+}
+
+.roster-comparison-grid .roster-info h2 {
+  font-size: 1.4rem;
+}
+
+/* Vista única */
+.roster-single-view {
+  margin-top: 20px;
+}
+
+/* Responsive Design */
+@media (max-width: 1400px) {
+  .roster-comparison-grid .tabla-jugadores {
+    font-size: 0.8rem;
+  }
+
+  .roster-comparison-grid .col-nombre {
+    min-width: 120px;
+  }
+
+  .roster-comparison-grid .col-apodo {
+    min-width: 80px;
+  }
+}
+
+@media (max-width: 1200px) {
+  .tabla-jugadores {
+    font-size: 0.85rem;
+  }
+
+  .tabla-jugadores th,
+  .tabla-jugadores td {
+    padding: 10px 8px;
+  }
+}
+
+@media (max-width: 768px) {
+  .roster-header h1 {
+    font-size: 2rem;
+  }
+
+  .tabla-container {
+    overflow-x: auto;
+  }
+
+  .tabla-jugadores {
+    min-width: 900px;
+  }
+
+  .form-row {
+    grid-template-columns: 1fr;
+  }
+
+  .modal-content {
+    width: 95%;
+    max-height: 95vh;
+  }
+
+  /* Modo comparación en tablet/móvil: cambiar a columnas verticales */
+  .equipos-grid {
+    grid-template-columns: 1fr;
+    gap: 15px;
+  }
+
+  .roster-comparison-grid {
+    grid-template-columns: 1fr;
+    gap: 40px;
+  }
+
+  .roster-comparison-header h3 {
+    font-size: 1.4rem;
+  }
+
+  .roster-comparison-header .torneo-info {
+    font-size: 0.9rem;
+  }
+
+  .roster-column {
+    width: 100%;
+  }
+}
+
+@media (max-width: 480px) {
+  .roster-jugadores-container {
+    padding: 10px;
+  }
+
+  .filtros-container {
+    padding: 15px;
+  }
+
+  .roster-header h1 {
+    font-size: 1.5rem;
+  }
+}

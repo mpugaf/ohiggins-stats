@@ -1,2 +1,249 @@
-node_modules/
+# ====================================
+# O'Higgins Stats - .gitignore
+# ====================================
+
+# =====================================
+# 🔴 SEGURIDAD CRÍTICA - API Keys & Credenciales
+# =====================================
+# Archivos de configuración con credenciales sensibles
 .env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# Credenciales de API de FBRef
+fbr_api_project/api_key.json
+**/api_key.json
+api_credentials.json
+
+# Archivos de configuración de base de datos con contraseñas
+config/database.local.js
+**/db_credentials.*
+
+# =====================================
+# 📦 DEPENDENCIAS - Node.js & Python
+# =====================================
+# Dependencias de Node.js (se reinstalan con npm install)
+node_modules/
+**/node_modules/
+
+# Archivos de lock (debate: mantener package-lock.json para reproducibilidad)
+# Descomenta la siguiente línea si prefieres no versionar los locks
+# package-lock.json
+# npm-debug.log*
+
+# Dependencias de Python (se reinstalan con pip install -r requirements.txt)
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+env/
+venv/
+ENV/
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+
+# =====================================
+# 🏗️ ARCHIVOS COMPILADOS/BUILD
+# =====================================
+# Build de producción de React (se genera con npm run build)
+frontend/build/
+frontend/.env.local
+frontend/.env.development.local
+frontend/.env.test.local
+frontend/.env.production.local
+
+# Archivos de compilación de Node.js
+*.tsbuildinfo
+
+# =====================================
+# 📊 DATOS GENERADOS & TEMPORALES
+# =====================================
+# Archivos CSV generados por pipelines (datos de FBRef API)
+# Estos archivos se regeneran con los scripts de pipeline
+fbr_api_project/fbr_get_all_players/chilean_first_division_players/*.csv
+fbr_api_project/fbr_get_all_players/chilean_matches_data/*.csv
+fbr_api_project/fbr_get_all_players/team_matches_data/*.csv
+statsPipeline/*.csv
+**/team_*_players_*.csv
+**/partidos_equipo_*.csv
+**/estadisticas_equipo_*.csv
+**/chilean_*.csv
+
+# Archivos con timestamps (generados automáticamente)
+**/*_[0-9][0-9][0-9][0-9][0-9][0-9][0-9][0-9]_*.csv
+**/*_[0-9][0-9][0-9][0-9][0-9][0-9][0-9][0-9]_*.log
+
+# =====================================
+# 📝 LOGS & DEBUGGING
+# =====================================
+# Logs de aplicación y pipelines (se regeneran en cada ejecución)
+*.log
+logs/
+backend/backend.log
+fbr_api_project/logs/
+fbr_api_project/*.log
+fbr_api_project/fbr_get_all_players/*.log
+statsPipeline/*.log
+statsPipeline/pipeline_execution_*.log
+
+# Logs de npm
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Logs de test
+coverage/
+*.lcov
+.nyc_output
+
+# =====================================
+# 🗄️ BASES DE DATOS
+# =====================================
+# Dumps de base de datos grandes (comentar si quieres versionarlos)
+# ufc_analytics.sql está actualmente en 64KB, es manejable
+# Archivos SQLite temporales
+*.sqlite
+*.sqlite3
+*.db
+
+# Backups de base de datos
+*.sql.backup
+*.sql.bak
+db_backup/
+backups/
+
+# =====================================
+# 🖼️ MULTIMEDIA TEMPORAL
+# =====================================
+# Screenshots y documentación temporal
+# (Mantener solo archivos esenciales de documentación)
+ejemploresultados.png
+gestionpartidos.png
+
+# PDFs temporales
+# NOTA: Fixture-Liga-de-Primera-2026.pdf podría moverse a docs/references/
+# Si es documentación necesaria, considerar versionarlo
+# Si es temporal, descomentar la línea siguiente:
+# backend/Fixture-Liga-de-Primera-2026.pdf
+
+# =====================================
+# 💻 IDE & EDITORES
+# =====================================
+# Visual Studio Code
+.vscode/
+!.vscode/settings.json.example
+!.vscode/tasks.json.example
+!.vscode/launch.json.example
+!.vscode/extensions.json.example
+
+# IntelliJ IDEA / WebStorm / PyCharm
+.idea/
+*.iml
+*.iws
+*.ipr
+
+# Sublime Text
+*.sublime-workspace
+*.sublime-project
+
+# Vim
+*.swp
+*.swo
+*~
+.vim/
+
+# Emacs
+*~
+\#*\#
+.\#*
+
+# =====================================
+# 🖥️ SISTEMA OPERATIVO
+# =====================================
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+._*
+.Spotlight-V100
+.Trashes
+
+# Windows
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+$RECYCLE.BIN/
+
+# Linux
+.directory
+.Trash-*
+
+# =====================================
+# 🧪 TESTING & COVERAGE
+# =====================================
+# Reportes de cobertura de código
+coverage/
+.nyc_output/
+*.lcov
+junit.xml
+test-results/
+
+# Archivos de testing
+.cache/
+.pytest_cache/
+.tox/
+
+# =====================================
+# 🔧 OTROS TEMPORALES
+# =====================================
+# Archivos temporales generales
+*.tmp
+*.temp
+*.cache
+.temp/
+tmp/
+
+# Archivos de configuración local
+*.local
+.local/
+
+# Claude Code scratchpad (temporal)
+.claude/scratchpad/
+
+# =====================================
+# ✅ ARCHIVOS QUE SÍ DEBEN VERSIONARSE
+# =====================================
+# Estos archivos SON NECESARIOS y deben estar en el repositorio:
+# - package.json (backend y frontend)
+# - requirements.txt (Python)
+# - .env.example (plantilla de configuración)
+# - Scripts SQL de schema (backend/scripts/*.sql, statsPipeline/*.sql)
+# - Código fuente (*.js, *.jsx, *.py)
+# - Archivos de configuración del proyecto
+# - Documentación (*.md)
+# - Archivos estáticos públicos (frontend/public/)
+
+# =====================================
+# 📋 NOTAS IMPORTANTES
+# =====================================
+# 1. ANTES DE HACER PUSH: Verificar que api_key.json NO esté en staging
+# 2. package-lock.json: Se mantiene para reproducibilidad de builds
+# 3. Los archivos .env deben crearse localmente desde .env.example
+# 4. Los datos CSV se regeneran con los scripts de pipeline
+# 5. Los builds de frontend se generan con: cd frontend && npm run build

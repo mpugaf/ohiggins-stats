@@ -1,0 +1,68 @@
+/* O'Higgins Stats - Global Styles & Brand Colors */
+:root {
+  /* Brand colors - Celeste, Negro, Blanco */
+  --color-primary: #00BFFF;        /* Celeste principal */
+  --color-primary-dark: #0099CC;   /* Celeste oscuro */
+  --color-primary-light: #66D9FF;  /* Celeste claro */
+
+  --color-secondary: #000000;      /* Negro */
+  --color-secondary-light: #333333; /* Negro suave */
+  --color-secondary-lighter: #666666; /* Gris oscuro */
+
+  --color-tertiary: #FFFFFF;       /* Blanco */
+  --color-tertiary-dark: #F5F5F5;  /* Blanco grisáceo */
+
+  /* Legacy aliases for backwards compatibility */
+  --color-celeste: var(--color-primary);
+  --color-celeste-dark: var(--color-primary-dark);
+  --color-celeste-light: var(--color-primary-light);
+
+  /* Gradients */
+  --gradient-primary: linear-gradient(135deg, #00BFFF 0%, #000000 100%);
+  --gradient-celeste: linear-gradient(135deg, #66D9FF 0%, #0099CC 100%);
+  --gradient-dark: linear-gradient(135deg, #333333 0%, #000000 100%);
+
+  /* Status colors */
+  --color-success: #28a745;
+  --color-error: #dc3545;
+  --color-warning: #ffc107;
+  --color-info: var(--color-primary);
+
+  /* Neutral colors */
+  --color-bg-light: #FFFFFF;
+  --color-bg-medium: #F5F5F5;
+  --color-bg-dark: #000000;
+  --color-text-dark: #000000;
+  --color-text-light: #666666;
+  --color-border: #E0E0E0;
+
+  /* Shadows */
+  --shadow-sm: 0 2px 4px rgba(0, 0, 0, 0.1);
+  --shadow-md: 0 4px 8px rgba(0, 0, 0, 0.15);
+  --shadow-lg: 0 8px 16px rgba(0, 0, 0, 0.2);
+
+  /* Transitions */
+  --transition-fast: all 0.2s ease;
+  --transition-normal: all 0.3s ease;
+  --transition-slow: all 0.5s ease;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+    sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  background-color: var(--color-primary-light); /* Fondo celeste claro */
+  color: var(--color-text-dark);
+}
+
+code {
+  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
+    monospace;
+}

@@ -1,0 +1,2781 @@
+{
+    "match_id": "9fb48f41",
+    "match_info": {
+        "home_team": "Colo-Colo",
+        "away_team": "O'Higgins",
+        "home_goals": 0,
+        "away_goals": 1,
+        "teams_data": [
+            {
+                "team_name": "Colo-Colo",
+                "home_away": "home",
+                "players": [
+                    {
+                        "meta_data": {
+                            "player_id": "1645d166",
+                            "player_name": "Claudio Aquino",
+                            "player_country_code": "ARG",
+                            "player_number": "10",
+                            "age": "33"
+                        },
+                        "stats": {
+                            "summary": {
+                                "positions": "FW",
+                                "min": "90",
+                                "gls": 0,
+                                "sh": 0,
+                                "sot": 0,
+                                "ast": 0,
+                                "tkl_won": 2,
+                                "int": 0,
+                                "og": 0,
+                                "fls_com": 1,
+                                "fls_drawn": 2,
+                                "yellow_cards": 1,
+                                "red_cards": 0,
+                                "offside": 0,
+                                "pk_won": null,
+                                "pk_made": 0,
+                                "pk_att": 0
+                            }
+                        }
+                    },
+                    {
+                        "meta_data": {
+                            "player_id": "04bdcce2",
+                            "player_name": "Javier Marcelo Correa",
+                            "player_country_code": "ARG",
+                            "player_number": "9",
+                            "age": "32"
+                        },
+                        "stats": {
+                            "summary": {
+                                "positions": "FW",
+                                "min": "90",
+                                "gls": 0,
+                                "sh": 5,
+                                "sot": 2,
+                                "ast": 0,
+                                "tkl_won": 0,
+                                "int": 0,
+                                "og": 0,
+                                "fls_com": 0,
+                                "fls_drawn": 1,
+                                "yellow_cards": 0,
+                                "red_cards": 0,
+                                "offside": 2,
+                                "pk_won": null,
+                                "pk_made": 0,
+                                "pk_att": 0
+                            }
+                        }
+                    },
+                    {
+                        "meta_data": {
+                            "player_id": "33d87e32",
+                            "player_name": "Lucas Cepeda",
+                            "player_country_code": "CHI",
+                            "player_number": "32",
+                            "age": "22"
+                        },
+                        "stats": {
+                            "summary": {
+                                "positions": "FW",
+                                "min": "90",
+                                "gls": 0,
+                                "sh": 2,
+                                "sot": 1,
+                                "ast": 0,
+                                "tkl_won": 0,
+                                "int": 1,
+                                "og": 0,
+                                "fls_com": 0,
+                                "fls_drawn": 1,
+                                "yellow_cards": 0,
+                                "red_cards": 0,
+                                "offside": 0,
+                                "pk_won": null,
+                                "pk_made": 0,
+                                "pk_att": 0
+                            }
+                        }
+                    },
+                    {
+                        "meta_data": {
+                            "player_id": "dba1f4ca",
+                            "player_name": "Vicente Pizarro",
+                            "player_country_code": "CHI",
+                            "player_number": "34",
+                            "age": "22"
+                        },
+                        "stats": {
+                            "summary": {
+                                "positions": "CM",
+                                "min": "81",
+                                "gls": 0,
+                                "sh": 2,
+                                "sot": 1,
+                                "ast": 0,
+                                "tkl_won": 1,
+                                "int": 0,
+                                "og": 0,
+                                "fls_com": 0,
+                                "fls_drawn": 2,
+                                "yellow_cards": 0,
+                                "red_cards": 0,
+                                "offside": 0,
+                                "pk_won": null,
+                                "pk_made": 0,
+                                "pk_att": 0
+                            }
+                        }
+                    },
+                    {
+                        "meta_data": {
+                            "player_id": "32c4d249",
+                            "player_name": "Francisco Marchant",
+                            "player_country_code": "CHI",
+                            "player_number": "7",
+                            "age": "18"
+                        },
+                        "stats": {
+                            "summary": {
+                                "positions": "MF",
+                                "min": "9",
+                                "gls": 0,
+                                "sh": 0,
+                                "sot": 0,
+                                "ast": 0,
+                                "tkl_won": 0,
+                                "int": 0,
+                                "og": 0,
+                                "fls_com": 0,
+                                "fls_drawn": 0,
+                                "yellow_cards": 0,
+                                "red_cards": 0,
+                                "offside": 0,
+                                "pk_won": null,
+                                "pk_made": 0,
+                                "pk_att": 0
+                            }
+                        }
+                    },
+                    {
+                        "meta_data": {
+                            "player_id": "bff05389",
+                            "player_name": "Esteban Pavez",
+                            "player_country_code": "CHI",
+                            "player_number": "8",
+                            "age": "34"
+                        },
+                        "stats": {
+                            "summary": {
+                                "positions": "CM",
+                                "min": "90",
+                                "gls": 0,
+                                "sh": 4,
+                                "sot": 1,
+                                "ast": 0,
+                                "tkl_won": 4,
+                                "int": 1,
+                                "og": 0,
+                                "fls_com": 0,
+                                "fls_drawn": 1,
+                                "yellow_cards": 0,
+                                "red_cards": 0,
+                                "offside": 0,
+                                "pk_won": null,
+                                "pk_made": 0,
+                                "pk_att": 0
+                            }
+                        }
+                    },
+                    {
+                        "meta_data": {
+                            "player_id": "67cdbc0e",
+                            "player_name": "Arturo Vidal",
+                            "player_country_code": "CHI",
+                            "player_number": "23",
+                            "age": "37"
+                        },
+                        "stats": {
+                            "summary": {
+                                "positions": "CM",
+                                "min": "64",
+                                "gls": 0,
+                                "sh": 2,
+                                "sot": 0,
+                                "ast": 0,
+                                "tkl_won": 1,
+                                "int": 0,
+                                "og": 0,
+                                "fls_com": 2,
+                                "fls_drawn": 1,
+                                "yellow_cards": 1,
+                                "red_cards": 0,
+                                "offside": 0,
+                                "pk_won": null,
+                                "pk_made": 0,
+                                "pk_att": 0
+                            }
+                        }
+                    },
+                    {
+                        "meta_data": {
+                            "player_id": "963706d2",
+                            "player_name": "Víctor Méndez",
+                            "player_country_code": "CHI",
+                            "player_number": "5",
+                            "age": "25"
+                        },
+                        "stats": {
+                            "summary": {
+                                "positions": "MF",
+                                "min": "26",
+                                "gls": 0,
+                                "sh": 0,
+                                "sot": 0,
+                                "ast": 0,
+                                "tkl_won": 0,
+                                "int": 0,
+                                "og": 0,
+                                "fls_com": 0,
+                                "fls_drawn": 0,
+                                "yellow_cards": 0,
+                                "red_cards": 0,
+                                "offside": 0,
+                                "pk_won": null,
+                                "pk_made": 0,
+                                "pk_att": 0
+                            }
+                        }
+                    },
+                    {
+                        "meta_data": {
+                            "player_id": "dc224436",
+                            "player_name": "Érick Wiemberg",
+                            "player_country_code": "CHI",
+                            "player_number": "21",
+                            "age": "30"
+                        },
+                        "stats": {
+                            "summary": {
+                                "positions": "LB",
+                                "min": "89",
+                                "gls": 0,
+                                "sh": 1,
+                                "sot": 0,
+                                "ast": 0,
+                                "tkl_won": 2,
+                                "int": 1,
+                                "og": 0,
+                                "fls_com": 2,
+                                "fls_drawn": 0,
+                                "yellow_cards": 0,
+                                "red_cards": 0,
+                                "offside": 0,
+                                "pk_won": null,
+                                "pk_made": 0,
+                                "pk_att": 0
+                            }
+                        }
+                    },
+                    {
+                        "meta_data": {
+                            "player_id": "f94fee58",
+                            "player_name": "Daniel Gutiérrez",
+                            "player_country_code": "CHI",
+                            "player_number": "3",
+                            "age": "22"
+                        },
+                        "stats": {
+                            "summary": {
+                                "positions": "DF",
+                                "min": "1",
+                                "gls": 0,
+                                "sh": 0,
+                                "sot": 0,
+                                "ast": 0,
+                                "tkl_won": 0,
+                                "int": 1,
+                                "og": 0,
+                                "fls_com": 1,
+                                "fls_drawn": 1,
+                                "yellow_cards": 0,
+                                "red_cards": 0,
+                                "offside": 0,
+                                "pk_won": null,
+                                "pk_made": 0,
+                                "pk_att": 0
+                            }
+                        }
+                    },
+                    {
+                        "meta_data": {
+                            "player_id": "4ef92b90",
+                            "player_name": "Sebastián Vegas",
+                            "player_country_code": "CHI",
+                            "player_number": "6",
+                            "age": "28"
+                        },
+                        "stats": {
+                            "summary": {
+                                "positions": "CB",
+                                "min": "89",
+                                "gls": 0,
+                                "sh": 0,
+                                "sot": 0,
+                                "ast": 0,
+                                "tkl_won": 1,
+                                "int": 2,
+                                "og": 0,
+                                "fls_com": 0,
+                                "fls_drawn": 2,
+                                "yellow_cards": 0,
+                                "red_cards": 0,
+                                "offside": 0,
+                                "pk_won": null,
+                                "pk_made": 0,
+                                "pk_att": 0
+                            }
+                        }
+                    },
+                    {
+                        "meta_data": {
+                            "player_id": "3fc6c051",
+                            "player_name": "Emiliano Amor",
+                            "player_country_code": "SYR",
+                            "player_number": "15",
+                            "age": "29"
+                        },
+                        "stats": {
+                            "summary": {
+                                "positions": "DF",
+                                "min": "1",
+                                "gls": 0,
+                                "sh": 0,
+                                "sot": 0,
+                                "ast": 0,
+                                "tkl_won": 0,
+                                "int": 0,
+                                "og": 0,
+                                "fls_com": 0,
+                                "fls_drawn": 0,
+                                "yellow_cards": 0,
+                                "red_cards": 0,
+                                "offside": 0,
+                                "pk_won": null,
+                                "pk_made": 0,
+                                "pk_att": 0
+                            }
+                        }
+                    },
+                    {
+                        "meta_data": {
+                            "player_id": "b084cda6",
+                            "player_name": "Alan Saldivia",
+                            "player_country_code": "URU",
+                            "player_number": "4",
+                            "age": "22"
+                        },
+                        "stats": {
+                            "summary": {
+                                "positions": "CB",
+                                "min": "90",
+                                "gls": 0,
+                                "sh": 1,
+                                "sot": 0,
+                                "ast": 0,
+                                "tkl_won": 1,
+                                "int": 2,
+                                "og": 0,
+                                "fls_com": 0,
+                                "fls_drawn": 0,
+                                "yellow_cards": 1,
+                                "red_cards": 0,
+                                "offside": 0,
+                                "pk_won": null,
+                                "pk_made": 0,
+                                "pk_att": 0
+                            }
+                        }
+                    },
+                    {
+                        "meta_data": {
+                            "player_id": "de4517dd",
+                            "player_name": "Mauricio Isla",
+                            "player_country_code": "CHI",
+                            "player_number": "22",
+                            "age": "36"
+                        },
+                        "stats": {
+                            "summary": {
+                                "positions": "RB",
+                                "min": "90",
+                                "gls": 0,
+                                "sh": 1,
+                                "sot": 0,
+                                "ast": 0,
+                                "tkl_won": 2,
+                                "int": 2,
+                                "og": 0,
+                                "fls_com": 0,
+                                "fls_drawn": 0,
+                                "yellow_cards": 0,
+                                "red_cards": 0,
+                                "offside": 0,
+                                "pk_won": null,
+                                "pk_made": 0,
+                                "pk_att": 0
+                            }
+                        }
+                    },
+                    {
+                        "meta_data": {
+                            "player_id": "51079959",
+                            "player_name": "Brayan Cortés",
+                            "player_country_code": "CHI",
+                            "player_number": "1",
+                            "age": "29"
+                        },
+                        "stats": {
+                            "summary": {
+                                "positions": "GK",
+                                "min": "90",
+                                "gls": 0,
+                                "sh": 0,
+                                "sot": 0,
+                                "ast": 0,
+                                "tkl_won": 0,
+                                "int": 0,
+                                "og": 0,
+                                "fls_com": 0,
+                                "fls_drawn": 0,
+                                "yellow_cards": 0,
+                                "red_cards": 0,
+                                "offside": 0,
+                                "pk_won": null,
+                                "pk_made": 0,
+                                "pk_att": 0
+                            }
+                        }
+                    }
+                ],
+                "keepers": [
+                    {
+                        "player_id": "51079959",
+                        "player_name": "Brayan Cortés",
+                        "gls_ag": 1,
+                        "sot_ag": 3,
+                        "saves": 2,
+                        "save_pct": 66.7
+                    }
+                ]
+            },
+            {
+                "team_name": "O'Higgins",
+                "home_away": "away",
+                "players": [
+                    {
+                        "meta_data": {
+                            "player_id": "a423f339",
+                            "player_name": "Arnaldo Castillo",
+                            "player_country_code": "PAR",
+                            "player_number": "9",
+                            "age": "27"
+                        },
+                        "stats": {
+                            "summary": {
+                                "positions": "FW",
+                                "min": "71",
+                                "gls": 0,
+                                "sh": 2,
+                                "sot": 0,
+                                "ast": 0,
+                                "tkl_won": 0,
+                                "int": 1,
+                                "og": 0,
+                                "fls_com": 1,
+                                "fls_drawn": 1,
+                                "yellow_cards": 0,
+                                "red_cards": 0,
+                                "offside": 0,
+                                "pk_won": null,
+                                "pk_made": 0,
+                                "pk_att": 0
+                            }
+                        }
+                    },
+                    {
+                        "meta_data": {
+                            "player_id": "38610318",
+                            "player_name": "Leandro Benegas",
+                            "player_country_code": "CHI",
+                            "player_number": "19",
+                            "age": "36"
+                        },
+                        "stats": {
+                            "summary": {
+                                "positions": "FW",
+                                "min": "19",
+                                "gls": 0,
+                                "sh": 1,
+                                "sot": 0,
+                                "ast": 0,
+                                "tkl_won": 0,
+                                "int": 0,
+                                "og": 0,
+                                "fls_com": 2,
+                                "fls_drawn": 0,
+                                "yellow_cards": 0,
+                                "red_cards": 0,
+                                "offside": 0,
+                                "pk_won": null,
+                                "pk_made": 0,
+                                "pk_att": 0
+                            }
+                        }
+                    },
+                    {
+                        "meta_data": {
+                            "player_id": "31987733",
+                            "player_name": "Rodrigo Godoy",
+                            "player_country_code": "CHI",
+                            "player_number": "26",
+                            "age": "19"
+                        },
+                        "stats": {
+                            "summary": {
+                                "positions": "AM",
+                                "min": "62",
+                                "gls": 0,
+                                "sh": 1,
+                                "sot": 0,
+                                "ast": 0,
+                                "tkl_won": 0,
+                                "int": 1,
+                                "og": 0,
+                                "fls_com": 0,
+                                "fls_drawn": 0,
+                                "yellow_cards": 0,
+                                "red_cards": 0,
+                                "offside": 1,
+                                "pk_won": null,
+                                "pk_made": 0,
+                                "pk_att": 0
+                            }
+                        }
+                    },
+                    {
+                        "meta_data": {
+                            "player_id": "2d6a53ad",
+                            "player_name": "Yorman Zapata",
+                            "player_country_code": "COL",
+                            "player_number": "15",
+                            "age": "24"
+                        },
+                        "stats": {
+                            "summary": {
+                                "positions": "FW",
+                                "min": "28",
+                                "gls": 0,
+                                "sh": 0,
+                                "sot": 0,
+                                "ast": 1,
+                                "tkl_won": 1,
+                                "int": 0,
+                                "og": 0,
+                                "fls_com": 1,
+                                "fls_drawn": 0,
+                                "yellow_cards": 0,
+                                "red_cards": 0,
+                                "offside": 0,
+                                "pk_won": null,
+                                "pk_made": 0,
+                                "pk_att": 0
+                            }
+                        }
+                    },
+                    {
+                        "meta_data": {
+                            "player_id": "ad052490",
+                            "player_name": "Bryan Rabello",
+                            "player_country_code": "CHI",
+                            "player_number": "10",
+                            "age": "30"
+                        },
+                        "stats": {
+                            "summary": {
+                                "positions": "AM",
+                                "min": "71",
+                                "gls": 1,
+                                "sh": 4,
+                                "sot": 2,
+                                "ast": 0,
+                                "tkl_won": 0,
+                                "int": 1,
+                                "og": 0,
+                                "fls_com": 1,
+                                "fls_drawn": 0,
+                                "yellow_cards": 1,
+                                "red_cards": 0,
+                                "offside": 1,
+                                "pk_won": null,
+                                "pk_made": 0,
+                                "pk_att": 0
+                            }
+                        }
+                    },
+                    {
+                        "meta_data": {
+                            "player_id": "55f096b1",
+                            "player_name": "Martín Sarrafiore",
+                            "player_country_code": "ARG",
+                            "player_number": "7",
+                            "age": "27"
+                        },
+                        "stats": {
+                            "summary": {
+                                "positions": "MF",
+                                "min": "19",
+                                "gls": 0,
+                                "sh": 0,
+                                "sot": 0,
+                                "ast": 0,
+                                "tkl_won": 1,
+                                "int": 0,
+                                "og": 0,
+                                "fls_com": 1,
+                                "fls_drawn": 0,
+                                "yellow_cards": 0,
+                                "red_cards": 0,
+                                "offside": 0,
+                                "pk_won": null,
+                                "pk_made": 0,
+                                "pk_att": 0
+                            }
+                        }
+                    },
+                    {
+                        "meta_data": {
+                            "player_id": "9ec27e7f",
+                            "player_name": "Joaquín Montecinos",
+                            "player_country_code": "CHI",
+                            "player_number": "8",
+                            "age": "29"
+                        },
+                        "stats": {
+                            "summary": {
+                                "positions": "AM",
+                                "min": "77",
+                                "gls": 0,
+                                "sh": 2,
+                                "sot": 1,
+                                "ast": 0,
+                                "tkl_won": 1,
+                                "int": 0,
+                                "og": 0,
+                                "fls_com": 0,
+                                "fls_drawn": 0,
+                                "yellow_cards": 0,
+                                "red_cards": 0,
+                                "offside": 2,
+                                "pk_won": null,
+                                "pk_made": 0,
+                                "pk_att": 0
+                            }
+                        }
+                    },
+                    {
+                        "meta_data": {
+                            "player_id": "52a253d3",
+                            "player_name": "Cristian Morales",
+                            "player_country_code": "CHI",
+                            "player_number": "2",
+                            "age": "18"
+                        },
+                        "stats": {
+                            "summary": {
+                                "positions": "DF",
+                                "min": "13",
+                                "gls": 0,
+                                "sh": 0,
+                                "sot": 0,
+                                "ast": 0,
+                                "tkl_won": 0,
+                                "int": 0,
+                                "og": 0,
+                                "fls_com": 0,
+                                "fls_drawn": 0,
+                                "yellow_cards": 0,
+                                "red_cards": 0,
+                                "offside": 0,
+                                "pk_won": null,
+                                "pk_made": 0,
+                                "pk_att": 0
+                            }
+                        }
+                    },
+                    {
+                        "meta_data": {
+                            "player_id": "76c44dcd",
+                            "player_name": "Matías Lugo",
+                            "player_country_code": "ARG",
+                            "player_number": "32",
+                            "age": "23"
+                        },
+                        "stats": {
+                            "summary": {
+                                "positions": "DM",
+                                "min": "90",
+                                "gls": 0,
+                                "sh": 1,
+                                "sot": 0,
+                                "ast": 0,
+                                "tkl_won": 2,
+                                "int": 3,
+                                "og": 0,
+                                "fls_com": 0,
+                                "fls_drawn": 0,
+                                "yellow_cards": 0,
+                                "red_cards": 0,
+                                "offside": 0,
+                                "pk_won": null,
+                                "pk_made": 0,
+                                "pk_att": 0
+                            }
+                        }
+                    },
+                    {
+                        "meta_data": {
+                            "player_id": "a246f365",
+                            "player_name": "Juan Leiva",
+                            "player_country_code": "CHI",
+                            "player_number": "11",
+                            "age": "31"
+                        },
+                        "stats": {
+                            "summary": {
+                                "positions": "DM",
+                                "min": "90",
+                                "gls": 0,
+                                "sh": 2,
+                                "sot": 0,
+                                "ast": 0,
+                                "tkl_won": 3,
+                                "int": 3,
+                                "og": 0,
+                                "fls_com": 2,
+                                "fls_drawn": 2,
+                                "yellow_cards": 1,
+                                "red_cards": 0,
+                                "offside": 0,
+                                "pk_won": null,
+                                "pk_made": 0,
+                                "pk_att": 0
+                            }
+                        }
+                    },
+                    {
+                        "meta_data": {
+                            "player_id": "0ca56107",
+                            "player_name": "Luis Pavez Muñoz",
+                            "player_country_code": "CHI",
+                            "player_number": "6",
+                            "age": "29"
+                        },
+                        "stats": {
+                            "summary": {
+                                "positions": "LB",
+                                "min": "90",
+                                "gls": 0,
+                                "sh": 0,
+                                "sot": 0,
+                                "ast": 0,
+                                "tkl_won": 4,
+                                "int": 0,
+                                "og": 0,
+                                "fls_com": 1,
+                                "fls_drawn": 0,
+                                "yellow_cards": 0,
+                                "red_cards": 0,
+                                "offside": 0,
+                                "pk_won": null,
+                                "pk_made": 0,
+                                "pk_att": 0
+                            }
+                        }
+                    },
+                    {
+                        "meta_data": {
+                            "player_id": "baa6308e",
+                            "player_name": "Juan Ignacio Díaz",
+                            "player_country_code": "ARG",
+                            "player_number": "14",
+                            "age": "26"
+                        },
+                        "stats": {
+                            "summary": {
+                                "positions": "CB",
+                                "min": "90",
+                                "gls": 0,
+                                "sh": 0,
+                                "sot": 0,
+                                "ast": 0,
+                                "tkl_won": 0,
+                                "int": 1,
+                                "og": 0,
+                                "fls_com": 2,
+                                "fls_drawn": 0,
+                                "yellow_cards": 0,
+                                "red_cards": 0,
+                                "offside": 0,
+                                "pk_won": null,
+                                "pk_made": 0,
+                                "pk_att": 0
+                            }
+                        }
+                    },
+                    {
+                        "meta_data": {
+                            "player_id": "9ad1a13c",
+                            "player_name": "Alan Robledo",
+                            "player_country_code": "ARG",
+                            "player_number": "22",
+                            "age": "27"
+                        },
+                        "stats": {
+                            "summary": {
+                                "positions": "CB",
+                                "min": "90",
+                                "gls": 0,
+                                "sh": 1,
+                                "sot": 0,
+                                "ast": 0,
+                                "tkl_won": 1,
+                                "int": 0,
+                                "og": 0,
+                                "fls_com": 1,
+                                "fls_drawn": 1,
+                                "yellow_cards": 0,
+                                "red_cards": 0,
+                                "offside": 0,
+                                "pk_won": null,
+                                "pk_made": 0,
+                                "pk_att": 0
+                            }
+                        }
+                    },
+                    {
+                        "meta_data": {
+                            "player_id": "765fc2c7",
+                            "player_name": "Moisés González",
+                            "player_country_code": "CHI",
+                            "player_number": "17",
+                            "age": "24"
+                        },
+                        "stats": {
+                            "summary": {
+                                "positions": "RB",
+                                "min": "90",
+                                "gls": 0,
+                                "sh": 0,
+                                "sot": 0,
+                                "ast": 0,
+                                "tkl_won": 1,
+                                "int": 0,
+                                "og": 0,
+                                "fls_com": 0,
+                                "fls_drawn": 1,
+                                "yellow_cards": 0,
+                                "red_cards": 0,
+                                "offside": 0,
+                                "pk_won": null,
+                                "pk_made": 0,
+                                "pk_att": 0
+                            }
+                        }
+                    },
+                    {
+                        "meta_data": {
+                            "player_id": "ddae1696",
+                            "player_name": "Omar Carabalí",
+                            "player_country_code": "CHI",
+                            "player_number": "31",
+                            "age": "27"
+                        },
+                        "stats": {
+                            "summary": {
+                                "positions": "GK",
+                                "min": "90",
+                                "gls": 0,
+                                "sh": 0,
+                                "sot": 0,
+                                "ast": 0,
+                                "tkl_won": 0,
+                                "int": 0,
+                                "og": 0,
+                                "fls_com": 0,
+                                "fls_drawn": 1,
+                                "yellow_cards": 0,
+                                "red_cards": 0,
+                                "offside": 0,
+                                "pk_won": null,
+                                "pk_made": 0,
+                                "pk_att": 0
+                            }
+                        }
+                    }
+                ],
+                "keepers": [
+                    {
+                        "player_id": "ddae1696",
+                        "player_name": "Omar Carabalí",
+                        "gls_ag": 0,
+                        "sot_ag": 5,
+                        "saves": 5,
+                        "save_pct": 100.0
+                    }
+                ]
+            }
+        ]
+    },
+    "all_players_detailed": [
+        {
+            "team": "Colo-Colo",
+            "home_away": "home",
+            "meta_player_id": "1645d166",
+            "meta_player_name": "Claudio Aquino",
+            "meta_player_country_code": "ARG",
+            "meta_player_number": "10",
+            "meta_age": "33",
+            "summary_positions": "FW",
+            "summary_min": "90",
+            "summary_gls": 0,
+            "summary_sh": 0,
+            "summary_sot": 0,
+            "summary_ast": 0,
+            "summary_tkl_won": 2,
+            "summary_int": 0,
+            "summary_og": 0,
+            "summary_fls_com": 1,
+            "summary_fls_drawn": 2,
+            "summary_yellow_cards": 1,
+            "summary_red_cards": 0,
+            "summary_offside": 0,
+            "summary_pk_won": null,
+            "summary_pk_made": 0,
+            "summary_pk_att": 0
+        },
+        {
+            "team": "Colo-Colo",
+            "home_away": "home",
+            "meta_player_id": "04bdcce2",
+            "meta_player_name": "Javier Marcelo Correa",
+            "meta_player_country_code": "ARG",
+            "meta_player_number": "9",
+            "meta_age": "32",
+            "summary_positions": "FW",
+            "summary_min": "90",
+            "summary_gls": 0,
+            "summary_sh": 5,
+            "summary_sot": 2,
+            "summary_ast": 0,
+            "summary_tkl_won": 0,
+            "summary_int": 0,
+            "summary_og": 0,
+            "summary_fls_com": 0,
+            "summary_fls_drawn": 1,
+            "summary_yellow_cards": 0,
+            "summary_red_cards": 0,
+            "summary_offside": 2,
+            "summary_pk_won": null,
+            "summary_pk_made": 0,
+            "summary_pk_att": 0
+        },
+        {
+            "team": "Colo-Colo",
+            "home_away": "home",
+            "meta_player_id": "33d87e32",
+            "meta_player_name": "Lucas Cepeda",
+            "meta_player_country_code": "CHI",
+            "meta_player_number": "32",
+            "meta_age": "22",
+            "summary_positions": "FW",
+            "summary_min": "90",
+            "summary_gls": 0,
+            "summary_sh": 2,
+            "summary_sot": 1,
+            "summary_ast": 0,
+            "summary_tkl_won": 0,
+            "summary_int": 1,
+            "summary_og": 0,
+            "summary_fls_com": 0,
+            "summary_fls_drawn": 1,
+            "summary_yellow_cards": 0,
+            "summary_red_cards": 0,
+            "summary_offside": 0,
+            "summary_pk_won": null,
+            "summary_pk_made": 0,
+            "summary_pk_att": 0
+        },
+        {
+            "team": "Colo-Colo",
+            "home_away": "home",
+            "meta_player_id": "dba1f4ca",
+            "meta_player_name": "Vicente Pizarro",
+            "meta_player_country_code": "CHI",
+            "meta_player_number": "34",
+            "meta_age": "22",
+            "summary_positions": "CM",
+            "summary_min": "81",
+            "summary_gls": 0,
+            "summary_sh": 2,
+            "summary_sot": 1,
+            "summary_ast": 0,
+            "summary_tkl_won": 1,
+            "summary_int": 0,
+            "summary_og": 0,
+            "summary_fls_com": 0,
+            "summary_fls_drawn": 2,
+            "summary_yellow_cards": 0,
+            "summary_red_cards": 0,
+            "summary_offside": 0,
+            "summary_pk_won": null,
+            "summary_pk_made": 0,
+            "summary_pk_att": 0
+        },
+        {
+            "team": "Colo-Colo",
+            "home_away": "home",
+            "meta_player_id": "32c4d249",
+            "meta_player_name": "Francisco Marchant",
+            "meta_player_country_code": "CHI",
+            "meta_player_number": "7",
+            "meta_age": "18",
+            "summary_positions": "MF",
+            "summary_min": "9",
+            "summary_gls": 0,
+            "summary_sh": 0,
+            "summary_sot": 0,
+            "summary_ast": 0,
+            "summary_tkl_won": 0,
+            "summary_int": 0,
+            "summary_og": 0,
+            "summary_fls_com": 0,
+            "summary_fls_drawn": 0,
+            "summary_yellow_cards": 0,
+            "summary_red_cards": 0,
+            "summary_offside": 0,
+            "summary_pk_won": null,
+            "summary_pk_made": 0,
+            "summary_pk_att": 0
+        },
+        {
+            "team": "Colo-Colo",
+            "home_away": "home",
+            "meta_player_id": "bff05389",
+            "meta_player_name": "Esteban Pavez",
+            "meta_player_country_code": "CHI",
+            "meta_player_number": "8",
+            "meta_age": "34",
+            "summary_positions": "CM",
+            "summary_min": "90",
+            "summary_gls": 0,
+            "summary_sh": 4,
+            "summary_sot": 1,
+            "summary_ast": 0,
+            "summary_tkl_won": 4,
+            "summary_int": 1,
+            "summary_og": 0,
+            "summary_fls_com": 0,
+            "summary_fls_drawn": 1,
+            "summary_yellow_cards": 0,
+            "summary_red_cards": 0,
+            "summary_offside": 0,
+            "summary_pk_won": null,
+            "summary_pk_made": 0,
+            "summary_pk_att": 0
+        },
+        {
+            "team": "Colo-Colo",
+            "home_away": "home",
+            "meta_player_id": "67cdbc0e",
+            "meta_player_name": "Arturo Vidal",
+            "meta_player_country_code": "CHI",
+            "meta_player_number": "23",
+            "meta_age": "37",
+            "summary_positions": "CM",
+            "summary_min": "64",
+            "summary_gls": 0,
+            "summary_sh": 2,
+            "summary_sot": 0,
+            "summary_ast": 0,
+            "summary_tkl_won": 1,
+            "summary_int": 0,
+            "summary_og": 0,
+            "summary_fls_com": 2,
+            "summary_fls_drawn": 1,
+            "summary_yellow_cards": 1,
+            "summary_red_cards": 0,
+            "summary_offside": 0,
+            "summary_pk_won": null,
+            "summary_pk_made": 0,
+            "summary_pk_att": 0
+        },
+        {
+            "team": "Colo-Colo",
+            "home_away": "home",
+            "meta_player_id": "963706d2",
+            "meta_player_name": "Víctor Méndez",
+            "meta_player_country_code": "CHI",
+            "meta_player_number": "5",
+            "meta_age": "25",
+            "summary_positions": "MF",
+            "summary_min": "26",
+            "summary_gls": 0,
+            "summary_sh": 0,
+            "summary_sot": 0,
+            "summary_ast": 0,
+            "summary_tkl_won": 0,
+            "summary_int": 0,
+            "summary_og": 0,
+            "summary_fls_com": 0,
+            "summary_fls_drawn": 0,
+            "summary_yellow_cards": 0,
+            "summary_red_cards": 0,
+            "summary_offside": 0,
+            "summary_pk_won": null,
+            "summary_pk_made": 0,
+            "summary_pk_att": 0
+        },
+        {
+            "team": "Colo-Colo",
+            "home_away": "home",
+            "meta_player_id": "dc224436",
+            "meta_player_name": "Érick Wiemberg",
+            "meta_player_country_code": "CHI",
+            "meta_player_number": "21",
+            "meta_age": "30",
+            "summary_positions": "LB",
+            "summary_min": "89",
+            "summary_gls": 0,
+            "summary_sh": 1,
+            "summary_sot": 0,
+            "summary_ast": 0,
+            "summary_tkl_won": 2,
+            "summary_int": 1,
+            "summary_og": 0,
+            "summary_fls_com": 2,
+            "summary_fls_drawn": 0,
+            "summary_yellow_cards": 0,
+            "summary_red_cards": 0,
+            "summary_offside": 0,
+            "summary_pk_won": null,
+            "summary_pk_made": 0,
+            "summary_pk_att": 0
+        },
+        {
+            "team": "Colo-Colo",
+            "home_away": "home",
+            "meta_player_id": "f94fee58",
+            "meta_player_name": "Daniel Gutiérrez",
+            "meta_player_country_code": "CHI",
+            "meta_player_number": "3",
+            "meta_age": "22",
+            "summary_positions": "DF",
+            "summary_min": "1",
+            "summary_gls": 0,
+            "summary_sh": 0,
+            "summary_sot": 0,
+            "summary_ast": 0,
+            "summary_tkl_won": 0,
+            "summary_int": 1,
+            "summary_og": 0,
+            "summary_fls_com": 1,
+            "summary_fls_drawn": 1,
+            "summary_yellow_cards": 0,
+            "summary_red_cards": 0,
+            "summary_offside": 0,
+            "summary_pk_won": null,
+            "summary_pk_made": 0,
+            "summary_pk_att": 0
+        },
+        {
+            "team": "Colo-Colo",
+            "home_away": "home",
+            "meta_player_id": "4ef92b90",
+            "meta_player_name": "Sebastián Vegas",
+            "meta_player_country_code": "CHI",
+            "meta_player_number": "6",
+            "meta_age": "28",
+            "summary_positions": "CB",
+            "summary_min": "89",
+            "summary_gls": 0,
+            "summary_sh": 0,
+            "summary_sot": 0,
+            "summary_ast": 0,
+            "summary_tkl_won": 1,
+            "summary_int": 2,
+            "summary_og": 0,
+            "summary_fls_com": 0,
+            "summary_fls_drawn": 2,
+            "summary_yellow_cards": 0,
+            "summary_red_cards": 0,
+            "summary_offside": 0,
+            "summary_pk_won": null,
+            "summary_pk_made": 0,
+            "summary_pk_att": 0
+        },
+        {
+            "team": "Colo-Colo",
+            "home_away": "home",
+            "meta_player_id": "3fc6c051",
+            "meta_player_name": "Emiliano Amor",
+            "meta_player_country_code": "SYR",
+            "meta_player_number": "15",
+            "meta_age": "29",
+            "summary_positions": "DF",
+            "summary_min": "1",
+            "summary_gls": 0,
+            "summary_sh": 0,
+            "summary_sot": 0,
+            "summary_ast": 0,
+            "summary_tkl_won": 0,
+            "summary_int": 0,
+            "summary_og": 0,
+            "summary_fls_com": 0,
+            "summary_fls_drawn": 0,
+            "summary_yellow_cards": 0,
+            "summary_red_cards": 0,
+            "summary_offside": 0,
+            "summary_pk_won": null,
+            "summary_pk_made": 0,
+            "summary_pk_att": 0
+        },
+        {
+            "team": "Colo-Colo",
+            "home_away": "home",
+            "meta_player_id": "b084cda6",
+            "meta_player_name": "Alan Saldivia",
+            "meta_player_country_code": "URU",
+            "meta_player_number": "4",
+            "meta_age": "22",
+            "summary_positions": "CB",
+            "summary_min": "90",
+            "summary_gls": 0,
+            "summary_sh": 1,
+            "summary_sot": 0,
+            "summary_ast": 0,
+            "summary_tkl_won": 1,
+            "summary_int": 2,
+            "summary_og": 0,
+            "summary_fls_com": 0,
+            "summary_fls_drawn": 0,
+            "summary_yellow_cards": 1,
+            "summary_red_cards": 0,
+            "summary_offside": 0,
+            "summary_pk_won": null,
+            "summary_pk_made": 0,
+            "summary_pk_att": 0
+        },
+        {
+            "team": "Colo-Colo",
+            "home_away": "home",
+            "meta_player_id": "de4517dd",
+            "meta_player_name": "Mauricio Isla",
+            "meta_player_country_code": "CHI",
+            "meta_player_number": "22",
+            "meta_age": "36",
+            "summary_positions": "RB",
+            "summary_min": "90",
+            "summary_gls": 0,
+            "summary_sh": 1,
+            "summary_sot": 0,
+            "summary_ast": 0,
+            "summary_tkl_won": 2,
+            "summary_int": 2,
+            "summary_og": 0,
+            "summary_fls_com": 0,
+            "summary_fls_drawn": 0,
+            "summary_yellow_cards": 0,
+            "summary_red_cards": 0,
+            "summary_offside": 0,
+            "summary_pk_won": null,
+            "summary_pk_made": 0,
+            "summary_pk_att": 0
+        },
+        {
+            "team": "Colo-Colo",
+            "home_away": "home",
+            "meta_player_id": "51079959",
+            "meta_player_name": "Brayan Cortés",
+            "meta_player_country_code": "CHI",
+            "meta_player_number": "1",
+            "meta_age": "29",
+            "summary_positions": "GK",
+            "summary_min": "90",
+            "summary_gls": 0,
+            "summary_sh": 0,
+            "summary_sot": 0,
+            "summary_ast": 0,
+            "summary_tkl_won": 0,
+            "summary_int": 0,
+            "summary_og": 0,
+            "summary_fls_com": 0,
+            "summary_fls_drawn": 0,
+            "summary_yellow_cards": 0,
+            "summary_red_cards": 0,
+            "summary_offside": 0,
+            "summary_pk_won": null,
+            "summary_pk_made": 0,
+            "summary_pk_att": 0
+        },
+        {
+            "team": "O'Higgins",
+            "home_away": "away",
+            "meta_player_id": "a423f339",
+            "meta_player_name": "Arnaldo Castillo",
+            "meta_player_country_code": "PAR",
+            "meta_player_number": "9",
+            "meta_age": "27",
+            "summary_positions": "FW",
+            "summary_min": "71",
+            "summary_gls": 0,
+            "summary_sh": 2,
+            "summary_sot": 0,
+            "summary_ast": 0,
+            "summary_tkl_won": 0,
+            "summary_int": 1,
+            "summary_og": 0,
+            "summary_fls_com": 1,
+            "summary_fls_drawn": 1,
+            "summary_yellow_cards": 0,
+            "summary_red_cards": 0,
+            "summary_offside": 0,
+            "summary_pk_won": null,
+            "summary_pk_made": 0,
+            "summary_pk_att": 0
+        },
+        {
+            "team": "O'Higgins",
+            "home_away": "away",
+            "meta_player_id": "38610318",
+            "meta_player_name": "Leandro Benegas",
+            "meta_player_country_code": "CHI",
+            "meta_player_number": "19",
+            "meta_age": "36",
+            "summary_positions": "FW",
+            "summary_min": "19",
+            "summary_gls": 0,
+            "summary_sh": 1,
+            "summary_sot": 0,
+            "summary_ast": 0,
+            "summary_tkl_won": 0,
+            "summary_int": 0,
+            "summary_og": 0,
+            "summary_fls_com": 2,
+            "summary_fls_drawn": 0,
+            "summary_yellow_cards": 0,
+            "summary_red_cards": 0,
+            "summary_offside": 0,
+            "summary_pk_won": null,
+            "summary_pk_made": 0,
+            "summary_pk_att": 0
+        },
+        {
+            "team": "O'Higgins",
+            "home_away": "away",
+            "meta_player_id": "31987733",
+            "meta_player_name": "Rodrigo Godoy",
+            "meta_player_country_code": "CHI",
+            "meta_player_number": "26",
+            "meta_age": "19",
+            "summary_positions": "AM",
+            "summary_min": "62",
+            "summary_gls": 0,
+            "summary_sh": 1,
+            "summary_sot": 0,
+            "summary_ast": 0,
+            "summary_tkl_won": 0,
+            "summary_int": 1,
+            "summary_og": 0,
+            "summary_fls_com": 0,
+            "summary_fls_drawn": 0,
+            "summary_yellow_cards": 0,
+            "summary_red_cards": 0,
+            "summary_offside": 1,
+            "summary_pk_won": null,
+            "summary_pk_made": 0,
+            "summary_pk_att": 0
+        },
+        {
+            "team": "O'Higgins",
+            "home_away": "away",
+            "meta_player_id": "2d6a53ad",
+            "meta_player_name": "Yorman Zapata",
+            "meta_player_country_code": "COL",
+            "meta_player_number": "15",
+            "meta_age": "24",
+            "summary_positions": "FW",
+            "summary_min": "28",
+            "summary_gls": 0,
+            "summary_sh": 0,
+            "summary_sot": 0,
+            "summary_ast": 1,
+            "summary_tkl_won": 1,
+            "summary_int": 0,
+            "summary_og": 0,
+            "summary_fls_com": 1,
+            "summary_fls_drawn": 0,
+            "summary_yellow_cards": 0,
+            "summary_red_cards": 0,
+            "summary_offside": 0,
+            "summary_pk_won": null,
+            "summary_pk_made": 0,
+            "summary_pk_att": 0
+        },
+        {
+            "team": "O'Higgins",
+            "home_away": "away",
+            "meta_player_id": "ad052490",
+            "meta_player_name": "Bryan Rabello",
+            "meta_player_country_code": "CHI",
+            "meta_player_number": "10",
+            "meta_age": "30",
+            "summary_positions": "AM",
+            "summary_min": "71",
+            "summary_gls": 1,
+            "summary_sh": 4,
+            "summary_sot": 2,
+            "summary_ast": 0,
+            "summary_tkl_won": 0,
+            "summary_int": 1,
+            "summary_og": 0,
+            "summary_fls_com": 1,
+            "summary_fls_drawn": 0,
+            "summary_yellow_cards": 1,
+            "summary_red_cards": 0,
+            "summary_offside": 1,
+            "summary_pk_won": null,
+            "summary_pk_made": 0,
+            "summary_pk_att": 0
+        },
+        {
+            "team": "O'Higgins",
+            "home_away": "away",
+            "meta_player_id": "55f096b1",
+            "meta_player_name": "Martín Sarrafiore",
+            "meta_player_country_code": "ARG",
+            "meta_player_number": "7",
+            "meta_age": "27",
+            "summary_positions": "MF",
+            "summary_min": "19",
+            "summary_gls": 0,
+            "summary_sh": 0,
+            "summary_sot": 0,
+            "summary_ast": 0,
+            "summary_tkl_won": 1,
+            "summary_int": 0,
+            "summary_og": 0,
+            "summary_fls_com": 1,
+            "summary_fls_drawn": 0,
+            "summary_yellow_cards": 0,
+            "summary_red_cards": 0,
+            "summary_offside": 0,
+            "summary_pk_won": null,
+            "summary_pk_made": 0,
+            "summary_pk_att": 0
+        },
+        {
+            "team": "O'Higgins",
+            "home_away": "away",
+            "meta_player_id": "9ec27e7f",
+            "meta_player_name": "Joaquín Montecinos",
+            "meta_player_country_code": "CHI",
+            "meta_player_number": "8",
+            "meta_age": "29",
+            "summary_positions": "AM",
+            "summary_min": "77",
+            "summary_gls": 0,
+            "summary_sh": 2,
+            "summary_sot": 1,
+            "summary_ast": 0,
+            "summary_tkl_won": 1,
+            "summary_int": 0,
+            "summary_og": 0,
+            "summary_fls_com": 0,
+            "summary_fls_drawn": 0,
+            "summary_yellow_cards": 0,
+            "summary_red_cards": 0,
+            "summary_offside": 2,
+            "summary_pk_won": null,
+            "summary_pk_made": 0,
+            "summary_pk_att": 0
+        },
+        {
+            "team": "O'Higgins",
+            "home_away": "away",
+            "meta_player_id": "52a253d3",
+            "meta_player_name": "Cristian Morales",
+            "meta_player_country_code": "CHI",
+            "meta_player_number": "2",
+            "meta_age": "18",
+            "summary_positions": "DF",
+            "summary_min": "13",
+            "summary_gls": 0,
+            "summary_sh": 0,
+            "summary_sot": 0,
+            "summary_ast": 0,
+            "summary_tkl_won": 0,
+            "summary_int": 0,
+            "summary_og": 0,
+            "summary_fls_com": 0,
+            "summary_fls_drawn": 0,
+            "summary_yellow_cards": 0,
+            "summary_red_cards": 0,
+            "summary_offside": 0,
+            "summary_pk_won": null,
+            "summary_pk_made": 0,
+            "summary_pk_att": 0
+        },
+        {
+            "team": "O'Higgins",
+            "home_away": "away",
+            "meta_player_id": "76c44dcd",
+            "meta_player_name": "Matías Lugo",
+            "meta_player_country_code": "ARG",
+            "meta_player_number": "32",
+            "meta_age": "23",
+            "summary_positions": "DM",
+            "summary_min": "90",
+            "summary_gls": 0,
+            "summary_sh": 1,
+            "summary_sot": 0,
+            "summary_ast": 0,
+            "summary_tkl_won": 2,
+            "summary_int": 3,
+            "summary_og": 0,
+            "summary_fls_com": 0,
+            "summary_fls_drawn": 0,
+            "summary_yellow_cards": 0,
+            "summary_red_cards": 0,
+            "summary_offside": 0,
+            "summary_pk_won": null,
+            "summary_pk_made": 0,
+            "summary_pk_att": 0
+        },
+        {
+            "team": "O'Higgins",
+            "home_away": "away",
+            "meta_player_id": "a246f365",
+            "meta_player_name": "Juan Leiva",
+            "meta_player_country_code": "CHI",
+            "meta_player_number": "11",
+            "meta_age": "31",
+            "summary_positions": "DM",
+            "summary_min": "90",
+            "summary_gls": 0,
+            "summary_sh": 2,
+            "summary_sot": 0,
+            "summary_ast": 0,
+            "summary_tkl_won": 3,
+            "summary_int": 3,
+            "summary_og": 0,
+            "summary_fls_com": 2,
+            "summary_fls_drawn": 2,
+            "summary_yellow_cards": 1,
+            "summary_red_cards": 0,
+            "summary_offside": 0,
+            "summary_pk_won": null,
+            "summary_pk_made": 0,
+            "summary_pk_att": 0
+        },
+        {
+            "team": "O'Higgins",
+            "home_away": "away",
+            "meta_player_id": "0ca56107",
+            "meta_player_name": "Luis Pavez Muñoz",
+            "meta_player_country_code": "CHI",
+            "meta_player_number": "6",
+            "meta_age": "29",
+            "summary_positions": "LB",
+            "summary_min": "90",
+            "summary_gls": 0,
+            "summary_sh": 0,
+            "summary_sot": 0,
+            "summary_ast": 0,
+            "summary_tkl_won": 4,
+            "summary_int": 0,
+            "summary_og": 0,
+            "summary_fls_com": 1,
+            "summary_fls_drawn": 0,
+            "summary_yellow_cards": 0,
+            "summary_red_cards": 0,
+            "summary_offside": 0,
+            "summary_pk_won": null,
+            "summary_pk_made": 0,
+            "summary_pk_att": 0
+        },
+        {
+            "team": "O'Higgins",
+            "home_away": "away",
+            "meta_player_id": "baa6308e",
+            "meta_player_name": "Juan Ignacio Díaz",
+            "meta_player_country_code": "ARG",
+            "meta_player_number": "14",
+            "meta_age": "26",
+            "summary_positions": "CB",
+            "summary_min": "90",
+            "summary_gls": 0,
+            "summary_sh": 0,
+            "summary_sot": 0,
+            "summary_ast": 0,
+            "summary_tkl_won": 0,
+            "summary_int": 1,
+            "summary_og": 0,
+            "summary_fls_com": 2,
+            "summary_fls_drawn": 0,
+            "summary_yellow_cards": 0,
+            "summary_red_cards": 0,
+            "summary_offside": 0,
+            "summary_pk_won": null,
+            "summary_pk_made": 0,
+            "summary_pk_att": 0
+        },
+        {
+            "team": "O'Higgins",
+            "home_away": "away",
+            "meta_player_id": "9ad1a13c",
+            "meta_player_name": "Alan Robledo",
+            "meta_player_country_code": "ARG",
+            "meta_player_number": "22",
+            "meta_age": "27",
+            "summary_positions": "CB",
+            "summary_min": "90",
+            "summary_gls": 0,
+            "summary_sh": 1,
+            "summary_sot": 0,
+            "summary_ast": 0,
+            "summary_tkl_won": 1,
+            "summary_int": 0,
+            "summary_og": 0,
+            "summary_fls_com": 1,
+            "summary_fls_drawn": 1,
+            "summary_yellow_cards": 0,
+            "summary_red_cards": 0,
+            "summary_offside": 0,
+            "summary_pk_won": null,
+            "summary_pk_made": 0,
+            "summary_pk_att": 0
+        },
+        {
+            "team": "O'Higgins",
+            "home_away": "away",
+            "meta_player_id": "765fc2c7",
+            "meta_player_name": "Moisés González",
+            "meta_player_country_code": "CHI",
+            "meta_player_number": "17",
+            "meta_age": "24",
+            "summary_positions": "RB",
+            "summary_min": "90",
+            "summary_gls": 0,
+            "summary_sh": 0,
+            "summary_sot": 0,
+            "summary_ast": 0,
+            "summary_tkl_won": 1,
+            "summary_int": 0,
+            "summary_og": 0,
+            "summary_fls_com": 0,
+            "summary_fls_drawn": 1,
+            "summary_yellow_cards": 0,
+            "summary_red_cards": 0,
+            "summary_offside": 0,
+            "summary_pk_won": null,
+            "summary_pk_made": 0,
+            "summary_pk_att": 0
+        },
+        {
+            "team": "O'Higgins",
+            "home_away": "away",
+            "meta_player_id": "ddae1696",
+            "meta_player_name": "Omar Carabalí",
+            "meta_player_country_code": "CHI",
+            "meta_player_number": "31",
+            "meta_age": "27",
+            "summary_positions": "GK",
+            "summary_min": "90",
+            "summary_gls": 0,
+            "summary_sh": 0,
+            "summary_sot": 0,
+            "summary_ast": 0,
+            "summary_tkl_won": 0,
+            "summary_int": 0,
+            "summary_og": 0,
+            "summary_fls_com": 0,
+            "summary_fls_drawn": 1,
+            "summary_yellow_cards": 0,
+            "summary_red_cards": 0,
+            "summary_offside": 0,
+            "summary_pk_won": null,
+            "summary_pk_made": 0,
+            "summary_pk_att": 0
+        }
+    ],
+    "match_events": {
+        "goals": [
+            {
+                "team": "O'Higgins",
+                "home_away": "away",
+                "player": "Bryan Rabello",
+                "player_id": "ad052490",
+                "player_number": "10",
+                "goals": 1,
+                "penalty_goals": 0,
+                "non_penalty_goals": 1
+            }
+        ],
+        "yellow_cards": [
+            {
+                "team": "Colo-Colo",
+                "home_away": "home",
+                "player": "Claudio Aquino",
+                "player_id": "1645d166",
+                "player_number": "10",
+                "count": 1
+            },
+            {
+                "team": "Colo-Colo",
+                "home_away": "home",
+                "player": "Arturo Vidal",
+                "player_id": "67cdbc0e",
+                "player_number": "23",
+                "count": 1
+            },
+            {
+                "team": "Colo-Colo",
+                "home_away": "home",
+                "player": "Alan Saldivia",
+                "player_id": "b084cda6",
+                "player_number": "4",
+                "count": 1
+            },
+            {
+                "team": "O'Higgins",
+                "home_away": "away",
+                "player": "Bryan Rabello",
+                "player_id": "ad052490",
+                "player_number": "10",
+                "count": 1
+            },
+            {
+                "team": "O'Higgins",
+                "home_away": "away",
+                "player": "Juan Leiva",
+                "player_id": "a246f365",
+                "player_number": "11",
+                "count": 1
+            }
+        ],
+        "red_cards": [],
+        "assists": [
+            {
+                "team": "O'Higgins",
+                "home_away": "away",
+                "player": "Yorman Zapata",
+                "player_id": "2d6a53ad",
+                "player_number": "15",
+                "assists": 1
+            }
+        ],
+        "penalties": []
+    },
+    "team_performance": {
+        "home": {
+            "team_name": "Colo-Colo",
+            "home_away": "home",
+            "total_players": 15,
+            "starters": 0,
+            "substitutes": 15,
+            "goals": 0,
+            "assists": 0,
+            "shots": 18,
+            "shots_on_target": 5,
+            "passes_completed": 0,
+            "passes_attempted": 0,
+            "pass_accuracy": 0,
+            "yellow_cards": 3,
+            "red_cards": 0,
+            "fouls_committed": 0,
+            "fouls_drawn": 0,
+            "corners": 0,
+            "offsides": 0,
+            "possession_touches": 0,
+            "tackles": 0,
+            "interceptions": 0,
+            "blocks": 0,
+            "clearances": 0
+        },
+        "away": {
+            "team_name": "O'Higgins",
+            "home_away": "away",
+            "total_players": 15,
+            "starters": 0,
+            "substitutes": 15,
+            "goals": 1,
+            "assists": 1,
+            "shots": 14,
+            "shots_on_target": 3,
+            "passes_completed": 0,
+            "passes_attempted": 0,
+            "pass_accuracy": 0,
+            "yellow_cards": 2,
+            "red_cards": 0,
+            "fouls_committed": 0,
+            "fouls_drawn": 0,
+            "corners": 0,
+            "offsides": 0,
+            "possession_touches": 0,
+            "tackles": 0,
+            "interceptions": 0,
+            "blocks": 0,
+            "clearances": 0
+        }
+    },
+    "raw_player_data": {
+        "data": [
+            {
+                "team_name": "Colo-Colo",
+                "home_away": "home",
+                "players": [
+                    {
+                        "meta_data": {
+                            "player_id": "1645d166",
+                            "player_name": "Claudio Aquino",
+                            "player_country_code": "ARG",
+                            "player_number": "10",
+                            "age": "33"
+                        },
+                        "stats": {
+                            "summary": {
+                                "positions": "FW",
+                                "min": "90",
+                                "gls": 0,
+                                "sh": 0,
+                                "sot": 0,
+                                "ast": 0,
+                                "tkl_won": 2,
+                                "int": 0,
+                                "og": 0,
+                                "fls_com": 1,
+                                "fls_drawn": 2,
+                                "yellow_cards": 1,
+                                "red_cards": 0,
+                                "offside": 0,
+                                "pk_won": null,
+                                "pk_made": 0,
+                                "pk_att": 0
+                            }
+                        }
+                    },
+                    {
+                        "meta_data": {
+                            "player_id": "04bdcce2",
+                            "player_name": "Javier Marcelo Correa",
+                            "player_country_code": "ARG",
+                            "player_number": "9",
+                            "age": "32"
+                        },
+                        "stats": {
+                            "summary": {
+                                "positions": "FW",
+                                "min": "90",
+                                "gls": 0,
+                                "sh": 5,
+                                "sot": 2,
+                                "ast": 0,
+                                "tkl_won": 0,
+                                "int": 0,
+                                "og": 0,
+                                "fls_com": 0,
+                                "fls_drawn": 1,
+                                "yellow_cards": 0,
+                                "red_cards": 0,
+                                "offside": 2,
+                                "pk_won": null,
+                                "pk_made": 0,
+                                "pk_att": 0
+                            }
+                        }
+                    },
+                    {
+                        "meta_data": {
+                            "player_id": "33d87e32",
+                            "player_name": "Lucas Cepeda",
+                            "player_country_code": "CHI",
+                            "player_number": "32",
+                            "age": "22"
+                        },
+                        "stats": {
+                            "summary": {
+                                "positions": "FW",
+                                "min": "90",
+                                "gls": 0,
+                                "sh": 2,
+                                "sot": 1,
+                                "ast": 0,
+                                "tkl_won": 0,
+                                "int": 1,
+                                "og": 0,
+                                "fls_com": 0,
+                                "fls_drawn": 1,
+                                "yellow_cards": 0,
+                                "red_cards": 0,
+                                "offside": 0,
+                                "pk_won": null,
+                                "pk_made": 0,
+                                "pk_att": 0
+                            }
+                        }
+                    },
+                    {
+                        "meta_data": {
+                            "player_id": "dba1f4ca",
+                            "player_name": "Vicente Pizarro",
+                            "player_country_code": "CHI",
+                            "player_number": "34",
+                            "age": "22"
+                        },
+                        "stats": {
+                            "summary": {
+                                "positions": "CM",
+                                "min": "81",
+                                "gls": 0,
+                                "sh": 2,
+                                "sot": 1,
+                                "ast": 0,
+                                "tkl_won": 1,
+                                "int": 0,
+                                "og": 0,
+                                "fls_com": 0,
+                                "fls_drawn": 2,
+                                "yellow_cards": 0,
+                                "red_cards": 0,
+                                "offside": 0,
+                                "pk_won": null,
+                                "pk_made": 0,
+                                "pk_att": 0
+                            }
+                        }
+                    },
+                    {
+                        "meta_data": {
+                            "player_id": "32c4d249",
+                            "player_name": "Francisco Marchant",
+                            "player_country_code": "CHI",
+                            "player_number": "7",
+                            "age": "18"
+                        },
+                        "stats": {
+                            "summary": {
+                                "positions": "MF",
+                                "min": "9",
+                                "gls": 0,
+                                "sh": 0,
+                                "sot": 0,
+                                "ast": 0,
+                                "tkl_won": 0,
+                                "int": 0,
+                                "og": 0,
+                                "fls_com": 0,
+                                "fls_drawn": 0,
+                                "yellow_cards": 0,
+                                "red_cards": 0,
+                                "offside": 0,
+                                "pk_won": null,
+                                "pk_made": 0,
+                                "pk_att": 0
+                            }
+                        }
+                    },
+                    {
+                        "meta_data": {
+                            "player_id": "bff05389",
+                            "player_name": "Esteban Pavez",
+                            "player_country_code": "CHI",
+                            "player_number": "8",
+                            "age": "34"
+                        },
+                        "stats": {
+                            "summary": {
+                                "positions": "CM",
+                                "min": "90",
+                                "gls": 0,
+                                "sh": 4,
+                                "sot": 1,
+                                "ast": 0,
+                                "tkl_won": 4,
+                                "int": 1,
+                                "og": 0,
+                                "fls_com": 0,
+                                "fls_drawn": 1,
+                                "yellow_cards": 0,
+                                "red_cards": 0,
+                                "offside": 0,
+                                "pk_won": null,
+                                "pk_made": 0,
+                                "pk_att": 0
+                            }
+                        }
+                    },
+                    {
+                        "meta_data": {
+                            "player_id": "67cdbc0e",
+                            "player_name": "Arturo Vidal",
+                            "player_country_code": "CHI",
+                            "player_number": "23",
+                            "age": "37"
+                        },
+                        "stats": {
+                            "summary": {
+                                "positions": "CM",
+                                "min": "64",
+                                "gls": 0,
+                                "sh": 2,
+                                "sot": 0,
+                                "ast": 0,
+                                "tkl_won": 1,
+                                "int": 0,
+                                "og": 0,
+                                "fls_com": 2,
+                                "fls_drawn": 1,
+                                "yellow_cards": 1,
+                                "red_cards": 0,
+                                "offside": 0,
+                                "pk_won": null,
+                                "pk_made": 0,
+                                "pk_att": 0
+                            }
+                        }
+                    },
+                    {
+                        "meta_data": {
+                            "player_id": "963706d2",
+                            "player_name": "Víctor Méndez",
+                            "player_country_code": "CHI",
+                            "player_number": "5",
+                            "age": "25"
+                        },
+                        "stats": {
+                            "summary": {
+                                "positions": "MF",
+                                "min": "26",
+                                "gls": 0,
+                                "sh": 0,
+                                "sot": 0,
+                                "ast": 0,
+                                "tkl_won": 0,
+                                "int": 0,
+                                "og": 0,
+                                "fls_com": 0,
+                                "fls_drawn": 0,
+                                "yellow_cards": 0,
+                                "red_cards": 0,
+                                "offside": 0,
+                                "pk_won": null,
+                                "pk_made": 0,
+                                "pk_att": 0
+                            }
+                        }
+                    },
+                    {
+                        "meta_data": {
+                            "player_id": "dc224436",
+                            "player_name": "Érick Wiemberg",
+                            "player_country_code": "CHI",
+                            "player_number": "21",
+                            "age": "30"
+                        },
+                        "stats": {
+                            "summary": {
+                                "positions": "LB",
+                                "min": "89",
+                                "gls": 0,
+                                "sh": 1,
+                                "sot": 0,
+                                "ast": 0,
+                                "tkl_won": 2,
+                                "int": 1,
+                                "og": 0,
+                                "fls_com": 2,
+                                "fls_drawn": 0,
+                                "yellow_cards": 0,
+                                "red_cards": 0,
+                                "offside": 0,
+                                "pk_won": null,
+                                "pk_made": 0,
+                                "pk_att": 0
+                            }
+                        }
+                    },
+                    {
+                        "meta_data": {
+                            "player_id": "f94fee58",
+                            "player_name": "Daniel Gutiérrez",
+                            "player_country_code": "CHI",
+                            "player_number": "3",
+                            "age": "22"
+                        },
+                        "stats": {
+                            "summary": {
+                                "positions": "DF",
+                                "min": "1",
+                                "gls": 0,
+                                "sh": 0,
+                                "sot": 0,
+                                "ast": 0,
+                                "tkl_won": 0,
+                                "int": 1,
+                                "og": 0,
+                                "fls_com": 1,
+                                "fls_drawn": 1,
+                                "yellow_cards": 0,
+                                "red_cards": 0,
+                                "offside": 0,
+                                "pk_won": null,
+                                "pk_made": 0,
+                                "pk_att": 0
+                            }
+                        }
+                    },
+                    {
+                        "meta_data": {
+                            "player_id": "4ef92b90",
+                            "player_name": "Sebastián Vegas",
+                            "player_country_code": "CHI",
+                            "player_number": "6",
+                            "age": "28"
+                        },
+                        "stats": {
+                            "summary": {
+                                "positions": "CB",
+                                "min": "89",
+                                "gls": 0,
+                                "sh": 0,
+                                "sot": 0,
+                                "ast": 0,
+                                "tkl_won": 1,
+                                "int": 2,
+                                "og": 0,
+                                "fls_com": 0,
+                                "fls_drawn": 2,
+                                "yellow_cards": 0,
+                                "red_cards": 0,
+                                "offside": 0,
+                                "pk_won": null,
+                                "pk_made": 0,
+                                "pk_att": 0
+                            }
+                        }
+                    },
+                    {
+                        "meta_data": {
+                            "player_id": "3fc6c051",
+                            "player_name": "Emiliano Amor",
+                            "player_country_code": "SYR",
+                            "player_number": "15",
+                            "age": "29"
+                        },
+                        "stats": {
+                            "summary": {
+                                "positions": "DF",
+                                "min": "1",
+                                "gls": 0,
+                                "sh": 0,
+                                "sot": 0,
+                                "ast": 0,
+                                "tkl_won": 0,
+                                "int": 0,
+                                "og": 0,
+                                "fls_com": 0,
+                                "fls_drawn": 0,
+                                "yellow_cards": 0,
+                                "red_cards": 0,
+                                "offside": 0,
+                                "pk_won": null,
+                                "pk_made": 0,
+                                "pk_att": 0
+                            }
+                        }
+                    },
+                    {
+                        "meta_data": {
+                            "player_id": "b084cda6",
+                            "player_name": "Alan Saldivia",
+                            "player_country_code": "URU",
+                            "player_number": "4",
+                            "age": "22"
+                        },
+                        "stats": {
+                            "summary": {
+                                "positions": "CB",
+                                "min": "90",
+                                "gls": 0,
+                                "sh": 1,
+                                "sot": 0,
+                                "ast": 0,
+                                "tkl_won": 1,
+                                "int": 2,
+                                "og": 0,
+                                "fls_com": 0,
+                                "fls_drawn": 0,
+                                "yellow_cards": 1,
+                                "red_cards": 0,
+                                "offside": 0,
+                                "pk_won": null,
+                                "pk_made": 0,
+                                "pk_att": 0
+                            }
+                        }
+                    },
+                    {
+                        "meta_data": {
+                            "player_id": "de4517dd",
+                            "player_name": "Mauricio Isla",
+                            "player_country_code": "CHI",
+                            "player_number": "22",
+                            "age": "36"
+                        },
+                        "stats": {
+                            "summary": {
+                                "positions": "RB",
+                                "min": "90",
+                                "gls": 0,
+                                "sh": 1,
+                                "sot": 0,
+                                "ast": 0,
+                                "tkl_won": 2,
+                                "int": 2,
+                                "og": 0,
+                                "fls_com": 0,
+                                "fls_drawn": 0,
+                                "yellow_cards": 0,
+                                "red_cards": 0,
+                                "offside": 0,
+                                "pk_won": null,
+                                "pk_made": 0,
+                                "pk_att": 0
+                            }
+                        }
+                    },
+                    {
+                        "meta_data": {
+                            "player_id": "51079959",
+                            "player_name": "Brayan Cortés",
+                            "player_country_code": "CHI",
+                            "player_number": "1",
+                            "age": "29"
+                        },
+                        "stats": {
+                            "summary": {
+                                "positions": "GK",
+                                "min": "90",
+                                "gls": 0,
+                                "sh": 0,
+                                "sot": 0,
+                                "ast": 0,
+                                "tkl_won": 0,
+                                "int": 0,
+                                "og": 0,
+                                "fls_com": 0,
+                                "fls_drawn": 0,
+                                "yellow_cards": 0,
+                                "red_cards": 0,
+                                "offside": 0,
+                                "pk_won": null,
+                                "pk_made": 0,
+                                "pk_att": 0
+                            }
+                        }
+                    }
+                ],
+                "keepers": [
+                    {
+                        "player_id": "51079959",
+                        "player_name": "Brayan Cortés",
+                        "gls_ag": 1,
+                        "sot_ag": 3,
+                        "saves": 2,
+                        "save_pct": 66.7
+                    }
+                ]
+            },
+            {
+                "team_name": "O'Higgins",
+                "home_away": "away",
+                "players": [
+                    {
+                        "meta_data": {
+                            "player_id": "a423f339",
+                            "player_name": "Arnaldo Castillo",
+                            "player_country_code": "PAR",
+                            "player_number": "9",
+                            "age": "27"
+                        },
+                        "stats": {
+                            "summary": {
+                                "positions": "FW",
+                                "min": "71",
+                                "gls": 0,
+                                "sh": 2,
+                                "sot": 0,
+                                "ast": 0,
+                                "tkl_won": 0,
+                                "int": 1,
+                                "og": 0,
+                                "fls_com": 1,
+                                "fls_drawn": 1,
+                                "yellow_cards": 0,
+                                "red_cards": 0,
+                                "offside": 0,
+                                "pk_won": null,
+                                "pk_made": 0,
+                                "pk_att": 0
+                            }
+                        }
+                    },
+                    {
+                        "meta_data": {
+                            "player_id": "38610318",
+                            "player_name": "Leandro Benegas",
+                            "player_country_code": "CHI",
+                            "player_number": "19",
+                            "age": "36"
+                        },
+                        "stats": {
+                            "summary": {
+                                "positions": "FW",
+                                "min": "19",
+                                "gls": 0,
+                                "sh": 1,
+                                "sot": 0,
+                                "ast": 0,
+                                "tkl_won": 0,
+                                "int": 0,
+                                "og": 0,
+                                "fls_com": 2,
+                                "fls_drawn": 0,
+                                "yellow_cards": 0,
+                                "red_cards": 0,
+                                "offside": 0,
+                                "pk_won": null,
+                                "pk_made": 0,
+                                "pk_att": 0
+                            }
+                        }
+                    },
+                    {
+                        "meta_data": {
+                            "player_id": "31987733",
+                            "player_name": "Rodrigo Godoy",
+                            "player_country_code": "CHI",
+                            "player_number": "26",
+                            "age": "19"
+                        },
+                        "stats": {
+                            "summary": {
+                                "positions": "AM",
+                                "min": "62",
+                                "gls": 0,
+                                "sh": 1,
+                                "sot": 0,
+                                "ast": 0,
+                                "tkl_won": 0,
+                                "int": 1,
+                                "og": 0,
+                                "fls_com": 0,
+                                "fls_drawn": 0,
+                                "yellow_cards": 0,
+                                "red_cards": 0,
+                                "offside": 1,
+                                "pk_won": null,
+                                "pk_made": 0,
+                                "pk_att": 0
+                            }
+                        }
+                    },
+                    {
+                        "meta_data": {
+                            "player_id": "2d6a53ad",
+                            "player_name": "Yorman Zapata",
+                            "player_country_code": "COL",
+                            "player_number": "15",
+                            "age": "24"
+                        },
+                        "stats": {
+                            "summary": {
+                                "positions": "FW",
+                                "min": "28",
+                                "gls": 0,
+                                "sh": 0,
+                                "sot": 0,
+                                "ast": 1,
+                                "tkl_won": 1,
+                                "int": 0,
+                                "og": 0,
+                                "fls_com": 1,
+                                "fls_drawn": 0,
+                                "yellow_cards": 0,
+                                "red_cards": 0,
+                                "offside": 0,
+                                "pk_won": null,
+                                "pk_made": 0,
+                                "pk_att": 0
+                            }
+                        }
+                    },
+                    {
+                        "meta_data": {
+                            "player_id": "ad052490",
+                            "player_name": "Bryan Rabello",
+                            "player_country_code": "CHI",
+                            "player_number": "10",
+                            "age": "30"
+                        },
+                        "stats": {
+                            "summary": {
+                                "positions": "AM",
+                                "min": "71",
+                                "gls": 1,
+                                "sh": 4,
+                                "sot": 2,
+                                "ast": 0,
+                                "tkl_won": 0,
+                                "int": 1,
+                                "og": 0,
+                                "fls_com": 1,
+                                "fls_drawn": 0,
+                                "yellow_cards": 1,
+                                "red_cards": 0,
+                                "offside": 1,
+                                "pk_won": null,
+                                "pk_made": 0,
+                                "pk_att": 0
+                            }
+                        }
+                    },
+                    {
+                        "meta_data": {
+                            "player_id": "55f096b1",
+                            "player_name": "Martín Sarrafiore",
+                            "player_country_code": "ARG",
+                            "player_number": "7",
+                            "age": "27"
+                        },
+                        "stats": {
+                            "summary": {
+                                "positions": "MF",
+                                "min": "19",
+                                "gls": 0,
+                                "sh": 0,
+                                "sot": 0,
+                                "ast": 0,
+                                "tkl_won": 1,
+                                "int": 0,
+                                "og": 0,
+                                "fls_com": 1,
+                                "fls_drawn": 0,
+                                "yellow_cards": 0,
+                                "red_cards": 0,
+                                "offside": 0,
+                                "pk_won": null,
+                                "pk_made": 0,
+                                "pk_att": 0
+                            }
+                        }
+                    },
+                    {
+                        "meta_data": {
+                            "player_id": "9ec27e7f",
+                            "player_name": "Joaquín Montecinos",
+                            "player_country_code": "CHI",
+                            "player_number": "8",
+                            "age": "29"
+                        },
+                        "stats": {
+                            "summary": {
+                                "positions": "AM",
+                                "min": "77",
+                                "gls": 0,
+                                "sh": 2,
+                                "sot": 1,
+                                "ast": 0,
+                                "tkl_won": 1,
+                                "int": 0,
+                                "og": 0,
+                                "fls_com": 0,
+                                "fls_drawn": 0,
+                                "yellow_cards": 0,
+                                "red_cards": 0,
+                                "offside": 2,
+                                "pk_won": null,
+                                "pk_made": 0,
+                                "pk_att": 0
+                            }
+                        }
+                    },
+                    {
+                        "meta_data": {
+                            "player_id": "52a253d3",
+                            "player_name": "Cristian Morales",
+                            "player_country_code": "CHI",
+                            "player_number": "2",
+                            "age": "18"
+                        },
+                        "stats": {
+                            "summary": {
+                                "positions": "DF",
+                                "min": "13",
+                                "gls": 0,
+                                "sh": 0,
+                                "sot": 0,
+                                "ast": 0,
+                                "tkl_won": 0,
+                                "int": 0,
+                                "og": 0,
+                                "fls_com": 0,
+                                "fls_drawn": 0,
+                                "yellow_cards": 0,
+                                "red_cards": 0,
+                                "offside": 0,
+                                "pk_won": null,
+                                "pk_made": 0,
+                                "pk_att": 0
+                            }
+                        }
+                    },
+                    {
+                        "meta_data": {
+                            "player_id": "76c44dcd",
+                            "player_name": "Matías Lugo",
+                            "player_country_code": "ARG",
+                            "player_number": "32",
+                            "age": "23"
+                        },
+                        "stats": {
+                            "summary": {
+                                "positions": "DM",
+                                "min": "90",
+                                "gls": 0,
+                                "sh": 1,
+                                "sot": 0,
+                                "ast": 0,
+                                "tkl_won": 2,
+                                "int": 3,
+                                "og": 0,
+                                "fls_com": 0,
+                                "fls_drawn": 0,
+                                "yellow_cards": 0,
+                                "red_cards": 0,
+                                "offside": 0,
+                                "pk_won": null,
+                                "pk_made": 0,
+                                "pk_att": 0
+                            }
+                        }
+                    },
+                    {
+                        "meta_data": {
+                            "player_id": "a246f365",
+                            "player_name": "Juan Leiva",
+                            "player_country_code": "CHI",
+                            "player_number": "11",
+                            "age": "31"
+                        },
+                        "stats": {
+                            "summary": {
+                                "positions": "DM",
+                                "min": "90",
+                                "gls": 0,
+                                "sh": 2,
+                                "sot": 0,
+                                "ast": 0,
+                                "tkl_won": 3,
+                                "int": 3,
+                                "og": 0,
+                                "fls_com": 2,
+                                "fls_drawn": 2,
+                                "yellow_cards": 1,
+                                "red_cards": 0,
+                                "offside": 0,
+                                "pk_won": null,
+                                "pk_made": 0,
+                                "pk_att": 0
+                            }
+                        }
+                    },
+                    {
+                        "meta_data": {
+                            "player_id": "0ca56107",
+                            "player_name": "Luis Pavez Muñoz",
+                            "player_country_code": "CHI",
+                            "player_number": "6",
+                            "age": "29"
+                        },
+                        "stats": {
+                            "summary": {
+                                "positions": "LB",
+                                "min": "90",
+                                "gls": 0,
+                                "sh": 0,
+                                "sot": 0,
+                                "ast": 0,
+                                "tkl_won": 4,
+                                "int": 0,
+                                "og": 0,
+                                "fls_com": 1,
+                                "fls_drawn": 0,
+                                "yellow_cards": 0,
+                                "red_cards": 0,
+                                "offside": 0,
+                                "pk_won": null,
+                                "pk_made": 0,
+                                "pk_att": 0
+                            }
+                        }
+                    },
+                    {
+                        "meta_data": {
+                            "player_id": "baa6308e",
+                            "player_name": "Juan Ignacio Díaz",
+                            "player_country_code": "ARG",
+                            "player_number": "14",
+                            "age": "26"
+                        },
+                        "stats": {
+                            "summary": {
+                                "positions": "CB",
+                                "min": "90",
+                                "gls": 0,
+                                "sh": 0,
+                                "sot": 0,
+                                "ast": 0,
+                                "tkl_won": 0,
+                                "int": 1,
+                                "og": 0,
+                                "fls_com": 2,
+                                "fls_drawn": 0,
+                                "yellow_cards": 0,
+                                "red_cards": 0,
+                                "offside": 0,
+                                "pk_won": null,
+                                "pk_made": 0,
+                                "pk_att": 0
+                            }
+                        }
+                    },
+                    {
+                        "meta_data": {
+                            "player_id": "9ad1a13c",
+                            "player_name": "Alan Robledo",
+                            "player_country_code": "ARG",
+                            "player_number": "22",
+                            "age": "27"
+                        },
+                        "stats": {
+                            "summary": {
+                                "positions": "CB",
+                                "min": "90",
+                                "gls": 0,
+                                "sh": 1,
+                                "sot": 0,
+                                "ast": 0,
+                                "tkl_won": 1,
+                                "int": 0,
+                                "og": 0,
+                                "fls_com": 1,
+                                "fls_drawn": 1,
+                                "yellow_cards": 0,
+                                "red_cards": 0,
+                                "offside": 0,
+                                "pk_won": null,
+                                "pk_made": 0,
+                                "pk_att": 0
+                            }
+                        }
+                    },
+                    {
+                        "meta_data": {
+                            "player_id": "765fc2c7",
+                            "player_name": "Moisés González",
+                            "player_country_code": "CHI",
+                            "player_number": "17",
+                            "age": "24"
+                        },
+                        "stats": {
+                            "summary": {
+                                "positions": "RB",
+                                "min": "90",
+                                "gls": 0,
+                                "sh": 0,
+                                "sot": 0,
+                                "ast": 0,
+                                "tkl_won": 1,
+                                "int": 0,
+                                "og": 0,
+                                "fls_com": 0,
+                                "fls_drawn": 1,
+                                "yellow_cards": 0,
+                                "red_cards": 0,
+                                "offside": 0,
+                                "pk_won": null,
+                                "pk_made": 0,
+                                "pk_att": 0
+                            }
+                        }
+                    },
+                    {
+                        "meta_data": {
+                            "player_id": "ddae1696",
+                            "player_name": "Omar Carabalí",
+                            "player_country_code": "CHI",
+                            "player_number": "31",
+                            "age": "27"
+                        },
+                        "stats": {
+                            "summary": {
+                                "positions": "GK",
+                                "min": "90",
+                                "gls": 0,
+                                "sh": 0,
+                                "sot": 0,
+                                "ast": 0,
+                                "tkl_won": 0,
+                                "int": 0,
+                                "og": 0,
+                                "fls_com": 0,
+                                "fls_drawn": 1,
+                                "yellow_cards": 0,
+                                "red_cards": 0,
+                                "offside": 0,
+                                "pk_won": null,
+                                "pk_made": 0,
+                                "pk_att": 0
+                            }
+                        }
+                    }
+                ],
+                "keepers": [
+                    {
+                        "player_id": "ddae1696",
+                        "player_name": "Omar Carabalí",
+                        "gls_ag": 0,
+                        "sot_ag": 5,
+                        "saves": 5,
+                        "save_pct": 100.0
+                    }
+                ]
+            }
+        ]
+    }
+}

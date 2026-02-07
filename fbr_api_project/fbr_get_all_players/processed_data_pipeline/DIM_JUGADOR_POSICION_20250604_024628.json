@@ -1,0 +1,177 @@
+[
+  {
+    "ID_JUGADOR": 1,
+    "ID_POSICION": 1,
+    "ES_POSICION_PRINCIPAL": 1
+  },
+  {
+    "ID_JUGADOR": 2,
+    "ID_POSICION": 1,
+    "ES_POSICION_PRINCIPAL": 1
+  },
+  {
+    "ID_JUGADOR": 2,
+    "ID_POSICION": 2,
+    "ES_POSICION_PRINCIPAL": 0
+  },
+  {
+    "ID_JUGADOR": 3,
+    "ID_POSICION": 3,
+    "ES_POSICION_PRINCIPAL": 1
+  },
+  {
+    "ID_JUGADOR": 4,
+    "ID_POSICION": 4,
+    "ES_POSICION_PRINCIPAL": 1
+  },
+  {
+    "ID_JUGADOR": 5,
+    "ID_POSICION": 5,
+    "ES_POSICION_PRINCIPAL": 1
+  },
+  {
+    "ID_JUGADOR": 5,
+    "ID_POSICION": 6,
+    "ES_POSICION_PRINCIPAL": 0
+  },
+  {
+    "ID_JUGADOR": 6,
+    "ID_POSICION": 5,
+    "ES_POSICION_PRINCIPAL": 1
+  },
+  {
+    "ID_JUGADOR": 6,
+    "ID_POSICION": 7,
+    "ES_POSICION_PRINCIPAL": 0
+  },
+  {
+    "ID_JUGADOR": 7,
+    "ID_POSICION": 5,
+    "ES_POSICION_PRINCIPAL": 1
+  },
+  {
+    "ID_JUGADOR": 8,
+    "ID_POSICION": 3,
+    "ES_POSICION_PRINCIPAL": 1
+  },
+  {
+    "ID_JUGADOR": 8,
+    "ID_POSICION": 1,
+    "ES_POSICION_PRINCIPAL": 0
+  },
+  {
+    "ID_JUGADOR": 8,
+    "ID_POSICION": 8,
+    "ES_POSICION_PRINCIPAL": 0
+  },
+  {
+    "ID_JUGADOR": 9,
+    "ID_POSICION": 5,
+    "ES_POSICION_PRINCIPAL": 1
+  },
+  {
+    "ID_JUGADOR": 10,
+    "ID_POSICION": 3,
+    "ES_POSICION_PRINCIPAL": 1
+  },
+  {
+    "ID_JUGADOR": 10,
+    "ID_POSICION": 1,
+    "ES_POSICION_PRINCIPAL": 0
+  },
+  {
+    "ID_JUGADOR": 11,
+    "ID_POSICION": 3,
+    "ES_POSICION_PRINCIPAL": 1
+  },
+  {
+    "ID_JUGADOR": 12,
+    "ID_POSICION": 5,
+    "ES_POSICION_PRINCIPAL": 1
+  },
+  {
+    "ID_JUGADOR": 12,
+    "ID_POSICION": 7,
+    "ES_POSICION_PRINCIPAL": 0
+  },
+  {
+    "ID_JUGADOR": 13,
+    "ID_POSICION": 5,
+    "ES_POSICION_PRINCIPAL": 1
+  },
+  {
+    "ID_JUGADOR": 14,
+    "ID_POSICION": 3,
+    "ES_POSICION_PRINCIPAL": 1
+  },
+  {
+    "ID_JUGADOR": 15,
+    "ID_POSICION": 3,
+    "ES_POSICION_PRINCIPAL": 1
+  },
+  {
+    "ID_JUGADOR": 16,
+    "ID_POSICION": 3,
+    "ES_POSICION_PRINCIPAL": 1
+  },
+  {
+    "ID_JUGADOR": 17,
+    "ID_POSICION": 1,
+    "ES_POSICION_PRINCIPAL": 1
+  },
+  {
+    "ID_JUGADOR": 18,
+    "ID_POSICION": 1,
+    "ES_POSICION_PRINCIPAL": 1
+  },
+  {
+    "ID_JUGADOR": 19,
+    "ID_POSICION": 4,
+    "ES_POSICION_PRINCIPAL": 1
+  },
+  {
+    "ID_JUGADOR": 20,
+    "ID_POSICION": 5,
+    "ES_POSICION_PRINCIPAL": 1
+  },
+  {
+    "ID_JUGADOR": 21,
+    "ID_POSICION": 1,
+    "ES_POSICION_PRINCIPAL": 1
+  },
+  {
+    "ID_JUGADOR": 22,
+    "ID_POSICION": 1,
+    "ES_POSICION_PRINCIPAL": 1
+  },
+  {
+    "ID_JUGADOR": 23,
+    "ID_POSICION": 3,
+    "ES_POSICION_PRINCIPAL": 1
+  },
+  {
+    "ID_JUGADOR": 24,
+    "ID_POSICION": 1,
+    "ES_POSICION_PRINCIPAL": 1
+  },
+  {
+    "ID_JUGADOR": 25,
+    "ID_POSICION": 5,
+    "ES_POSICION_PRINCIPAL": 1
+  },
+  {
+    "ID_JUGADOR": 26,
+    "ID_POSICION": 5,
+    "ES_POSICION_PRINCIPAL": 1
+  },
+  {
+    "ID_JUGADOR": 27,
+    "ID_POSICION": 5,
+    "ES_POSICION_PRINCIPAL": 1
+  },
+  {
+    "ID_JUGADOR": 28,
+    "ID_POSICION": 4,
+    "ES_POSICION_PRINCIPAL": 1
+  }
+]

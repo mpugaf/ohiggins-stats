@@ -1,0 +1,250 @@
+/* App Header - Barra superior permanente */
+.app-header {
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+  background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  border-bottom: 3px solid #00BFFF;
+}
+
+.app-header-content {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 12px 24px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 20px;
+}
+
+.app-header-left {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+
+.btn-back-dashboard {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 20px;
+  background: linear-gradient(135deg, #00BFFF 0%, #0099CC 100%);
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 8px rgba(0, 191, 255, 0.3);
+  white-space: nowrap;
+}
+
+.btn-back-dashboard:hover {
+  background: linear-gradient(135deg, #0099CC 0%, #007AA3 100%);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 191, 255, 0.4);
+}
+
+.btn-back-dashboard:active {
+  transform: translateY(0);
+}
+
+.app-title {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.app-logo {
+  font-size: 28px;
+  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.2));
+}
+
+.app-name {
+  font-size: 20px;
+  font-weight: 800;
+  color: white;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+  letter-spacing: 0.5px;
+}
+
+.app-header-right {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+
+.user-info-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 20px;
+  background: rgba(255, 255, 255, 0.15);
+  backdrop-filter: blur(10px);
+  border-radius: 12px;
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+  transition: all 0.3s ease;
+}
+
+.user-info-header:hover {
+  background: rgba(255, 255, 255, 0.25);
+  border-color: rgba(255, 255, 255, 0.5);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
+}
+
+.user-avatar {
+  font-size: 32px;
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 50%;
+  border: 2px solid rgba(255, 255, 255, 0.4);
+}
+
+.user-details {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.user-name-header {
+  font-size: 16px;
+  font-weight: 800;
+  color: white;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+  max-width: 200px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.user-role-header {
+  font-size: 12px;
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.9);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.btn-logout-header {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 10px 18px;
+  background: linear-gradient(135deg, #DC143C 0%, #A00000 100%);
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 8px rgba(220, 20, 60, 0.3);
+  white-space: nowrap;
+}
+
+.btn-logout-header:hover {
+  background: linear-gradient(135deg, #A00000 0%, #800000 100%);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(220, 20, 60, 0.4);
+}
+
+.btn-logout-header:active {
+  transform: translateY(0);
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .app-header-content {
+    padding: 10px 16px;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .app-header-left,
+  .app-header-right {
+    width: 100%;
+    justify-content: space-between;
+  }
+
+  .app-header-right {
+    flex-direction: row;
+    justify-content: flex-end;
+  }
+
+  .app-name {
+    font-size: 16px;
+  }
+
+  .app-logo {
+    font-size: 24px;
+  }
+
+  .user-name-header {
+    max-width: 120px;
+    font-size: 14px;
+  }
+
+  .user-avatar {
+    width: 32px;
+    height: 32px;
+    font-size: 24px;
+  }
+
+  .btn-back-dashboard,
+  .btn-logout-header {
+    padding: 8px 14px;
+    font-size: 13px;
+  }
+}
+
+@media (max-width: 480px) {
+  .app-header-content {
+    padding: 8px 12px;
+  }
+
+  .app-title {
+    gap: 6px;
+  }
+
+  .app-name {
+    font-size: 14px;
+  }
+
+  .app-logo {
+    font-size: 20px;
+  }
+
+  .user-info-header {
+    padding: 8px 12px;
+    gap: 8px;
+  }
+
+  .user-name-header {
+    font-size: 13px;
+    max-width: 100px;
+  }
+
+  .user-role-header {
+    font-size: 10px;
+  }
+
+  .user-avatar {
+    width: 28px;
+    height: 28px;
+    font-size: 20px;
+  }
+
+  .btn-back-dashboard,
+  .btn-logout-header {
+    padding: 6px 12px;
+    font-size: 12px;
+  }
+}

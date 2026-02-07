@@ -1,0 +1,27 @@
+[
+  {
+    "ID_PAIS": 1,
+    "NOMBRE": "Argentina",
+    "CODIGO_FIFA": "ARG"
+  },
+  {
+    "ID_PAIS": 2,
+    "NOMBRE": "Chile",
+    "CODIGO_FIFA": "CHI"
+  },
+  {
+    "ID_PAIS": 3,
+    "NOMBRE": "Ecuador",
+    "CODIGO_FIFA": "ECU"
+  },
+  {
+    "ID_PAIS": 4,
+    "NOMBRE": "Colombia",
+    "CODIGO_FIFA": "COL"
+  },
+  {
+    "ID_PAIS": 5,
+    "NOMBRE": "Paraguay",
+    "CODIGO_FIFA": "PAR"
+  }
+]

@@ -1,0 +1,735 @@
+/* frontend/src/components/TableStyles.css - Estilos para equipos y estadios */
+
+/* =================================================================== */
+/* ESTILOS GENERALES PARA TABLAS */
+/* =================================================================== */
+
+.table-container {
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+  margin: 20px;
+}
+
+.table-header {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  padding: 30px;
+  text-align: center;
+}
+
+.table-header h2 {
+  margin: 0 0 20px 0;
+  font-size: 2.2rem;
+  font-weight: 600;
+}
+
+.table-actions {
+  display: flex;
+  gap: 15px;
+  justify-content: center;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.search-input {
+  padding: 12px 20px;
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  border-radius: 25px;
+  background: rgba(255, 255, 255, 0.1);
+  color: white;
+  font-size: 1rem;
+  min-width: 300px;
+  backdrop-filter: blur(10px);
+}
+
+.search-input::placeholder {
+  color: rgba(255, 255, 255, 0.8);
+}
+
+.search-input:focus {
+  outline: none;
+  border-color: rgba(255, 255, 255, 0.8);
+  box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.2);
+}
+
+.btn-primary {
+  background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+  color: white;
+  border: none;
+  padding: 12px 24px;
+  border-radius: 25px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 15px rgba(40, 167, 69, 0.3);
+}
+
+.btn-primary:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(40, 167, 69, 0.4);
+}
+
+.btn-secondary {
+  background: linear-gradient(135deg, #6c757d 0%, #495057 100%);
+  color: white;
+  border: none;
+  padding: 12px 24px;
+  border-radius: 25px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.btn-secondary:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(108, 117, 125, 0.4);
+}
+
+.table-info {
+  padding: 15px 30px;
+  background: #f8f9fa;
+  border-bottom: 1px solid #e9ecef;
+  color: #6c757d;
+  font-size: 0.9rem;
+}
+
+.table-responsive {
+  overflow-x: auto;
+}
+
+.data-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.95rem;
+}
+
+.data-table thead {
+  background: linear-gradient(135deg, #343a40 0%, #495057 100%);
+  color: white;
+}
+
+.data-table th {
+  padding: 15px 12px;
+  text-align: left;
+  font-weight: 600;
+  text-transform: uppercase;
+  font-size: 0.85rem;
+  letter-spacing: 0.5px;
+  border-bottom: 3px solid #28a745;
+}
+
+.data-table tbody tr {
+  transition: all 0.2s ease;
+  border-bottom: 1px solid #e9ecef;
+}
+
+.data-table tbody tr:hover {
+  background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+  transform: scale(1.01);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.data-table td {
+  padding: 15px 12px;
+  vertical-align: middle;
+}
+
+.table-footer {
+  padding: 20px 30px;
+  background: #f8f9fa;
+  border-top: 1px solid #e9ecef;
+  text-align: center;
+}
+
+/* Estados de carga y error */
+.loading-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 400px;
+  background: white;
+  margin: 20px;
+  border-radius: 12px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.loading-spinner {
+  width: 50px;
+  height: 50px;
+  border: 4px solid #f3f3f3;
+  border-top: 4px solid #667eea;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  margin-bottom: 20px;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+.error-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 400px;
+  margin: 20px;
+}
+
+.error-message {
+  background: white;
+  padding: 40px;
+  border-radius: 12px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  text-align: center;
+  border-left: 5px solid #dc3545;
+}
+
+.error-message h3 {
+  color: #dc3545;
+  margin-bottom: 15px;
+}
+
+.empty-state {
+  text-align: center;
+  padding: 60px 30px;
+  color: #6c757d;
+}
+
+.empty-state h3 {
+  margin-bottom: 15px;
+  color: #495057;
+}
+
+/* =================================================================== */
+/* ESTILOS ESPECÍFICOS PARA EQUIPOS */
+/* =================================================================== */
+
+.nombre-equipo {
+  font-weight: 600;
+  color: #333;
+  font-size: 1.05rem;
+  transition: color 0.2s ease;
+}
+
+.apodo-equipo .apodo-badge {
+  background: linear-gradient(135deg, #e3f2fd 0%, #bbdefb 100%);
+  color: #1976d2;
+  padding: 4px 12px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 600;
+  font-style: italic;
+  white-space: nowrap;
+  border: 1px solid rgba(25, 118, 210, 0.3);
+  transition: transform 0.2s ease;
+}
+
+.apodo-equipo .sin-apodo {
+  color: #999;
+  font-style: italic;
+  font-size: 12px;
+}
+
+.estado-badge {
+  padding: 4px 12px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.estado-badge.activo {
+  background: rgba(76, 175, 80, 0.1);
+  color: #4CAF50;
+  border: 1px solid rgba(76, 175, 80, 0.3);
+}
+
+.estado-badge.inactivo {
+  background: rgba(244, 67, 54, 0.1);
+  color: #f44336;
+  border: 1px solid rgba(244, 67, 54, 0.3);
+}
+
+/* =================================================================== */
+/* ESTILOS ESPECÍFICOS PARA ESTADIOS */
+/* =================================================================== */
+
+.nombre-estadio {
+  font-weight: 600;
+  color: #2c3e50;
+  font-size: 1.1rem;
+  transition: color 0.2s ease;
+}
+
+.capacidad {
+  font-weight: 600;
+  color: #495057;
+  font-family: 'Courier New', monospace;
+  background: linear-gradient(135deg, #e8f5e8 0%, #c8e6c9 100%);
+  padding: 6px 12px;
+  border-radius: 8px;
+  border: 1px solid rgba(76, 175, 80, 0.3);
+  display: inline-block;
+  min-width: 80px;
+  text-align: center;
+}
+
+.superficie-badge {
+  background: linear-gradient(135deg, #fff3e0 0%, #ffcc02 100%);
+  color: #e65100;
+  padding: 6px 14px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: uppercase;
+  white-space: nowrap;
+  border: 1px solid rgba(230, 81, 0, 0.3);
+  letter-spacing: 0.5px;
+  box-shadow: 0 2px 4px rgba(255, 193, 7, 0.2);
+}
+
+/* Estilos específicos por tipo de superficie */
+.superficie-badge.cesped,
+.superficie-badge.natural {
+  background: linear-gradient(135deg, #e8f5e8 0%, #a5d6a7 100%);
+  color: #2e7d32;
+  border-color: rgba(46, 125, 50, 0.3);
+}
+
+.superficie-badge.artificial,
+.superficie-badge.sintetico {
+  background: linear-gradient(135deg, #e3f2fd 0%, #90caf9 100%);
+  color: #1565c0;
+  border-color: rgba(21, 101, 192, 0.3);
+}
+
+.superficie-badge.hibrido {
+  background: linear-gradient(135deg, #f3e5f5 0%, #ce93d8 100%);
+  color: #6a1b9a;
+  border-color: rgba(106, 27, 154, 0.3);
+}
+
+/* =================================================================== */
+/* ESTILOS PARA BOTONES DE ACCIÓN */
+/* =================================================================== */
+
+.acciones {
+  display: flex;
+  gap: 8px;
+  justify-content: center;
+  align-items: center;
+}
+
+.btn-edit {
+  background: linear-gradient(135deg, #ffc107 0%, #ff8f00 100%);
+  color: #212529;
+  border: none;
+  padding: 8px 12px;
+  border-radius: 6px;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  box-shadow: 0 2px 4px rgba(255, 193, 7, 0.3);
+  min-width: 40px;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.btn-edit:hover {
+  background: linear-gradient(135deg, #e0a800 0%, #f57c00 100%);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(255, 193, 7, 0.4);
+}
+
+.btn-delete {
+  background: linear-gradient(135deg, #dc3545 0%, #c82333 100%);
+  color: white;
+  border: none;
+  padding: 8px 12px;
+  border-radius: 6px;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  box-shadow: 0 2px 4px rgba(220, 53, 69, 0.3);
+  min-width: 40px;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.btn-delete:hover {
+  background: linear-gradient(135deg, #c82333 0%, #a71e2a 100%);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(220, 53, 69, 0.4);
+}
+
+.btn-edit:active,
+.btn-delete:active {
+  transform: translateY(0);
+}
+
+/* =================================================================== */
+/* EFECTOS DE HOVER MEJORADOS */
+/* =================================================================== */
+
+.data-table tbody tr:hover .nombre-equipo {
+  color: #667eea;
+}
+
+.data-table tbody tr:hover .nombre-estadio {
+  color: #667eea;
+  text-shadow: 0 1px 2px rgba(102, 126, 234, 0.2);
+}
+
+.data-table tbody tr:hover .apodo-badge {
+  transform: scale(1.05);
+  box-shadow: 0 3px 8px rgba(25, 118, 210, 0.3);
+}
+
+.data-table tbody tr:hover .superficie-badge {
+  transform: scale(1.05);
+  box-shadow: 0 3px 8px rgba(255, 193, 7, 0.3);
+}
+
+.data-table tbody tr:hover .capacidad {
+  transform: scale(1.05);
+  box-shadow: 0 3px 8px rgba(76, 175, 80, 0.3);
+}
+
+/* =================================================================== */
+/* ESTILOS PARA DASHBOARD */
+/* =================================================================== */
+
+.module-card.featured {
+  background: linear-gradient(145deg, #ffffff 0%, #f8fff8 100%);
+  border: 2px solid rgba(76, 175, 80, 0.2);
+}
+
+.module-status.active {
+  background: linear-gradient(135deg, #4CAF50 0%, #45a049 100%);
+  color: white;
+  padding: 6px 15px;
+  border-radius: 20px;
+  font-size: 0.8rem;
+  font-weight: 600;
+}
+
+/* =================================================================== */
+/* RESPONSIVE DESIGN */
+/* =================================================================== */
+
+@media (max-width: 768px) {
+  .table-container {
+    margin: 10px;
+  }
+  
+  .table-header {
+    padding: 20px;
+  }
+  
+  .table-header h2 {
+    font-size: 1.8rem;
+    margin-bottom: 15px;
+  }
+  
+  .table-actions {
+    flex-direction: column;
+    gap: 10px;
+  }
+  
+  .search-input {
+    min-width: 100%;
+    max-width: 100%;
+  }
+  
+  .data-table {
+    font-size: 0.85rem;
+  }
+  
+  .data-table th,
+  .data-table td {
+    padding: 10px 8px;
+  }
+  
+  .apodo-equipo .apodo-badge {
+    font-size: 10px;
+    padding: 2px 8px;
+  }
+  
+  .estado-badge {
+    font-size: 10px;
+    padding: 2px 8px;
+  }
+  
+  .superficie-badge {
+    font-size: 10px;
+    padding: 4px 8px;
+  }
+  
+  .capacidad {
+    font-size: 0.8rem;
+    padding: 4px 8px;
+  }
+  
+  .nombre-equipo,
+  .nombre-estadio {
+    font-size: 0.95rem;
+  }
+  
+  .acciones {
+    flex-direction: column;
+    gap: 4px;
+  }
+  
+  .btn-edit,
+  .btn-delete {
+    padding: 6px 10px;
+    font-size: 0.9rem;
+    min-width: 35px;
+    height: 32px;
+  }
+}
+
+@media (max-width: 480px) {
+  .table-responsive {
+    overflow-x: scroll;
+  }
+  
+  .data-table {
+    min-width: 600px;
+  }
+}
+
+/* =================================================================== */
+/* ESTILOS PARA HOMEPAGE CON FEATURES */
+/* =================================================================== */
+
+.feature-item.available .feature-actions {
+  opacity: 1;
+  visibility: visible;
+}
+
+.feature-item:not(.available) .feature-actions {
+  opacity: 0;
+  visibility: hidden;
+}
+
+.feature-item.available:hover .feature-actions {
+  transform: translateY(-2px);
+  transition: transform 0.3s ease;
+}
+
+/* Estilos específicos para torneos - Agregar al final de TableStyles.css */
+
+/* ========================================= */
+/* ESTILOS PARA MÓDULO DE TORNEOS */
+/* ========================================= */
+
+/* Estilos para tabla de torneos */
+.nombre-torneo {
+  font-weight: 600;
+  color: #333;
+  font-size: 1.05rem;
+}
+
+.pais-organizador .pais-badge {
+  background: linear-gradient(135deg, #fff3e0 0%, #ffcc02 100%);
+  color: #e65100;
+  padding: 4px 12px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 600;
+  white-space: nowrap;
+  border: 1px solid rgba(230, 81, 0, 0.3);
+}
+
+.temporada {
+  font-weight: 600;
+  color: #1976d2;
+  font-size: 1rem;
+}
+
+.rueda-badge {
+  padding: 4px 12px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: uppercase;
+  white-space: nowrap;
+  border: 1px solid;
+}
+
+.rueda-badge.primera {
+  background: rgba(76, 175, 80, 0.1);
+  color: #4CAF50;
+  border-color: rgba(76, 175, 80, 0.3);
+}
+
+.rueda-badge.segunda {
+  background: rgba(255, 152, 0, 0.1);
+  color: #ff9800;
+  border-color: rgba(255, 152, 0, 0.3);
+}
+
+.rueda-badge.unica {
+  background: rgba(156, 39, 176, 0.1);
+  color: #9c27b0;
+  border-color: rgba(156, 39, 176, 0.3);
+}
+
+.league-id code {
+  background: #f5f5f5;
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-family: 'Courier New', monospace;
+  font-size: 11px;
+  color: #666;
+  border: 1px solid #ddd;
+}
+
+/* Estilos para formularios de torneos */
+.torneo-info {
+  margin-top: 10px;
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.info-badge {
+  background: #e3f2fd;
+  color: #1565c0;
+  padding: 4px 12px;
+  border-radius: 15px;
+  font-size: 12px;
+  font-weight: 500;
+  border: 1px solid #bbdefb;
+}
+
+.form-info {
+  background: #f8f9fa;
+  padding: 15px;
+  border-radius: 8px;
+  border-left: 4px solid #2196f3;
+  margin: 20px 0;
+}
+
+.form-info h4 {
+  margin: 0 0 10px 0;
+  color: #333;
+  font-size: 1rem;
+}
+
+.form-info ul {
+  margin: 0;
+  padding-left: 20px;
+}
+
+.form-info li {
+  margin-bottom: 5px;
+  color: #555;
+  font-size: 0.9rem;
+}
+
+.field-help {
+  display: block;
+  margin-top: 5px;
+  color: #666;
+  font-size: 0.85rem;
+  line-height: 1.4;
+}
+
+.general-error {
+  background: #ffebee;
+  color: #c62828;
+  padding: 12px;
+  border-radius: 6px;
+  border: 1px solid #ffcdd2;
+  margin-bottom: 20px;
+}
+
+/* Hover effects para tabla de torneos */
+.data-table tbody tr:hover .nombre-torneo {
+  color: #2196f3;
+}
+
+.data-table tbody tr:hover .pais-badge {
+  transform: scale(1.05);
+  transition: transform 0.2s ease;
+}
+
+.data-table tbody tr:hover .rueda-badge {
+  transform: scale(1.05);
+  transition: transform 0.2s ease;
+}
+
+.data-table tbody tr:hover .league-id code {
+  background: #e3f2fd;
+  color: #1565c0;
+  border-color: #bbdefb;
+}
+
+/* Estilos responsive para torneos */
+@media (max-width: 768px) {
+  .pais-badge {
+    font-size: 10px;
+    padding: 2px 8px;
+  }
+  
+  .rueda-badge {
+    font-size: 10px;
+    padding: 2px 8px;
+  }
+  
+  .nombre-torneo {
+    font-size: 0.95rem;
+  }
+  
+  .league-id code {
+    font-size: 9px;
+    padding: 2px 6px;
+  }
+  
+  .form-info {
+    padding: 12px;
+  }
+  
+  .torneo-info {
+    flex-direction: column;
+  }
+}
+
+/* Estilos para el dashboard con torneos */
+.module-card.featured .module-icon {
+  font-size: 2.5rem;
+}
+
+.module-card .module-status.active {
+  background: linear-gradient(135deg, #4CAF50 0%, #45a049 100%);
+  color: white;
+  padding: 6px 15px;
+  border-radius: 20px;
+  font-size: 0.8rem;
+  font-weight: 600;
+}
+
+/* Estados específicos para empty state de torneos */
+.empty-state .btn-primary {
+  margin-top: 15px;
+  background: linear-gradient(135deg, #2196f3 0%, #1976d2 100%);
+}
+
+.empty-state .btn-primary:hover {
+  background: linear-gradient(135deg, #1976d2 0%, #1565c0 100%);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(33, 150, 243, 0.3);
+}
