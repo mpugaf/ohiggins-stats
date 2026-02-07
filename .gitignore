@@ -247,3 +247,5 @@ tmp/
 # 3. Los archivos .env deben crearse localmente desde .env.example
 # 4. Los datos CSV se regeneran con los scripts de pipeline
 # 5. Los builds de frontend se generan con: cd frontend && npm run build
+
+ufc_analytics.sql
