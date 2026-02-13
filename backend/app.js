@@ -46,6 +46,16 @@ try {
   console.error('📍 Stack:', error.stack);
 }
 
+console.log('📥 Cargando rutas de tokens de invitación...');
+try {
+  const tokensInvitacionRoutes = require('./routes/tokensInvitacion');
+  app.use('/api/tokens-invitacion', tokensInvitacionRoutes);
+  console.log('✅ Rutas de tokens de invitación cargadas exitosamente');
+} catch (error) {
+  console.error('❌ Error cargando rutas de tokens de invitación:', error.message);
+  console.error('📍 Stack:', error.stack);
+}
+
 // ==================== RUTAS PROTEGIDAS ====================
 // Importar middleware de autenticación
 const { authenticateToken, requireAdmin } = require('./middleware/auth');
@@ -88,6 +98,16 @@ try {
   console.log('✅ Rutas de pronósticos cargadas exitosamente');
 } catch (error) {
   console.error('❌ Error cargando rutas de pronósticos:', error.message);
+  console.error('📍 Stack:', error.stack);
+}
+
+console.log('📥 Cargando rutas de mensajes de ganadores...');
+try {
+  const mensajesGanadoresRoutes = require('./routes/mensajesGanadores');
+  app.use('/api/mensajes-ganadores', mensajesGanadoresRoutes);
+  console.log('✅ Rutas de mensajes de ganadores cargadas exitosamente');
+} catch (error) {
+  console.error('❌ Error cargando rutas de mensajes de ganadores:', error.message);
   console.error('📍 Stack:', error.stack);
 }
 

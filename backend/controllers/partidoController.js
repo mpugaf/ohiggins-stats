@@ -208,8 +208,10 @@ const obtenerPartidos = async (req, res) => {
         -- Información de equipos
         el.NOMBRE as NOMBRE_EQUIPO_LOCAL,
         el.APODO as APODO_EQUIPO_LOCAL,
+        COALESCE(el.IMAGEN, 'default-team.png') as IMAGEN_EQUIPO_LOCAL,
         ev.NOMBRE as NOMBRE_EQUIPO_VISITA,
         ev.APODO as APODO_EQUIPO_VISITA,
+        COALESCE(ev.IMAGEN, 'default-team.png') as IMAGEN_EQUIPO_VISITA,
 
         -- Información de estadio
         e.NOMBRE as NOMBRE_ESTADIO,

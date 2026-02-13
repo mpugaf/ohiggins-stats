@@ -11,14 +11,27 @@ function PartidosDisponibles({ onApuestaCreada }) {
   const MONTO_FIJO_APUESTA = 10000; // Monto fijo de 10,000 pesos chilenos
   const [apuestasHabilitadas, setApuestasHabilitadas] = useState(true);
   const [configInfo, setConfigInfo] = useState(null);
+  const [torneoActivoInfo, setTorneoActivoInfo] = useState(null);
   const [apuestasSeleccionadas, setApuestasSeleccionadas] = useState({}); // { idPartido: { tipo, cuota, partido } }
   const [mostrarModalConfirmacion, setMostrarModalConfirmacion] = useState(false);
   const [enviandoApuestas, setEnviandoApuestas] = useState(false);
   const [resultadoEnvio, setResultadoEnvio] = useState(null);
 
   useEffect(() => {
+    // Cargar configuración y partidos inmediatamente
     fetchConfiguracion();
     fetchPartidosConCuotas();
+
+    // Polling cada 30 segundos para sincronizar con cambios del admin
+    const intervalId = setInterval(() => {
+      fetchConfiguracion();
+      fetchPartidosConCuotas();
+    }, 30000); // 30 segundos
+
+    // Cleanup
+    return () => {
+      clearInterval(intervalId);
+    };
   }, []);
 
   const fetchConfiguracion = async () => {
@@ -46,6 +59,15 @@ function PartidosDisponibles({ onApuestaCreada }) {
       const data = await handleResponse(response);
 
       setPartidos(data.partidos || []);
+
+      // Guardar información del torneo activo
+      if (data.torneo_activo_nombre) {
+        setTorneoActivoInfo({
+          id: data.torneo_activo_id,
+          nombre: data.torneo_activo_nombre,
+          fecha: data.fecha_activa
+        });
+      }
 
       // Cargar cuotas para cada partido
       if (data.partidos && data.partidos.length > 0) {
@@ -210,6 +232,23 @@ function PartidosDisponibles({ onApuestaCreada }) {
     <div className="partidos-container">
       <h2 className="partidos-title">Partidos Disponibles para Apostar</h2>
 
+      {/* Banner informativo del torneo/fecha vigente */}
+      {torneoActivoInfo && (
+        <div className="info-banner" style={{ backgroundColor: '#e3f2fd', borderLeft: '4px solid #2196f3' }}>
+          <div className="info-icon">🏆</div>
+          <div className="info-content">
+            <strong>Torneo Vigente para Apuestas:</strong>
+            <p>
+              {torneoActivoInfo.nombre}
+              {torneoActivoInfo.fecha && ` - Fecha ${torneoActivoInfo.fecha}`}
+            </p>
+            <p style={{ fontSize: '0.9em', marginTop: '4px', color: '#555' }}>
+              Solo puedes apostar en partidos de este torneo y fecha configurados por el administrador.
+            </p>
+          </div>
+        </div>
+      )}
+
       <div className="info-apuestas">
         <div className="info-item">
           <span className="info-label">Monto por apuesta:</span>
@@ -226,8 +265,8 @@ function PartidosDisponibles({ onApuestaCreada }) {
       </div>
 
       {!apuestasHabilitadas && (
-        <div className="info-banner">
-          <div className="info-icon">ℹ️</div>
+        <div className="info-banner" style={{ backgroundColor: '#fff3cd', borderLeft: '4px solid #ffc107' }}>
+          <div className="info-icon">⚠️</div>
           <div className="info-content">
             <strong>Apuestas temporalmente deshabilitadas</strong>
             <p>El administrador ha deshabilitado las apuestas. Podrás apostar cuando estén habilitadas nuevamente.</p>
@@ -248,107 +287,74 @@ function PartidosDisponibles({ onApuestaCreada }) {
       ) : (
         <>
           <div className="partidos-list">
-            {partidos.map((partido) => {
+            {partidos.map((partido, index) => {
               const cuotaLocal = getCuotaPorTipo(partido.ID_PARTIDO, 'local');
               const cuotaEmpate = getCuotaPorTipo(partido.ID_PARTIDO, 'empate');
               const cuotaVisita = getCuotaPorTipo(partido.ID_PARTIDO, 'visita');
               const tieneApuesta = tieneSeleccion(partido.ID_PARTIDO);
+              const isEven = index % 2 === 0;
 
               return (
                 <div
                   key={partido.ID_PARTIDO}
-                  className={`partido-card ${tieneApuesta ? 'partido-seleccionado' : ''}`}
+                  className={`partido-row ${isEven ? 'row-dark' : 'row-light'} ${tieneApuesta ? 'row-selected' : ''}`}
                 >
-                  <div className="partido-header">
-                    <div className="torneo-badge">{partido.nombre_torneo}</div>
-                    <div className="fecha-partido">{formatDate(partido.FECHA_PARTIDO)}</div>
+                  {/* Info del partido (torneo y fecha) */}
+                  <div className="partido-info-header">
+                    <span className="torneo-nombre">{partido.nombre_torneo}</span>
+                    <span className="partido-fecha">{formatDate(partido.FECHA_PARTIDO)}</span>
                   </div>
 
-                  {tieneApuesta && (
-                    <div className="seleccion-badge">
-                      ✓ Apuesta seleccionada
-                    </div>
-                  )}
-
-                  <div className="partido-equipos">
-                    <div className="equipo-local">
+                  {/* Fila principal de apuestas */}
+                  <div className="partido-row-content">
+                    {/* Equipo Local - CON LOGO */}
+                    <div className="equipo-cell equipo-local-cell">
                       <TeamLogo
                         imagen={partido.imagen_local}
                         nombreEquipo={partido.equipo_local}
-                        size="large"
+                        size="small"
                       />
-                      <div className="equipo-info">
-                        <span className="equipo-nombre">{partido.equipo_local}</span>
-                        <span className="equipo-label">Local</span>
-                      </div>
+                      <span className="equipo-nombre">{partido.equipo_local}</span>
                     </div>
-                    <div className="vs-divider">VS</div>
-                    <div className="equipo-visita">
+
+                    {/* Cuota Local */}
+                    {cuotaLocal && (
+                      <div
+                        className={`cuota-cell ${estaSeleccionada(partido.ID_PARTIDO, 'local') ? 'cuota-selected' : ''}`}
+                        onClick={() => apuestasHabilitadas && toggleSeleccionApuesta(partido, cuotaLocal, 'local')}
+                      >
+                        <div className="cuota-value">{parseFloat(cuotaLocal.cuota_decimal).toFixed(2)}</div>
+                      </div>
+                    )}
+
+                    {/* Cuota Empate */}
+                    {cuotaEmpate && (
+                      <div
+                        className={`cuota-cell ${estaSeleccionada(partido.ID_PARTIDO, 'empate') ? 'cuota-selected' : ''}`}
+                        onClick={() => apuestasHabilitadas && toggleSeleccionApuesta(partido, cuotaEmpate, 'empate')}
+                      >
+                        <div className="cuota-value">{parseFloat(cuotaEmpate.cuota_decimal).toFixed(2)}</div>
+                      </div>
+                    )}
+
+                    {/* Cuota Visita */}
+                    {cuotaVisita && (
+                      <div
+                        className={`cuota-cell ${estaSeleccionada(partido.ID_PARTIDO, 'visita') ? 'cuota-selected' : ''}`}
+                        onClick={() => apuestasHabilitadas && toggleSeleccionApuesta(partido, cuotaVisita, 'visita')}
+                      >
+                        <div className="cuota-value">{parseFloat(cuotaVisita.cuota_decimal).toFixed(2)}</div>
+                      </div>
+                    )}
+
+                    {/* Equipo Visita - CON LOGO */}
+                    <div className="equipo-cell equipo-visita-cell">
+                      <span className="equipo-nombre">{partido.equipo_visita}</span>
                       <TeamLogo
                         imagen={partido.imagen_visita}
                         nombreEquipo={partido.equipo_visita}
-                        size="large"
+                        size="small"
                       />
-                      <div className="equipo-info">
-                        <span className="equipo-nombre">{partido.equipo_visita}</span>
-                        <span className="equipo-label">Visita</span>
-                      </div>
-                    </div>
-                  </div>
-
-                  <div className="cuotas-section">
-                    <div className="cuotas-title">Selecciona tu apuesta</div>
-                    <div className="cuotas-grid">
-                      {cuotaLocal && (
-                        <div
-                          className={`cuota-card cuota-local ${estaSeleccionada(partido.ID_PARTIDO, 'local') ? 'cuota-seleccionada' : ''}`}
-                          onClick={() => apuestasHabilitadas && toggleSeleccionApuesta(partido, cuotaLocal, 'local')}
-                        >
-                          {estaSeleccionada(partido.ID_PARTIDO, 'local') && (
-                            <div className="check-seleccion">✓</div>
-                          )}
-                          <div className="cuota-tipo">🏠 Local</div>
-                          <div className="cuota-equipo">{partido.equipo_local}</div>
-                          <div className="cuota-valor">{parseFloat(cuotaLocal.cuota_decimal).toFixed(2)}x</div>
-                          <div className="retorno-info">
-                            Retorno: ${parseInt(calcularRetorno(cuotaLocal)).toLocaleString('es-CL')}
-                          </div>
-                        </div>
-                      )}
-
-                      {cuotaEmpate && (
-                        <div
-                          className={`cuota-card cuota-empate ${estaSeleccionada(partido.ID_PARTIDO, 'empate') ? 'cuota-seleccionada' : ''}`}
-                          onClick={() => apuestasHabilitadas && toggleSeleccionApuesta(partido, cuotaEmpate, 'empate')}
-                        >
-                          {estaSeleccionada(partido.ID_PARTIDO, 'empate') && (
-                            <div className="check-seleccion">✓</div>
-                          )}
-                          <div className="cuota-tipo">🤝 Empate</div>
-                          <div className="cuota-equipo">-</div>
-                          <div className="cuota-valor">{parseFloat(cuotaEmpate.cuota_decimal).toFixed(2)}x</div>
-                          <div className="retorno-info">
-                            Retorno: ${parseInt(calcularRetorno(cuotaEmpate)).toLocaleString('es-CL')}
-                          </div>
-                        </div>
-                      )}
-
-                      {cuotaVisita && (
-                        <div
-                          className={`cuota-card cuota-visita ${estaSeleccionada(partido.ID_PARTIDO, 'visita') ? 'cuota-seleccionada' : ''}`}
-                          onClick={() => apuestasHabilitadas && toggleSeleccionApuesta(partido, cuotaVisita, 'visita')}
-                        >
-                          {estaSeleccionada(partido.ID_PARTIDO, 'visita') && (
-                            <div className="check-seleccion">✓</div>
-                          )}
-                          <div className="cuota-tipo">✈️ Visita</div>
-                          <div className="cuota-equipo">{partido.equipo_visita}</div>
-                          <div className="cuota-valor">{parseFloat(cuotaVisita.cuota_decimal).toFixed(2)}x</div>
-                          <div className="retorno-info">
-                            Retorno: ${parseInt(calcularRetorno(cuotaVisita)).toLocaleString('es-CL')}
-                          </div>
-                        </div>
-                      )}
                     </div>
                   </div>
                 </div>

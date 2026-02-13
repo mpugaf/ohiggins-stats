@@ -707,3 +707,321 @@ exports.actualizarCamisetaTemporada = async (req, res) => {
     res.status(500).json({ error: 'Error al actualizar número de camiseta' });
   }
 };
+
+/**
+ * Verificar si un torneo tiene asignaciones
+ * GET /api/torneo-jugador/verificar-asignaciones/:idTorneo
+ */
+exports.verificarAsignacionesTorneo = async (req, res) => {
+  const { idTorneo } = req.params;
+
+  try {
+    const asignaciones = await executeQuery(`
+      SELECT COUNT(*) as total
+      FROM DIM_TORNEO_JUGADOR
+      WHERE ID_TORNEO = ?
+    `, [idTorneo]);
+
+    const total = asignaciones[0].total;
+
+    res.json({
+      success: true,
+      tieneAsignaciones: total > 0,
+      totalAsignaciones: total
+    });
+
+  } catch (error) {
+    console.error('[VERIFICAR_ASIGNACIONES] Error:', error);
+    res.status(500).json({ error: 'Error al verificar asignaciones del torneo' });
+  }
+};
+
+/**
+ * Obtener jugadores de un equipo en un torneo específico
+ * GET /api/torneo-jugador/jugadores-equipo/:idTorneo/:idEquipo
+ */
+exports.getJugadoresPorEquipoYTorneo = async (req, res) => {
+  const { idTorneo, idEquipo } = req.params;
+
+  try {
+    const jugadores = await executeQuery(`
+      SELECT
+        tj.ID_TORNEO_JUGADOR,
+        tj.ID_JUGADOR,
+        tj.ID_EQUIPO,
+        tj.ID_TORNEO,
+        tj.NUMERO_CAMISETA,
+        tj.FECHA_INCORPORACION,
+        tj.ESTADO,
+        j.NOMBRE_COMPLETO as jugador_nombre,
+        j.APODO as jugador_apodo,
+        j.FECHA_NACIMIENTO,
+        pos.NOMBRE as posicion,
+        p.NOMBRE as nacionalidad
+      FROM DIM_TORNEO_JUGADOR tj
+      INNER JOIN DIM_JUGADOR j ON tj.ID_JUGADOR = j.ID_JUGADOR
+      LEFT JOIN DIM_JUGADOR_POSICION jpos ON j.ID_JUGADOR = jpos.ID_JUGADOR AND jpos.ES_POSICION_PRINCIPAL = TRUE
+      LEFT JOIN DIM_POSICION pos ON jpos.ID_POSICION = pos.ID_POSICION
+      LEFT JOIN DIM_JUGADOR_PAIS jp ON j.ID_JUGADOR = jp.ID_JUGADOR AND jp.TIPO_RELACION = 'NACIMIENTO'
+      LEFT JOIN DIM_PAIS p ON jp.ID_PAIS = p.ID_PAIS
+      WHERE tj.ID_TORNEO = ?
+        AND tj.ID_EQUIPO = ?
+      ORDER BY pos.NOMBRE, j.NOMBRE_COMPLETO
+    `, [idTorneo, idEquipo]);
+
+    res.json({
+      success: true,
+      jugadores
+    });
+
+  } catch (error) {
+    console.error('[JUGADORES_EQUIPO_TORNEO] Error:', error);
+    res.status(500).json({ error: 'Error al obtener jugadores del equipo en el torneo' });
+  }
+};
+
+/**
+ * Clonar asignaciones de un torneo a otro
+ * POST /api/torneo-jugador/clonar-asignaciones
+ * Body: {
+ *   idTorneoOrigen: number,
+ *   idTorneoDestino: number,
+ *   idEquipo: number (optional),
+ *   jugadoresIds: number[] (optional, si no se proporciona clona todos),
+ *   forzar: boolean (optional, default: false)
+ * }
+ */
+exports.clonarAsignacionesEntreTorneos = async (req, res) => {
+  const { idTorneoOrigen, idTorneoDestino, idEquipo, jugadoresIds, forzar } = req.body;
+
+  console.log('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
+  console.log('[CLONAR_ASIGNACIONES] Datos recibidos:');
+  console.log('  - Torneo Origen ID:', idTorneoOrigen);
+  console.log('  - Torneo Destino ID:', idTorneoDestino);
+  console.log('  - Equipo ID:', idEquipo || 'Todos');
+  console.log('  - Jugadores seleccionados:', jugadoresIds ? jugadoresIds.length : 'Todos');
+  console.log('  - Forzar:', forzar || false);
+  console.log('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
+
+  // Validar campos requeridos
+  if (!idTorneoOrigen || !idTorneoDestino) {
+    return res.status(400).json({
+      error: 'idTorneoOrigen e idTorneoDestino son requeridos'
+    });
+  }
+
+  // Validar que no sean el mismo torneo
+  if (idTorneoOrigen === idTorneoDestino) {
+    return res.status(400).json({
+      error: 'El torneo origen y destino no pueden ser el mismo'
+    });
+  }
+
+  try {
+    // Verificar que ambos torneos existen
+    const [torneoOrigen] = await executeQuery(
+      'SELECT ID_TORNEO, NOMBRE, TEMPORADA, RUEDA FROM DIM_TORNEO WHERE ID_TORNEO = ?',
+      [idTorneoOrigen]
+    );
+    if (!torneoOrigen) {
+      return res.status(404).json({ error: 'Torneo origen no encontrado' });
+    }
+
+    const [torneoDestino] = await executeQuery(
+      'SELECT ID_TORNEO, NOMBRE, TEMPORADA, RUEDA FROM DIM_TORNEO WHERE ID_TORNEO = ?',
+      [idTorneoDestino]
+    );
+    if (!torneoDestino) {
+      return res.status(404).json({ error: 'Torneo destino no encontrado' });
+    }
+
+    // Construir query para obtener asignaciones del torneo origen
+    let queryAsignaciones = `
+      SELECT
+        ID_JUGADOR,
+        ID_EQUIPO,
+        NUMERO_CAMISETA,
+        FECHA_INCORPORACION,
+        ESTADO
+      FROM DIM_TORNEO_JUGADOR
+      WHERE ID_TORNEO = ?
+    `;
+
+    const paramsAsignaciones = [idTorneoOrigen];
+
+    // Filtrar por equipo si se especifica
+    if (idEquipo) {
+      queryAsignaciones += ' AND ID_EQUIPO = ?';
+      paramsAsignaciones.push(idEquipo);
+    }
+
+    // Filtrar por jugadores específicos si se especifican
+    if (jugadoresIds && Array.isArray(jugadoresIds) && jugadoresIds.length > 0) {
+      const placeholders = jugadoresIds.map(() => '?').join(',');
+      queryAsignaciones += ` AND ID_JUGADOR IN (${placeholders})`;
+      paramsAsignaciones.push(...jugadoresIds);
+    }
+
+    const asignacionesOrigen = await executeQuery(queryAsignaciones, paramsAsignaciones);
+
+    if (asignacionesOrigen.length === 0) {
+      return res.status(400).json({
+        error: `No se encontraron asignaciones para clonar con los filtros especificados`
+      });
+    }
+
+    // Verificar si el torneo destino ya tiene asignaciones
+    const asignacionesDestino = await executeQuery(`
+      SELECT COUNT(*) as total
+      FROM DIM_TORNEO_JUGADOR
+      WHERE ID_TORNEO = ?
+    `, [idTorneoDestino]);
+
+    const tieneAsignacionesDestino = asignacionesDestino[0].total > 0;
+
+    // Si tiene asignaciones y no se fuerza, retornar warning
+    if (tieneAsignacionesDestino && !forzar) {
+      return res.status(409).json({
+        requiresConfirmation: true,
+        message: `El torneo destino "${torneoDestino.NOMBRE}" ya tiene ${asignacionesDestino[0].total} asignaciones. ¿Desea continuar?`,
+        torneoOrigen: {
+          id: torneoOrigen.ID_TORNEO,
+          nombre: torneoOrigen.NOMBRE,
+          temporada: torneoOrigen.TEMPORADA,
+          rueda: torneoOrigen.RUEDA,
+          totalAsignaciones: asignacionesOrigen.length
+        },
+        torneoDestino: {
+          id: torneoDestino.ID_TORNEO,
+          nombre: torneoDestino.NOMBRE,
+          temporada: torneoDestino.TEMPORADA,
+          rueda: torneoDestino.RUEDA,
+          totalAsignaciones: asignacionesDestino[0].total
+        }
+      });
+    }
+
+    // Proceder con la clonación
+    const resultados = {
+      creadas: [],
+      actualizadas: [],
+      omitidas: [],
+      errores: []
+    };
+
+    // Iniciar transacción
+    await executeQuery('START TRANSACTION');
+
+    try {
+      for (const asignacion of asignacionesOrigen) {
+        // Verificar si el jugador ya tiene asignación en el torneo destino
+        const [asignacionExistente] = await executeQuery(`
+          SELECT ID_TORNEO_JUGADOR, ID_EQUIPO
+          FROM DIM_TORNEO_JUGADOR
+          WHERE ID_JUGADOR = ? AND ID_TORNEO = ?
+        `, [asignacion.ID_JUGADOR, idTorneoDestino]);
+
+        // Obtener nombre del jugador para el reporte
+        const [jugador] = await executeQuery(
+          'SELECT NOMBRE_COMPLETO FROM DIM_JUGADOR WHERE ID_JUGADOR = ?',
+          [asignacion.ID_JUGADOR]
+        );
+        const nombreJugador = jugador ? jugador.NOMBRE_COMPLETO : `ID ${asignacion.ID_JUGADOR}`;
+
+        if (asignacionExistente) {
+          // Si ya existe asignación
+          if (asignacionExistente.ID_EQUIPO === asignacion.ID_EQUIPO) {
+            // Mismo equipo: omitir
+            resultados.omitidas.push({
+              jugador: nombreJugador,
+              razon: 'Ya existe asignación en este equipo'
+            });
+          } else {
+            // Equipo diferente: actualizar
+            await executeQuery(`
+              UPDATE DIM_TORNEO_JUGADOR
+              SET
+                ID_EQUIPO = ?,
+                NUMERO_CAMISETA = ?,
+                FECHA_INCORPORACION = ?,
+                ESTADO = ?
+              WHERE ID_TORNEO_JUGADOR = ?
+            `, [
+              asignacion.ID_EQUIPO,
+              asignacion.NUMERO_CAMISETA,
+              asignacion.FECHA_INCORPORACION,
+              asignacion.ESTADO || 'ACTIVO',
+              asignacionExistente.ID_TORNEO_JUGADOR
+            ]);
+
+            resultados.actualizadas.push({
+              jugador: nombreJugador,
+              razon: 'Reasignado al equipo del torneo origen'
+            });
+          }
+        } else {
+          // No existe: crear nueva asignación
+          const result = await executeQuery(`
+            INSERT INTO DIM_TORNEO_JUGADOR
+              (ID_JUGADOR, ID_EQUIPO, ID_TORNEO, NUMERO_CAMISETA, FECHA_INCORPORACION, ESTADO)
+            VALUES (?, ?, ?, ?, ?, ?)
+          `, [
+            asignacion.ID_JUGADOR,
+            asignacion.ID_EQUIPO,
+            idTorneoDestino,
+            asignacion.NUMERO_CAMISETA,
+            asignacion.FECHA_INCORPORACION,
+            asignacion.ESTADO || 'ACTIVO'
+          ]);
+
+          resultados.creadas.push({
+            jugador: nombreJugador,
+            id: result.insertId
+          });
+        }
+      }
+
+      // Confirmar transacción
+      await executeQuery('COMMIT');
+
+      console.log('[CLONAR_ASIGNACIONES] Resultados:');
+      console.log('  ✅ Creadas:', resultados.creadas.length);
+      console.log('  ♻️  Actualizadas:', resultados.actualizadas.length);
+      console.log('  ⏭️  Omitidas:', resultados.omitidas.length);
+
+      res.status(200).json({
+        success: true,
+        message: `Asignaciones clonadas exitosamente de "${torneoOrigen.NOMBRE}" a "${torneoDestino.NOMBRE}"`,
+        torneoOrigen: {
+          id: torneoOrigen.ID_TORNEO,
+          nombre: torneoOrigen.NOMBRE,
+          temporada: torneoOrigen.TEMPORADA,
+          rueda: torneoOrigen.RUEDA
+        },
+        torneoDestino: {
+          id: torneoDestino.ID_TORNEO,
+          nombre: torneoDestino.NOMBRE,
+          temporada: torneoDestino.TEMPORADA,
+          rueda: torneoDestino.RUEDA
+        },
+        resultados,
+        resumen: {
+          total: asignacionesOrigen.length,
+          creadas: resultados.creadas.length,
+          actualizadas: resultados.actualizadas.length,
+          omitidas: resultados.omitidas.length,
+          errores: resultados.errores.length
+        }
+      });
+
+    } catch (transactionError) {
+      // Revertir transacción en caso de error
+      await executeQuery('ROLLBACK');
+      throw transactionError;
+    }
+
+  } catch (error) {
+    console.error('[CLONAR_ASIGNACIONES] Error:', error);
+    res.status(500).json({ error: 'Error al clonar asignaciones: ' + error.message });
+  }
+};

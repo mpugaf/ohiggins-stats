@@ -73,7 +73,9 @@ const PartidosManager = () => {
       if (filtros.torneo) params.torneoId = filtros.torneo;
       if (filtros.equipo) params.equipoId = filtros.equipo;
       if (filtros.estado) params.estado = filtros.estado;
-      if (filtros.numeroJornada) params.numeroJornada = filtros.numeroJornada;
+      // NO enviar numeroJornada al backend - se filtra solo en frontend
+      // Esto permite que el combo de fechas muestre todas las opciones disponibles
+      // if (filtros.numeroJornada) params.numeroJornada = filtros.numeroJornada;
       if (filtros.fechaDesde) params.fechaDesde = filtros.fechaDesde;
       if (filtros.fechaHasta) params.fechaHasta = filtros.fechaHasta;
       params.limit = '100';

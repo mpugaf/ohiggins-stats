@@ -20,4 +20,9 @@ router.delete('/:id', torneoJugadorController.eliminarAsignacion);
 router.post('/asignacion-masiva', torneoJugadorController.crearAsignacionMasiva);
 router.put('/actualizar-camiseta-temporada', torneoJugadorController.actualizarCamisetaTemporada);
 
+// Rutas de clonación de asignaciones entre torneos
+router.get('/verificar-asignaciones/:idTorneo', torneoJugadorController.verificarAsignacionesTorneo);
+router.get('/jugadores-equipo/:idTorneo/:idEquipo', torneoJugadorController.getJugadoresPorEquipoYTorneo);
+router.post('/clonar-asignaciones', torneoJugadorController.clonarAsignacionesEntreTorneos);
+
 module.exports = router;

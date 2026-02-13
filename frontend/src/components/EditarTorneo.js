@@ -8,18 +8,17 @@ const EditarTorneo = () => {
   const navigate = useNavigate();
   const { id } = useParams();
 
-  console.log('🎯 EDITAR_TORNEO - ID capturado desde URL:', id);
-  console.log('🎯 EDITAR_TORNEO - Tipo de ID:', typeof id);
-  console.log('🎯 EDITAR_TORNEO - useParams completo:', useParams());
-
   const [formData, setFormData] = useState({
     nombre: '',
     paisOrganizador: '',
+    formatoTorneo: 'RUEDAS',
     rueda: '',
     temporada: ''
   });
+  const [fases, setFases] = useState([]);
   const [torneoOriginal, setTorneoOriginal] = useState(null);
   const [paises, setPaises] = useState([]);
+  const [plantillasFases, setPlantillasFases] = useState({});
   const [errors, setErrors] = useState({});
   const [loading, setLoading] = useState(false);
   const [loadingData, setLoadingData] = useState(true);
@@ -32,28 +31,49 @@ const EditarTorneo = () => {
     try {
       setLoadingData(true);
 
-      // Validar que el ID existe
       if (!id) {
         throw new Error('ID de torneo no proporcionado');
       }
 
-      // Cargar torneo y países en paralelo con autenticación
-      const [torneoResponse, paisesResponse] = await Promise.all([
+      // Cargar torneo, países y plantillas en paralelo
+      const [torneoResponse, paisesResponse, plantillasResponse] = await Promise.all([
         torneosService.getById(id),
-        torneosService.getPaises()
+        torneosService.getPaises(),
+        fetch('http://192.168.100.16:3000/api/torneos/data/plantillas-fases', {
+          headers: {
+            'Authorization': `Bearer ${localStorage.getItem('token')}`
+          }
+        })
       ]);
 
       const torneoData = await handleResponse(torneoResponse);
       const paisesData = await handleResponse(paisesResponse);
 
+      console.log('📋 Torneo cargado:', torneoData);
+
       setTorneoOriginal(torneoData);
       setFormData({
         nombre: torneoData.NOMBRE || '',
         paisOrganizador: torneoData.PAIS_ORGANIZADOR?.toString() || '',
+        formatoTorneo: torneoData.FORMATO_TORNEO || 'RUEDAS',
         rueda: torneoData.RUEDA || '',
         temporada: torneoData.TEMPORADA?.toString() || ''
       });
+
+      // Si tiene fases, cargarlas
+      if (torneoData.FORMATO_TORNEO === 'FASES' && torneoData.FASES) {
+        setFases(torneoData.FASES.map(f => ({
+          nombre: f.NOMBRE_FASE,
+          descripcion: f.DESCRIPCION || ''
+        })));
+      }
+
       setPaises(paisesData);
+
+      if (plantillasResponse.ok) {
+        const plantillasData = await plantillasResponse.json();
+        setPlantillasFases(plantillasData);
+      }
 
     } catch (error) {
       console.error('Error al cargar datos:', error);
@@ -71,37 +91,78 @@ const EditarTorneo = () => {
       ...prev,
       [name]: value
     }));
-    
-    // Limpiar error del campo cuando el usuario empiece a escribir
+
     if (errors[name]) {
       setErrors(prev => ({
         ...prev,
         [name]: ''
       }));
     }
+
+    // Si cambia el formato, limpiar campos relacionados
+    if (name === 'formatoTorneo') {
+      if (value === 'RUEDAS') {
+        setFases([]);
+        setFormData(prev => ({ ...prev, rueda: torneoOriginal?.RUEDA || '' }));
+      } else {
+        setFormData(prev => ({ ...prev, rueda: '' }));
+      }
+    }
+  };
+
+  const agregarFase = () => {
+    setFases([...fases, { nombre: '', descripcion: '' }]);
+  };
+
+  const eliminarFase = (index) => {
+    const nuevasFases = fases.filter((_, i) => i !== index);
+    setFases(nuevasFases);
+  };
+
+  const handleFaseChange = (index, field, value) => {
+    const nuevasFases = [...fases];
+    nuevasFases[index][field] = value;
+    setFases(nuevasFases);
+  };
+
+  const cargarPlantilla = (tipoPlantilla) => {
+    if (plantillasFases[tipoPlantilla]) {
+      const nuevasFases = plantillasFases[tipoPlantilla].map(fase => ({
+        nombre: fase.NOMBRE_FASE,
+        descripcion: fase.DESCRIPCION || ''
+      }));
+      setFases(nuevasFases);
+    }
   };
 
   const validateForm = () => {
     const newErrors = {};
 
-    // Validar nombre
     if (!formData.nombre.trim()) {
       newErrors.nombre = 'El nombre del torneo es obligatorio';
     } else if (formData.nombre.trim().length < 3) {
       newErrors.nombre = 'El nombre debe tener al menos 3 caracteres';
     }
 
-    // Validar país organizador
-    if (!formData.paisOrganizador) {
-      newErrors.paisOrganizador = 'Debe seleccionar un país organizador';
+    if (!formData.formatoTorneo) {
+      newErrors.formatoTorneo = 'Debe seleccionar el formato de torneo';
     }
 
-    // Validar rueda
-    if (!formData.rueda) {
+    if (formData.formatoTorneo === 'RUEDAS' && !formData.rueda) {
       newErrors.rueda = 'Debe seleccionar el tipo de rueda';
     }
 
-    // Validar temporada
+    if (formData.formatoTorneo === 'FASES' && fases.length === 0) {
+      newErrors.fases = 'Debe agregar al menos una fase para torneos con formato de fases';
+    }
+
+    if (formData.formatoTorneo === 'FASES' && fases.length > 0) {
+      const fasesInvalidas = fases.some(f => !f.nombre.trim());
+      if (fasesInvalidas) {
+        newErrors.fases = 'Todas las fases deben tener un nombre';
+      }
+    }
+
     if (!formData.temporada) {
       newErrors.temporada = 'La temporada es obligatoria';
     } else {
@@ -126,13 +187,25 @@ const EditarTorneo = () => {
 
     setLoading(true);
     try {
-      const response = await torneosService.update(id, {
+      const payload = {
         nombre: formData.nombre.trim(),
-        paisOrganizador: parseInt(formData.paisOrganizador),
-        rueda: formData.rueda,
-        temporada: parseInt(formData.temporada)
-      });
+        temporada: parseInt(formData.temporada),
+        formatoTorneo: formData.formatoTorneo
+      };
 
+      if (formData.paisOrganizador) {
+        payload.paisOrganizador = parseInt(formData.paisOrganizador);
+      }
+
+      if (formData.formatoTorneo === 'RUEDAS') {
+        payload.rueda = formData.rueda;
+      }
+
+      if (formData.formatoTorneo === 'FASES') {
+        payload.fases = fases;
+      }
+
+      const response = await torneosService.update(id, payload);
       const result = await handleResponse(response);
       console.log('Torneo actualizado:', result);
 
@@ -143,7 +216,7 @@ const EditarTorneo = () => {
       console.error('Error:', error);
       if (error.message.includes('Ya existe otro torneo')) {
         setErrors({
-          general: 'Ya existe otro torneo con esas características (mismo nombre, país, rueda y temporada)'
+          general: 'Ya existe otro torneo con esas características'
         });
       } else {
         setErrors({
@@ -157,15 +230,6 @@ const EditarTorneo = () => {
 
   const handleCancel = () => {
     navigate('/torneos');
-  };
-
-  const formatearRueda = (rueda) => {
-    const ruedas = {
-      'PRIMERA': 'Primera Rueda',
-      'SEGUNDA': 'Segunda Rueda',
-      'UNICA': 'Rueda Única'
-    };
-    return ruedas[rueda] || rueda;
   };
 
   if (loadingData) {
@@ -196,14 +260,7 @@ const EditarTorneo = () => {
       <div className="form-card">
         <div className="form-header">
           <h2>✏️ Editar Torneo</h2>
-          <p>Modificar los datos del torneo: <strong>{torneoOriginal?.NOMBRE}</strong></p>
-          {torneoOriginal && (
-            <div className="torneo-info">
-              <span className="info-badge">
-                League ID: {torneoOriginal.LEAGUE_ID_FBR}
-              </span>
-            </div>
-          )}
+          <p>Modificar: <strong>{torneoOriginal?.NOMBRE}</strong></p>
         </div>
 
         <form onSubmit={handleSubmit} className="form">
@@ -224,56 +281,11 @@ const EditarTorneo = () => {
               value={formData.nombre}
               onChange={handleChange}
               className={errors.nombre ? 'error' : ''}
-              placeholder="Ej: Copa América Femenina 2025"
+              placeholder="Ej: Copa Libertadores 2025"
               maxLength="100"
               disabled={loading}
             />
             {errors.nombre && <span className="error-message">{errors.nombre}</span>}
-          </div>
-
-          <div className="form-group">
-            <label htmlFor="paisOrganizador">
-              País Organizador <span className="required">*</span>
-            </label>
-            <select
-              id="paisOrganizador"
-              name="paisOrganizador"
-              value={formData.paisOrganizador}
-              onChange={handleChange}
-              className={errors.paisOrganizador ? 'error' : ''}
-              disabled={loading}
-            >
-              <option value="">-- Seleccione un país --</option>
-              {paises.map(pais => (
-                <option key={pais.ID_PAIS} value={pais.ID_PAIS}>
-                  {pais.CODIGO_FIFA} - {pais.NOMBRE}
-                </option>
-              ))}
-            </select>
-            {errors.paisOrganizador && <span className="error-message">{errors.paisOrganizador}</span>}
-          </div>
-
-          <div className="form-group">
-            <label htmlFor="rueda">
-              Tipo de Rueda <span className="required">*</span>
-            </label>
-            <select
-              id="rueda"
-              name="rueda"
-              value={formData.rueda}
-              onChange={handleChange}
-              className={errors.rueda ? 'error' : ''}
-              disabled={loading}
-            >
-              <option value="">-- Seleccione el tipo de rueda --</option>
-              <option value="PRIMERA">Primera Rueda</option>
-              <option value="SEGUNDA">Segunda Rueda</option>
-              <option value="UNICA">Rueda Única</option>
-            </select>
-            {errors.rueda && <span className="error-message">{errors.rueda}</span>}
-            <small className="field-help">
-              Actualmente: {formatearRueda(torneoOriginal?.RUEDA || '')}
-            </small>
           </div>
 
           <div className="form-group">
@@ -293,20 +305,149 @@ const EditarTorneo = () => {
               disabled={loading}
             />
             {errors.temporada && <span className="error-message">{errors.temporada}</span>}
+          </div>
+
+          <div className="form-group">
+            <label htmlFor="paisOrganizador">
+              País Organizador <span className="optional">(Opcional)</span>
+            </label>
+            <select
+              id="paisOrganizador"
+              name="paisOrganizador"
+              value={formData.paisOrganizador}
+              onChange={handleChange}
+              disabled={loading}
+            >
+              <option value="">-- Sin país específico --</option>
+              {paises.map(pais => (
+                <option key={pais.ID_PAIS} value={pais.ID_PAIS}>
+                  {pais.CODIGO_FIFA} - {pais.NOMBRE}
+                </option>
+              ))}
+            </select>
             <small className="field-help">
-              Año de la temporada del torneo
+              Deja vacío para torneos organizados por confederaciones (CONMEBOL, FIFA, etc.)
             </small>
           </div>
 
-          <div className="form-info">
-            <h4>📋 Información del Torneo</h4>
-            <ul>
-              <li><strong>ID del Torneo:</strong> {torneoOriginal?.ID_TORNEO}</li>
-              <li><strong>League ID FBR:</strong> {torneoOriginal?.LEAGUE_ID_FBR}</li>
-              <li><strong>País Actual:</strong> {torneoOriginal?.NOMBRE_PAIS} ({torneoOriginal?.CODIGO_PAIS})</li>
-              <li><strong>Configuración Actual:</strong> {formatearRueda(torneoOriginal?.RUEDA || '')} - {torneoOriginal?.TEMPORADA}</li>
-            </ul>
+          <div className="form-group">
+            <label htmlFor="formatoTorneo">
+              Formato del Torneo <span className="required">*</span>
+            </label>
+            <select
+              id="formatoTorneo"
+              name="formatoTorneo"
+              value={formData.formatoTorneo}
+              onChange={handleChange}
+              className={errors.formatoTorneo ? 'error' : ''}
+              disabled={loading}
+            >
+              <option value="RUEDAS">Torneo por Ruedas (Liga)</option>
+              <option value="FASES">Torneo por Fases (Copa)</option>
+            </select>
+            {errors.formatoTorneo && <span className="error-message">{errors.formatoTorneo}</span>}
           </div>
+
+          {formData.formatoTorneo === 'RUEDAS' && (
+            <div className="form-group">
+              <label htmlFor="rueda">
+                Tipo de Rueda <span className="required">*</span>
+              </label>
+              <select
+                id="rueda"
+                name="rueda"
+                value={formData.rueda}
+                onChange={handleChange}
+                className={errors.rueda ? 'error' : ''}
+                disabled={loading}
+              >
+                <option value="">-- Seleccione el tipo de rueda --</option>
+                <option value="PRIMERA">Primera Rueda</option>
+                <option value="SEGUNDA">Segunda Rueda</option>
+                <option value="UNICA">Rueda Única</option>
+              </select>
+              {errors.rueda && <span className="error-message">{errors.rueda}</span>}
+            </div>
+          )}
+
+          {formData.formatoTorneo === 'FASES' && (
+            <div className="form-group">
+              <label>
+                Fases del Torneo <span className="required">*</span>
+              </label>
+
+              <div style={{ marginBottom: '15px' }}>
+                <strong>Cargar plantilla:</strong>
+                <div style={{ display: 'flex', gap: '10px', flexWrap: 'wrap', marginTop: '5px' }}>
+                  {Object.keys(plantillasFases).map(tipo => (
+                    <button
+                      key={tipo}
+                      type="button"
+                      className="btn-secondary"
+                      onClick={() => cargarPlantilla(tipo)}
+                      style={{ fontSize: '12px', padding: '5px 10px' }}
+                    >
+                      {tipo.replace('_', ' ')}
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              <div style={{ marginBottom: '10px' }}>
+                {fases.map((fase, index) => (
+                  <div key={index} style={{
+                    border: '1px solid #ddd',
+                    padding: '10px',
+                    marginBottom: '10px',
+                    borderRadius: '4px',
+                    backgroundColor: '#f9f9f9'
+                  }}>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '5px' }}>
+                      <strong>Fase {index + 1}</strong>
+                      <button
+                        type="button"
+                        onClick={() => eliminarFase(index)}
+                        style={{
+                          background: 'none',
+                          border: 'none',
+                          color: 'red',
+                          cursor: 'pointer',
+                          fontSize: '18px'
+                        }}
+                      >
+                        ✕
+                      </button>
+                    </div>
+                    <input
+                      type="text"
+                      placeholder="Nombre de la fase"
+                      value={fase.nombre}
+                      onChange={(e) => handleFaseChange(index, 'nombre', e.target.value)}
+                      style={{ width: '100%', marginBottom: '5px', padding: '8px' }}
+                    />
+                    <input
+                      type="text"
+                      placeholder="Descripción (opcional)"
+                      value={fase.descripcion}
+                      onChange={(e) => handleFaseChange(index, 'descripcion', e.target.value)}
+                      style={{ width: '100%', padding: '8px' }}
+                    />
+                  </div>
+                ))}
+              </div>
+
+              <button
+                type="button"
+                onClick={agregarFase}
+                className="btn-secondary"
+                style={{ width: '100%' }}
+              >
+                + Agregar Fase
+              </button>
+
+              {errors.fases && <span className="error-message">{errors.fases}</span>}
+            </div>
+          )}
 
           <div className="form-actions">
             <button

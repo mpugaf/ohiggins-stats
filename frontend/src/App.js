@@ -18,14 +18,15 @@ import PartidosApuestasManager from './components/apuestas/PartidosApuestasManag
 
 // Consultation Components (Both Admin and User)
 import RosterJugadores from './components/consultas/RosterJugadores';
+import PartidosHistoricosPlus from './components/apuestas/PartidosHistoricosPlus';
 
 // Admin Components
 import Dashboard from './components/Dashboard';
 import HomePage from './components/HomePage';
-import GestionCuotas from './components/admin/GestionCuotas';
-import LiquidarApuestas from './components/admin/LiquidarApuestas';
 import LimpiarApuestasUsuario from './components/admin/LimpiarApuestasUsuario';
+import LimpiarResultados from './components/admin/LimpiarResultados';
 import ConfiguracionApuestas from './components/admin/ConfiguracionApuestas';
+import GestionTokens from './components/admin/GestionTokens';
 
 // Original Management Components (Admin Only)
 import NuevoEstadio from './components/NuevoEstadio';
@@ -37,11 +38,13 @@ import EditarEquipo from './components/EditarEquipo';
 import PlayersManager from './components/PlayersManager';
 import AsignacionJugador from './components/AsignacionJugador';
 import AsignacionMasiva from './components/asignaciones/AsignacionMasiva';
+import ClonarAsignaciones from './components/ClonarAsignaciones';
 import ListadoJugadores from './components/ListadoJugadores';
 import ListaTorneos from './components/ListaTorneos';
 import NuevoTorneo from './components/NuevoTorneo';
 import EditarTorneo from './components/EditarTorneo';
 import PartidosManager from './components/PartidosManager';
+import PartidosManagerPlus from './components/PartidosManagerPlus';
 
 // User Management Components (Admin Only)
 import ListaUsuarios from './components/usuarios/ListaUsuarios';
@@ -82,6 +85,16 @@ function App() {
               }
             />
 
+            {/* Partidos Históricos - Accesible para todos los usuarios autenticados */}
+            <Route
+              path="/consultas/partidos-historicos-plus"
+              element={
+                <ProtectedRoute>
+                  <PartidosHistoricosPlus />
+                </ProtectedRoute>
+              }
+            />
+
             {/* ==================== ADMIN ROUTES ==================== */}
             {/* Admin Dashboard */}
             <Route
@@ -95,24 +108,6 @@ function App() {
 
             {/* Betting Management (Admin) */}
             <Route
-              path="/gestion-cuotas"
-              element={
-                <ProtectedRoute requireAdmin={true}>
-                  <GestionCuotas />
-                </ProtectedRoute>
-              }
-            />
-
-            <Route
-              path="/liquidar-apuestas"
-              element={
-                <ProtectedRoute requireAdmin={true}>
-                  <LiquidarApuestas />
-                </ProtectedRoute>
-              }
-            />
-
-            <Route
               path="/admin/limpiar-apuestas-usuario"
               element={
                 <ProtectedRoute requireAdmin={true}>
@@ -122,10 +117,29 @@ function App() {
             />
 
             <Route
+              path="/admin/limpiar-resultados"
+              element={
+                <ProtectedRoute requireAdmin={true}>
+                  <LimpiarResultados />
+                </ProtectedRoute>
+              }
+            />
+
+            <Route
               path="/admin/configuracion-apuestas"
               element={
                 <ProtectedRoute requireAdmin={true}>
                   <ConfiguracionApuestas />
+                </ProtectedRoute>
+              }
+            />
+
+            {/* Gestión de Tokens de Invitación (Admin) */}
+            <Route
+              path="/admin/tokens-invitacion"
+              element={
+                <ProtectedRoute requireAdmin={true}>
+                  <GestionTokens />
                 </ProtectedRoute>
               }
             />
@@ -208,6 +222,14 @@ function App() {
               }
             />
             <Route
+              path="/clonar-asignaciones"
+              element={
+                <ProtectedRoute requireAdmin={true}>
+                  <ClonarAsignaciones />
+                </ProtectedRoute>
+              }
+            />
+            <Route
               path="/listado-jugadores"
               element={
                 <ProtectedRoute requireAdmin={true}>
@@ -248,6 +270,16 @@ function App() {
               element={
                 <ProtectedRoute requireAdmin={true}>
                   <PartidosManager />
+                </ProtectedRoute>
+              }
+            />
+
+            {/* Matches Management Plus (Admin) */}
+            <Route
+              path="/partidos-plus"
+              element={
+                <ProtectedRoute requireAdmin={true}>
+                  <PartidosManagerPlus />
                 </ProtectedRoute>
               }
             />

@@ -1,0 +1,744 @@
+/* ============================================================================
+   PARTIDOS HISTÓRICOS PLUS - Diseño de Tabla Moderno
+   Esquema: Gradientes vibrantes + Tabla profesional + Animaciones suaves
+   ============================================================================ */
+
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800;900&display=swap');
+
+:root {
+  --primary-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  --success-gradient: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+  --danger-gradient: linear-gradient(135deg, #ee0979 0%, #ff6a00 100%);
+  --warning-gradient: linear-gradient(135deg, #f2994a 0%, #f2c94c 100%);
+  --dark-gradient: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
+  --light-bg: #f8f9fd;
+  --card-shadow: 0 8px 30px rgba(0, 0, 0, 0.12);
+  --hover-shadow: 0 12px 40px rgba(0, 0, 0, 0.18);
+  --border-radius: 16px;
+  --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* ============================================================================
+   CONTENEDOR PRINCIPAL
+   ============================================================================ */
+
+.historico-plus-container {
+  max-width: 1600px;
+  margin: 0 auto;
+  padding: 40px 24px;
+  background: var(--light-bg);
+  min-height: 100vh;
+  font-family: 'Poppins', -apple-system, BlinkMacSystemFont, sans-serif;
+}
+
+/* ============================================================================
+   HEADER
+   ============================================================================ */
+
+.header-plus {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 32px;
+  padding: 32px;
+  background: white;
+  border-radius: var(--border-radius);
+  box-shadow: var(--card-shadow);
+  background: var(--primary-gradient);
+  color: white;
+  position: relative;
+  overflow: hidden;
+}
+
+.header-plus::before {
+  content: '';
+  position: absolute;
+  top: -50%;
+  right: -10%;
+  width: 400px;
+  height: 400px;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 50%;
+  animation: float 6s ease-in-out infinite;
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0) rotate(0deg); }
+  50% { transform: translateY(-20px) rotate(180deg); }
+}
+
+.header-content-plus {
+  z-index: 1;
+}
+
+.title-plus {
+  font-size: 36px;
+  font-weight: 800;
+  margin: 0 0 8px 0;
+  text-shadow: 2px 2px 8px rgba(0, 0, 0, 0.2);
+  letter-spacing: -0.5px;
+}
+
+.subtitle-plus {
+  font-size: 16px;
+  font-weight: 400;
+  margin: 0;
+  opacity: 0.95;
+}
+
+.stats-badge-plus {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background: rgba(255, 255, 255, 0.2);
+  backdrop-filter: blur(10px);
+  padding: 16px 24px;
+  border-radius: 12px;
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  z-index: 1;
+}
+
+.badge-number {
+  font-size: 32px;
+  font-weight: 900;
+  line-height: 1;
+}
+
+.badge-label {
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  opacity: 0.9;
+}
+
+/* ============================================================================
+   PANEL DE FILTROS
+   ============================================================================ */
+
+.filtros-panel-plus {
+  background: white;
+  border-radius: var(--border-radius);
+  padding: 28px;
+  margin-bottom: 32px;
+  box-shadow: var(--card-shadow);
+  transition: var(--transition);
+}
+
+.filtros-panel-plus:hover {
+  box-shadow: var(--hover-shadow);
+}
+
+.filtros-row {
+  display: flex;
+  gap: 20px;
+  flex-wrap: wrap;
+  align-items: flex-end;
+}
+
+.filtro-item-plus {
+  flex: 1;
+  min-width: 200px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.filtro-item-plus.checkbox-item {
+  justify-content: flex-end;
+  padding-bottom: 8px;
+}
+
+.filtro-label-plus {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 14px;
+  font-weight: 600;
+  color: #2d3748;
+}
+
+.label-icon {
+  font-size: 18px;
+}
+
+.label-text {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.required-mark {
+  color: #e53e3e;
+  font-weight: 700;
+}
+
+.filtro-select-plus,
+.filtro-input-plus {
+  padding: 12px 16px;
+  font-size: 15px;
+  font-weight: 500;
+  border: 2px solid #e2e8f0;
+  border-radius: 10px;
+  background: #f7fafc;
+  color: #2d3748;
+  transition: var(--transition);
+  font-family: 'Poppins', sans-serif;
+}
+
+.filtro-select-plus:hover,
+.filtro-input-plus:hover {
+  border-color: #cbd5e0;
+  background: white;
+}
+
+.filtro-select-plus:focus,
+.filtro-input-plus:focus {
+  outline: none;
+  border-color: #667eea;
+  background: white;
+  box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+}
+
+.checkbox-label-plus {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  cursor: pointer;
+  user-select: none;
+  font-weight: 500;
+  color: #2d3748;
+}
+
+.checkbox-label-plus input[type="checkbox"] {
+  width: 20px;
+  height: 20px;
+  cursor: pointer;
+  accent-color: #667eea;
+}
+
+.checkbox-text {
+  font-size: 14px;
+}
+
+/* ============================================================================
+   TABLA DE PARTIDOS
+   ============================================================================ */
+
+.tabla-wrapper-plus {
+  background: white;
+  border-radius: var(--border-radius);
+  box-shadow: var(--card-shadow);
+  overflow: hidden;
+  margin-bottom: 32px;
+}
+
+.tabla-partidos-plus {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 15px;
+}
+
+.tabla-partidos-plus thead {
+  background: var(--dark-gradient);
+  color: white;
+}
+
+.tabla-partidos-plus thead th {
+  padding: 18px 16px;
+  text-align: center;
+  font-weight: 700;
+  font-size: 13px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  border-bottom: 3px solid #667eea;
+}
+
+.th-fecha { width: 12%; }
+.th-jornada { width: 8%; }
+.th-local { width: 25%; }
+.th-resultado { width: 12%; }
+.th-visita { width: 25%; }
+.th-estado { width: 12%; }
+.th-acciones { width: 6%; }
+
+.tabla-partidos-plus tbody tr.fila-partido-plus {
+  transition: var(--transition);
+  border-bottom: 1px solid #e2e8f0;
+}
+
+.tabla-partidos-plus tbody tr.fila-partido-plus:hover {
+  background: linear-gradient(90deg, #f7fafc 0%, #edf2f7 100%);
+  transform: scale(1.01);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+}
+
+.tabla-partidos-plus tbody td {
+  padding: 20px 16px;
+  text-align: center;
+  vertical-align: middle;
+}
+
+/* Columnas específicas */
+.td-fecha {
+  text-align: center;
+}
+
+.fecha-info {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  align-items: center;
+}
+
+.fecha-dia {
+  font-weight: 700;
+  font-size: 14px;
+  color: #2d3748;
+}
+
+.fecha-hora {
+  font-size: 12px;
+  color: #718096;
+  font-weight: 500;
+}
+
+.td-jornada {
+  text-align: center;
+}
+
+.jornada-badge-plus {
+  display: inline-block;
+  padding: 6px 12px;
+  background: var(--primary-gradient);
+  color: white;
+  border-radius: 8px;
+  font-weight: 700;
+  font-size: 13px;
+  box-shadow: 0 2px 8px rgba(102, 126, 234, 0.3);
+}
+
+.jornada-vacio {
+  color: #cbd5e0;
+  font-weight: 500;
+}
+
+.td-equipo {
+  text-align: center;
+}
+
+.equipo-info-plus {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  justify-content: center;
+}
+
+.td-local .equipo-info-plus {
+  justify-content: flex-end;
+  padding-right: 16px;
+}
+
+.td-visita .equipo-info-plus {
+  justify-content: flex-start;
+  padding-left: 16px;
+}
+
+.equipo-nombre-plus {
+  font-weight: 700;
+  font-size: 15px;
+  color: #2d3748;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 200px;
+}
+
+.td-resultado {
+  text-align: center;
+}
+
+.resultado-box-plus {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 20px;
+  background: var(--success-gradient);
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(17, 153, 142, 0.3);
+  color: white;
+  font-weight: 900;
+  font-size: 24px;
+}
+
+.gol-local,
+.gol-visita {
+  min-width: 32px;
+  text-align: center;
+}
+
+.separador-gol {
+  font-weight: 600;
+  font-size: 18px;
+  opacity: 0.8;
+}
+
+.td-estado {
+  text-align: center;
+}
+
+.estado-badge-plus {
+  display: inline-block;
+  padding: 8px 16px;
+  border-radius: 8px;
+  font-weight: 700;
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+}
+
+.estado-finalizado {
+  background: var(--success-gradient);
+  color: white;
+}
+
+.estado-suspendido {
+  background: var(--warning-gradient);
+  color: white;
+}
+
+.estado-cancelado {
+  background: var(--danger-gradient);
+  color: white;
+}
+
+.td-acciones {
+  text-align: center;
+}
+
+.btn-detalles-plus {
+  padding: 8px 12px;
+  background: var(--primary-gradient);
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: var(--transition);
+  box-shadow: 0 2px 8px rgba(102, 126, 234, 0.3);
+}
+
+.btn-detalles-plus:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+}
+
+.btn-detalles-plus:active {
+  transform: translateY(0);
+}
+
+/* Fila de detalles expandida */
+.fila-detalles-plus td {
+  padding: 0 !important;
+  background: linear-gradient(135deg, #f7fafc 0%, #edf2f7 100%);
+}
+
+.detalles-content-plus {
+  padding: 24px 32px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  animation: slideDown 0.3s ease-out;
+  border-top: 3px solid #667eea;
+}
+
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.detalle-item {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  padding: 12px;
+  background: white;
+  border-radius: 8px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+}
+
+.detalle-label {
+  font-weight: 700;
+  font-size: 14px;
+  color: #4a5568;
+  min-width: 120px;
+}
+
+.detalle-value {
+  font-weight: 500;
+  font-size: 14px;
+  color: #2d3748;
+}
+
+/* ============================================================================
+   PAGINACIÓN
+   ============================================================================ */
+
+.paginacion-plus {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+  padding: 24px;
+  background: white;
+  border-radius: var(--border-radius);
+  box-shadow: var(--card-shadow);
+}
+
+.paginas-lista {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.btn-pag-plus,
+.btn-pag-num {
+  padding: 10px 18px;
+  border: 2px solid #e2e8f0;
+  border-radius: 10px;
+  background: white;
+  color: #2d3748;
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: var(--transition);
+  font-family: 'Poppins', sans-serif;
+}
+
+.btn-pag-plus:hover:not(:disabled),
+.btn-pag-num:hover {
+  background: var(--primary-gradient);
+  color: white;
+  border-color: transparent;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+}
+
+.btn-pag-plus:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+  background: #f7fafc;
+  color: #cbd5e0;
+}
+
+.btn-pag-num.activo {
+  background: var(--primary-gradient);
+  color: white;
+  border-color: transparent;
+  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+  transform: scale(1.05);
+}
+
+.paginacion-info {
+  font-size: 13px;
+  font-weight: 600;
+  color: #718096;
+  padding: 8px 16px;
+  background: #f7fafc;
+  border-radius: 8px;
+}
+
+/* ============================================================================
+   ESTADOS VACÍOS Y LOADING
+   ============================================================================ */
+
+.loading-state,
+.empty-state-plus {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 400px;
+  padding: 60px 20px;
+  background: white;
+  border-radius: var(--border-radius);
+  box-shadow: var(--card-shadow);
+}
+
+.loading-spinner-plus {
+  width: 60px;
+  height: 60px;
+  border: 5px solid #e2e8f0;
+  border-top: 5px solid #667eea;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+.loading-state p,
+.empty-state-plus p {
+  margin-top: 20px;
+  font-size: 16px;
+  font-weight: 600;
+  color: #4a5568;
+}
+
+.empty-icon-plus {
+  font-size: 80px;
+  margin-bottom: 16px;
+  opacity: 0.5;
+  animation: bounce 2s ease-in-out infinite;
+}
+
+@keyframes bounce {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-10px); }
+}
+
+.empty-hint-plus {
+  font-size: 14px !important;
+  color: #718096 !important;
+  font-weight: 500 !important;
+  margin-top: 8px !important;
+}
+
+/* Error Banner */
+.error-banner-plus {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 16px 24px;
+  background: linear-gradient(135deg, #fff5f5 0%, #fed7d7 100%);
+  border-left: 4px solid #e53e3e;
+  border-radius: 12px;
+  margin-bottom: 24px;
+  color: #c53030;
+  font-weight: 600;
+  box-shadow: 0 4px 12px rgba(229, 62, 62, 0.2);
+}
+
+.error-icon {
+  font-size: 24px;
+}
+
+/* ============================================================================
+   RESPONSIVE
+   ============================================================================ */
+
+@media (max-width: 1200px) {
+  .tabla-partidos-plus {
+    font-size: 14px;
+  }
+
+  .equipo-nombre-plus {
+    font-size: 14px;
+    max-width: 150px;
+  }
+
+  .resultado-box-plus {
+    font-size: 20px;
+    padding: 10px 16px;
+  }
+}
+
+@media (max-width: 992px) {
+  .header-plus {
+    flex-direction: column;
+    gap: 20px;
+    text-align: center;
+  }
+
+  .filtros-row {
+    flex-direction: column;
+  }
+
+  .filtro-item-plus {
+    width: 100%;
+  }
+
+  .tabla-wrapper-plus {
+    overflow-x: auto;
+  }
+
+  .tabla-partidos-plus {
+    min-width: 900px;
+  }
+}
+
+@media (max-width: 768px) {
+  .historico-plus-container {
+    padding: 20px 12px;
+  }
+
+  .title-plus {
+    font-size: 28px;
+  }
+
+  .subtitle-plus {
+    font-size: 14px;
+  }
+
+  .tabla-partidos-plus {
+    font-size: 13px;
+  }
+
+  .equipo-nombre-plus {
+    font-size: 13px;
+    max-width: 120px;
+  }
+
+  .resultado-box-plus {
+    font-size: 18px;
+    padding: 8px 12px;
+  }
+
+  .detalles-content-plus {
+    padding: 16px;
+  }
+
+  .detalle-label {
+    min-width: 100px;
+    font-size: 13px;
+  }
+
+  .detalle-value {
+    font-size: 13px;
+  }
+}
+
+@media (max-width: 480px) {
+  .title-plus {
+    font-size: 24px;
+  }
+
+  .stats-badge-plus {
+    padding: 12px 16px;
+  }
+
+  .badge-number {
+    font-size: 24px;
+  }
+
+  .tabla-partidos-plus {
+    font-size: 12px;
+  }
+
+  .btn-pag-plus,
+  .btn-pag-num {
+    padding: 8px 12px;
+    font-size: 12px;
+  }
+}

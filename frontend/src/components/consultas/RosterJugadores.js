@@ -300,7 +300,7 @@ const RosterJugadores = () => {
   const jugadoresOrdenados = ordenarJugadores(jugadores);
   const jugadoresOrdenados2 = ordenarJugadores(jugadores2);
 
-  const torneoActual = torneos.find(t => t.id === parseInt(selectedTorneo));
+  const torneoActual = torneos.find(t => t.ID_TORNEO === parseInt(selectedTorneo));
   const equipoActual = equipos.find(e => e.id === parseInt(selectedEquipo));
   const equipoActual2 = equipos.find(e => e.id === parseInt(selectedEquipo2));
 
@@ -421,7 +421,7 @@ const RosterJugadores = () => {
           >
             <option value="">-- Seleccione un torneo --</option>
             {torneos.map(torneo => (
-              <option key={torneo.id} value={torneo.id}>
+              <option key={torneo.ID_TORNEO} value={torneo.ID_TORNEO}>
                 {torneo.nombre_completo || `${torneo.NOMBRE} ${torneo.TEMPORADA} - ${torneo.RUEDA} rueda`}
               </option>
             ))}

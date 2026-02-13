@@ -99,6 +99,122 @@ exports.crearApuesta = async (req, res) => {
 };
 
 /**
+ * Crear múltiples apuestas en batch
+ * POST /api/apuestas/batch
+ * Body: { apuestas: [{ idPartido, tipo, cuota, idEquipoPredicho, partidoInfo }] }
+ */
+exports.crearApuestasBatch = async (req, res) => {
+  const idUsuario = req.user.id_usuario;
+  const { apuestas } = req.body;
+
+  if (!apuestas || !Array.isArray(apuestas) || apuestas.length === 0) {
+    return res.status(400).json({ error: 'Se requiere un array de apuestas' });
+  }
+
+  const exitosas = [];
+  const fallidas = [];
+
+  for (const apuesta of apuestas) {
+    try {
+      const { idPartido, tipo, idEquipoPredicho, partidoInfo } = apuesta;
+
+      // Validar campos
+      if (!idPartido || !tipo) {
+        fallidas.push({
+          equipoLocal: partidoInfo?.equipoLocal || 'Desconocido',
+          equipoVisita: partidoInfo?.equipoVisita || 'Desconocido',
+          tipoApuesta: tipo || 'N/A',
+          error: 'Datos incompletos'
+        });
+        continue;
+      }
+
+      // Verificar que el partido existe y está programado
+      const [partido] = await executeQuery(
+        'SELECT ID_PARTIDO, ID_TORNEO, ESTADO_PARTIDO FROM HECHOS_RESULTADOS WHERE ID_PARTIDO = ?',
+        [idPartido]
+      );
+
+      if (!partido || partido.ESTADO_PARTIDO !== 'PROGRAMADO') {
+        fallidas.push({
+          equipoLocal: partidoInfo?.equipoLocal || 'Desconocido',
+          equipoVisita: partidoInfo?.equipoVisita || 'Desconocido',
+          tipoApuesta: tipo,
+          error: 'Partido no disponible para apostar'
+        });
+        continue;
+      }
+
+      // Verificar apuesta duplicada
+      const [apuestaExistente] = await executeQuery(
+        'SELECT id_apuesta FROM apuestas_usuarios WHERE id_usuario = ? AND id_partido = ?',
+        [idUsuario, idPartido]
+      );
+
+      if (apuestaExistente) {
+        fallidas.push({
+          equipoLocal: partidoInfo?.equipoLocal || 'Desconocido',
+          equipoVisita: partidoInfo?.equipoVisita || 'Desconocido',
+          tipoApuesta: tipo,
+          error: 'Ya apostaste en este partido'
+        });
+        continue;
+      }
+
+      // Obtener cuota
+      const [cuotaData] = await executeQuery(
+        'SELECT cuota_decimal FROM cuotas_partidos WHERE id_partido = ? AND tipo_resultado = ? AND activa = 1',
+        [idPartido, tipo]
+      );
+
+      if (!cuotaData) {
+        fallidas.push({
+          equipoLocal: partidoInfo?.equipoLocal || 'Desconocido',
+          equipoVisita: partidoInfo?.equipoVisita || 'Desconocido',
+          tipoApuesta: tipo,
+          error: 'Cuota no disponible'
+        });
+        continue;
+      }
+
+      // Crear apuesta
+      const MONTO_FIJO_APUESTA = 10000.00;
+      const retornoPotencial = (MONTO_FIJO_APUESTA * cuotaData.cuota_decimal).toFixed(2);
+
+      await executeQuery(
+        `INSERT INTO apuestas_usuarios
+          (id_usuario, id_partido, id_torneo, tipo_apuesta, id_equipo_predicho, monto_apuesta, valor_cuota, retorno_potencial, estado)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, 'pendiente')`,
+        [idUsuario, idPartido, partido.ID_TORNEO, tipo, idEquipoPredicho || null, MONTO_FIJO_APUESTA, cuotaData.cuota_decimal, retornoPotencial]
+      );
+
+      exitosas.push({
+        equipoLocal: partidoInfo?.equipoLocal || 'Desconocido',
+        equipoVisita: partidoInfo?.equipoVisita || 'Desconocido',
+        tipoApuesta: tipo
+      });
+
+    } catch (error) {
+      console.error('[APUESTAS BATCH] Error en apuesta:', error);
+      fallidas.push({
+        equipoLocal: apuesta.partidoInfo?.equipoLocal || 'Desconocido',
+        equipoVisita: apuesta.partidoInfo?.equipoVisita || 'Desconocido',
+        tipoApuesta: apuesta.tipo || 'N/A',
+        error: 'Error al procesar'
+      });
+    }
+  }
+
+  console.log(`[APUESTAS BATCH] Usuario ${req.user.username}: ${exitosas.length} exitosas, ${fallidas.length} fallidas`);
+
+  res.status(200).json({
+    message: `Proceso completado: ${exitosas.length} exitosas, ${fallidas.length} fallidas`,
+    exitosas,
+    fallidas
+  });
+};
+
+/**
  * Obtener apuestas del usuario autenticado
  * GET /api/apuestas/mis-apuestas?estado=&torneo=&fecha=
  */
@@ -383,9 +499,11 @@ exports.getUsuariosConApuestas = async (req, res) => {
  */
 exports.limpiarApuestasUsuario = async (req, res) => {
   const { idUsuario, idTorneo } = req.params;
+  const { fecha } = req.query; // Fecha opcional desde query params
 
   try {
-    console.log(`[APUESTAS] Admin ${req.user.username} limpiando apuestas del usuario ${idUsuario} en torneo ${idTorneo}`);
+    const fechaTexto = fecha ? ` (Fecha ${fecha})` : '';
+    console.log(`[APUESTAS] Admin ${req.user.username} limpiando apuestas del usuario ${idUsuario} en torneo ${idTorneo}${fechaTexto}`);
 
     // Verificar que el usuario existe
     const [usuario] = await executeQuery(
@@ -407,39 +525,60 @@ exports.limpiarApuestasUsuario = async (req, res) => {
       return res.status(404).json({ error: 'Torneo no encontrado' });
     }
 
+    // Construir queries dinámicamente según si hay fecha o no
+    let countQuery = `
+      SELECT COUNT(*) as total
+      FROM apuestas_usuarios au
+      INNER JOIN HECHOS_RESULTADOS hr ON au.id_partido = hr.ID_PARTIDO
+      WHERE au.id_usuario = ? AND au.id_torneo = ?
+    `;
+    let deleteHistorialQuery = `
+      DELETE hp FROM historial_puntos hp
+      INNER JOIN apuestas_usuarios au ON hp.id_apuesta = au.id_apuesta
+      INNER JOIN HECHOS_RESULTADOS hr ON au.id_partido = hr.ID_PARTIDO
+      WHERE hp.id_usuario = ? AND hp.id_torneo = ?
+    `;
+    let deleteApuestasQuery = `
+      DELETE au FROM apuestas_usuarios au
+      INNER JOIN HECHOS_RESULTADOS hr ON au.id_partido = hr.ID_PARTIDO
+      WHERE au.id_usuario = ? AND au.id_torneo = ?
+    `;
+
+    const queryParams = [idUsuario, idTorneo];
+
+    // Si se especifica fecha, agregar filtro
+    if (fecha) {
+      countQuery += ' AND hr.FECHA_TORNEO = ?';
+      deleteHistorialQuery += ' AND hr.FECHA_TORNEO = ?';
+      deleteApuestasQuery += ' AND hr.FECHA_TORNEO = ?';
+      queryParams.push(fecha);
+    }
+
     // Obtener el conteo de apuestas antes de eliminar
-    const [countResult] = await executeQuery(
-      'SELECT COUNT(*) as total FROM apuestas_usuarios WHERE id_usuario = ? AND id_torneo = ?',
-      [idUsuario, idTorneo]
-    );
+    const [countResult] = await executeQuery(countQuery, queryParams);
 
     const totalApuestas = countResult.total;
 
     if (totalApuestas === 0) {
       return res.status(200).json({
-        message: `El usuario ${usuario.username} no tiene apuestas en el torneo ${torneo.NOMBRE}`,
+        message: `El usuario ${usuario.username} no tiene apuestas en el torneo ${torneo.NOMBRE}${fechaTexto}`,
         apuestas_eliminadas: 0
       });
     }
 
     // Eliminar historial de puntos asociados a estas apuestas
-    await executeQuery(
-      'DELETE FROM historial_puntos WHERE id_usuario = ? AND id_torneo = ?',
-      [idUsuario, idTorneo]
-    );
+    await executeQuery(deleteHistorialQuery, queryParams);
 
-    // Eliminar las apuestas del usuario en el torneo
-    await executeQuery(
-      'DELETE FROM apuestas_usuarios WHERE id_usuario = ? AND id_torneo = ?',
-      [idUsuario, idTorneo]
-    );
+    // Eliminar las apuestas del usuario en el torneo (y fecha si aplica)
+    await executeQuery(deleteApuestasQuery, queryParams);
 
-    console.log(`[APUESTAS] Limpieza completada: ${totalApuestas} apuestas eliminadas del usuario ${usuario.username} en torneo ${torneo.NOMBRE}`);
+    console.log(`[APUESTAS] Limpieza completada: ${totalApuestas} apuestas eliminadas del usuario ${usuario.username} en torneo ${torneo.NOMBRE}${fechaTexto}`);
 
     res.json({
-      message: `Apuestas del usuario ${usuario.username} eliminadas exitosamente del torneo ${torneo.NOMBRE}`,
+      message: `Apuestas del usuario ${usuario.username} eliminadas exitosamente del torneo ${torneo.NOMBRE}${fechaTexto}`,
       usuario: usuario.username,
       torneo: torneo.NOMBRE,
+      fecha: fecha || 'Todas',
       apuestas_eliminadas: totalApuestas
     });
 
@@ -525,7 +664,9 @@ exports.getTorneosYFechasUsuario = async (req, res) => {
       `SELECT DISTINCT
         t.ID_TORNEO,
         t.NOMBRE,
-        t.TEMPORADA
+        t.TEMPORADA,
+        t.RUEDA,
+        t.FORMATO_TORNEO
       FROM apuestas_usuarios a
       INNER JOIN DIM_TORNEO t ON a.id_torneo = t.ID_TORNEO
       WHERE a.id_usuario = ?
@@ -541,13 +682,27 @@ exports.getTorneosYFechasUsuario = async (req, res) => {
         `SELECT DISTINCT p.NUMERO_JORNADA
         FROM apuestas_usuarios a
         INNER JOIN HECHOS_RESULTADOS p ON a.id_partido = p.ID_PARTIDO
-        WHERE a.id_usuario = ? AND a.id_torneo = ?
+        WHERE a.id_usuario = ?
+          AND a.id_torneo = ?
+          AND p.NUMERO_JORNADA IS NOT NULL
         ORDER BY p.NUMERO_JORNADA ASC`,
         [idUsuario, torneo.ID_TORNEO]
       );
 
-      fechasPorTorneo[torneo.ID_TORNEO] = fechas.map(f => f.NUMERO_JORNADA).filter(Boolean);
+      const fechasArray = fechas.map(f => f.NUMERO_JORNADA).filter(Boolean);
+
+      console.log(`[APUESTAS] Fechas encontradas para torneo ${torneo.ID_TORNEO}:`, {
+        fechasRaw: fechas,
+        fechasArray: fechasArray
+      });
+
+      fechasPorTorneo[torneo.ID_TORNEO] = fechasArray;
     }
+
+    console.log('[APUESTAS] Torneos y fechas del usuario:', {
+      torneos: torneos.map(t => ({ id: t.ID_TORNEO, nombre: t.NOMBRE })),
+      fechasPorTorneo
+    });
 
     res.json({
       torneos,
@@ -557,5 +712,140 @@ exports.getTorneosYFechasUsuario = async (req, res) => {
   } catch (error) {
     console.error('[APUESTAS] Error obteniendo torneos y fechas:', error);
     res.status(500).json({ error: 'Error al obtener torneos y fechas' });
+  }
+};
+
+/**
+ * Obtener partidos por torneo y fecha (para verificación antes de limpiar)
+ * GET /api/apuestas/partidos-por-fecha?torneoId=X&fecha=Y
+ */
+exports.getPartidosPorFecha = async (req, res) => {
+  const { torneoId, fecha } = req.query;
+
+  try {
+    console.log(`[APUESTAS] Admin ${req.user.username} consultando partidos del torneo ${torneoId}, fecha ${fecha}`);
+
+    if (!torneoId || !fecha) {
+      return res.status(400).json({ error: 'torneoId y fecha son requeridos' });
+    }
+
+    // Obtener partidos de la fecha especificada con información de apuestas
+    const partidos = await executeQuery(
+      `SELECT
+        p.ID_PARTIDO,
+        p.FECHA_PARTIDO,
+        p.NUMERO_JORNADA as FECHA_TORNEO,
+        p.ESTADO_PARTIDO,
+        p.GOLES_LOCAL,
+        p.GOLES_VISITA,
+        el.NOMBRE as equipo_local,
+        ev.NOMBRE as equipo_visita,
+        COUNT(a.id_apuesta) as total_apuestas
+      FROM HECHOS_RESULTADOS p
+      INNER JOIN DIM_EQUIPO el ON p.ID_EQUIPO_LOCAL = el.ID_EQUIPO
+      INNER JOIN DIM_EQUIPO ev ON p.ID_EQUIPO_VISITA = ev.ID_EQUIPO
+      LEFT JOIN apuestas_usuarios a ON p.ID_PARTIDO = a.id_partido
+      WHERE p.ID_TORNEO = ? AND p.NUMERO_JORNADA = ?
+      GROUP BY p.ID_PARTIDO
+      ORDER BY p.FECHA_PARTIDO ASC`,
+      [torneoId, fecha]
+    );
+
+    res.json({
+      success: true,
+      partidos
+    });
+
+  } catch (error) {
+    console.error('[APUESTAS] Error obteniendo partidos por fecha:', error);
+    res.status(500).json({ error: 'Error al obtener partidos' });
+  }
+};
+
+/**
+ * Limpiar resultados de partidos para modo replay (solo admin)
+ * POST /api/apuestas/limpiar-resultados
+ * Body: { torneoId, fecha }
+ */
+exports.limpiarResultados = async (req, res) => {
+  const { torneoId, fecha } = req.body;
+
+  try {
+    console.log(`[APUESTAS] Admin ${req.user.username} limpiando resultados del torneo ${torneoId}, fecha ${fecha}`);
+
+    if (!torneoId || !fecha) {
+      return res.status(400).json({ error: 'torneoId y fecha son requeridos' });
+    }
+
+    // Obtener información del torneo
+    const [torneo] = await executeQuery(
+      'SELECT ID_TORNEO, NOMBRE FROM DIM_TORNEO WHERE ID_TORNEO = ?',
+      [torneoId]
+    );
+
+    if (!torneo) {
+      return res.status(404).json({ error: 'Torneo no encontrado' });
+    }
+
+    // Contar partidos afectados
+    const [countResult] = await executeQuery(
+      `SELECT COUNT(*) as total
+      FROM HECHOS_RESULTADOS
+      WHERE ID_TORNEO = ? AND NUMERO_JORNADA = ?`,
+      [torneoId, fecha]
+    );
+
+    const totalPartidos = countResult.total;
+
+    if (totalPartidos === 0) {
+      return res.status(404).json({
+        error: `No se encontraron partidos para el torneo ${torneo.NOMBRE}, fecha ${fecha}`
+      });
+    }
+
+    // 1. Marcar todas las apuestas de estos partidos como "pendiente" y resetear puntos
+    const updateApuestasResult = await executeQuery(
+      `UPDATE apuestas_usuarios a
+      INNER JOIN HECHOS_RESULTADOS p ON a.id_partido = p.ID_PARTIDO
+      SET a.estado = 'pendiente', a.puntos_ganados = 0
+      WHERE p.ID_TORNEO = ? AND p.NUMERO_JORNADA = ?`,
+      [torneoId, fecha]
+    );
+
+    const apuestasActualizadas = updateApuestasResult.affectedRows || 0;
+
+    // 2. Eliminar registros de historial_puntos de estas apuestas
+    await executeQuery(
+      `DELETE hp FROM historial_puntos hp
+      INNER JOIN apuestas_usuarios a ON hp.id_apuesta = a.id_apuesta
+      INNER JOIN HECHOS_RESULTADOS p ON a.id_partido = p.ID_PARTIDO
+      WHERE p.ID_TORNEO = ? AND p.NUMERO_JORNADA = ?`,
+      [torneoId, fecha]
+    );
+
+    // 3. Limpiar resultados de los partidos (goles a NULL, estado a PROGRAMADO)
+    await executeQuery(
+      `UPDATE HECHOS_RESULTADOS
+      SET GOLES_LOCAL = NULL,
+          GOLES_VISITA = NULL,
+          ESTADO_PARTIDO = 'PROGRAMADO'
+      WHERE ID_TORNEO = ? AND NUMERO_JORNADA = ?`,
+      [torneoId, fecha]
+    );
+
+    console.log(`[APUESTAS] Limpieza completada: ${totalPartidos} partidos, ${apuestasActualizadas} apuestas marcadas como pendientes`);
+
+    res.json({
+      success: true,
+      message: 'Resultados limpiados exitosamente',
+      torneo: torneo.NOMBRE,
+      fecha: fecha,
+      partidos_actualizados: totalPartidos,
+      apuestas_actualizadas: apuestasActualizadas
+    });
+
+  } catch (error) {
+    console.error('[APUESTAS] Error limpiando resultados:', error);
+    res.status(500).json({ error: 'Error al limpiar resultados de partidos' });
   }
 };

@@ -17,7 +17,7 @@ function Login() {
     setError('');
 
     if (!username.trim() || !password.trim()) {
-      setError('Username y contraseña son requeridos');
+      setError('Usuario y contraseña son requeridos');
       return;
     }
 
@@ -41,63 +41,142 @@ function Login() {
   };
 
   return (
-    <div className="login-container">
-      <div className="login-card">
-        <div className="login-header">
-          <div className="logo-section">
-            <span className="logo-text">O'Higgins</span>
-            <span className="logo-subtext">Stats & Betting</span>
-          </div>
+    <div className="login-container-modern">
+      {/* Fondo animado con partículas */}
+      <div className="background-animation">
+        <div className="particle particle-1"></div>
+        <div className="particle particle-2"></div>
+        <div className="particle particle-3"></div>
+        <div className="particle particle-4"></div>
+        <div className="particle particle-5"></div>
+      </div>
+
+      {/* Layout principal con 3 columnas */}
+      <div className="login-layout">
+        {/* Imagen Izquierda - Bienvenido */}
+        <div className="login-image-container login-image-left">
+          <img
+            src="/images/site/bienvenido.png"
+            alt="Bienvenido a O'Higgins Stats"
+            className="login-side-image"
+          />
         </div>
 
-        <form onSubmit={handleSubmit} className="login-form">
-          <h2>Iniciar Sesión</h2>
+        {/* Card de Login - Centro */}
+        <div className="login-card-modern">
+        {/* Header con Insignia de O'Higgins */}
+        <div className="login-header-modern">
+          <div className="badge-container">
+            <img
+              src="/images/equipos/ohiggins.png"
+              alt="O'Higgins Badge"
+              className="team-badge"
+            />
+            <div className="badge-glow"></div>
+          </div>
+          <h1 className="login-title">
+            <span className="title-ohiggins">O'HIGGINS BETS</span>
+            <span className="title-subtitle">Plataforma para celestes</span>
+          </h1>
+          <div className="title-underline"></div>
+        </div>
+
+        {/* Formulario */}
+        <form onSubmit={handleSubmit} className="login-form-modern">
+          <h2 className="form-title">Iniciar Sesión</h2>
 
           {error && (
-            <div className="alert alert-error">
-              {error}
+            <div className="alert-modern alert-error-modern">
+              <div className="alert-icon-modern">⚠️</div>
+              <div className="alert-content">
+                <span className="alert-text">{error}</span>
+              </div>
             </div>
           )}
 
-          <div className="form-group">
-            <label htmlFor="username">Usuario</label>
-            <input
-              type="text"
-              id="username"
-              value={username}
-              onChange={(e) => setUsername(e.target.value)}
-              placeholder="Ingresa tu usuario"
-              autoComplete="username"
-              disabled={isSubmitting}
-            />
+          <div className="form-group-modern">
+            <label htmlFor="username" className="form-label-modern">
+              Usuario
+            </label>
+            <div className="input-wrapper">
+              <input
+                type="text"
+                id="username"
+                value={username}
+                onChange={(e) => setUsername(e.target.value)}
+                placeholder="Ingresa tu usuario"
+                autoComplete="username"
+                disabled={isSubmitting}
+                className="form-input-modern"
+              />
+              <div className="input-highlight"></div>
+            </div>
           </div>
 
-          <div className="form-group">
-            <label htmlFor="password">Contraseña</label>
-            <input
-              type="password"
-              id="password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              placeholder="Ingresa tu contraseña"
-              autoComplete="current-password"
-              disabled={isSubmitting}
-            />
+          <div className="form-group-modern">
+            <label htmlFor="password" className="form-label-modern">
+              Contraseña
+            </label>
+            <div className="input-wrapper">
+              <input
+                type="password"
+                id="password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                placeholder="Ingresa tu contraseña"
+                autoComplete="current-password"
+                disabled={isSubmitting}
+                className="form-input-modern"
+              />
+              <div className="input-highlight"></div>
+            </div>
           </div>
 
           <button
             type="submit"
-            className="btn-login"
+            className="btn-login-modern"
             disabled={isSubmitting}
           >
-            {isSubmitting ? 'Ingresando...' : 'Ingresar'}
+            <span className="btn-text">
+              {isSubmitting ? 'Ingresando...' : 'INGRESAR'}
+            </span>
+            <div className="btn-shine"></div>
           </button>
 
-          <div className="login-footer">
-            <p>¿No tienes cuenta? <Link to="/register">Regístrate aquí</Link></p>
+          <div className="divider-modern">
+            <span>o</span>
+          </div>
+
+          <div className="login-footer-modern">
+            {/* <p className="footer-text">
+              ¿No tienes cuenta?
+            </p>
+            <Link to="/register" className="register-link-modern">
+              <span>Regístrate Gratis</span>
+              <span className="link-arrow">→</span>
+            </Link> */}
           </div>
         </form>
+
+          {/* Footer decorativo */}
+          <div className="card-footer-decoration">
+            <div className="decoration-line"></div>
+          </div>
+        </div>
+
+        {/* Imagen Derecha - Registro */}
+        <div className="login-image-container login-image-right">
+          <img
+            src="/images/site/registro.png"
+            alt="Regístrate en O'Higgins Stats"
+            className="login-side-image"
+          />
+        </div>
       </div>
+
+      {/* Elementos decorativos de fondo */}
+      <div className="bg-decoration bg-decoration-1"></div>
+      <div className="bg-decoration bg-decoration-2"></div>
     </div>
   );
 }

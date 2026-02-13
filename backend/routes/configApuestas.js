@@ -7,9 +7,9 @@ const router = express.Router();
 /**
  * GET /api/config-apuestas
  * Obtener configuración global de apuestas
- * Requiere autenticación
+ * PÚBLICO - No requiere autenticación (información visible para todos)
  */
-router.get('/', authenticateToken, configApuestasController.getConfig);
+router.get('/', configApuestasController.getConfig);
 
 /**
  * PUT /api/config-apuestas
@@ -24,5 +24,12 @@ router.put('/', authenticateToken, requireAdmin, configApuestasController.update
  * Requiere autenticación y rol de administrador
  */
 router.get('/torneos-fechas', authenticateToken, requireAdmin, configApuestasController.getTorneosFechas);
+
+/**
+ * GET /api/config-apuestas/partidos/:idTorneo/:fecha
+ * Obtener partidos de un torneo/fecha específica con sus cuotas
+ * Requiere autenticación y rol de administrador
+ */
+router.get('/partidos/:idTorneo/:fecha', authenticateToken, requireAdmin, configApuestasController.getPartidosPorTorneoFecha);
 
 module.exports = router;

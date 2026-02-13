@@ -79,6 +79,7 @@ frontend/.env.production.local
 fbr_api_project/fbr_get_all_players/chilean_first_division_players/*.csv
 fbr_api_project/fbr_get_all_players/chilean_matches_data/*.csv
 fbr_api_project/fbr_get_all_players/team_matches_data/*.csv
+fbr_api_project/match_data/
 statsPipeline/*.csv
 **/team_*_players_*.csv
 **/partidos_equipo_*.csv
@@ -128,6 +129,18 @@ coverage/
 db_backup/
 backups/
 
+# Archivos SQL de diagnóstico, consultas y correcciones temporales (NO schema)
+# Estos archivos son queries de diagnóstico/debug y NO deben versionarse
+consulta_*.sql
+diagnostico_*.sql
+verificar_*.sql
+verificacion_*.sql
+corregir_*.sql
+reporte_*.sql
+prueba_*.sql
+agregar_*.sql
+asignar_*.sql
+
 # =====================================
 # 🖼️ MULTIMEDIA TEMPORAL
 # =====================================
@@ -135,6 +148,11 @@ backups/
 # (Mantener solo archivos esenciales de documentación)
 ejemploresultados.png
 gestionpartidos.png
+botonesmorados.png
+tablapartidos.png
+*.screenshot.png
+*.temp.png
+*.debug.png
 
 # PDFs temporales
 # NOTA: Fixture-Liga-de-Primera-2026.pdf podría moverse a docs/references/
@@ -225,6 +243,20 @@ tmp/
 
 # Claude Code scratchpad (temporal)
 .claude/scratchpad/
+
+# Documentación temporal de cambios/diagnósticos (NO permanente)
+# Estas son notas temporales de implementación que NO deben versionarse
+CAMBIOS_*.md
+CONFIRMACION_*.md
+CORRECCIONES_*.md
+DIAGNOSTICO_*.md
+IMPLEMENTACION_*.md
+INSTRUCCIONES_*.md
+SISTEMA_*.md
+SOLUCION_*.md
+SUGERENCIAS_*.md
+REPORTE_*.md
+NOTAS_*.md
 
 # =====================================
 # ✅ ARCHIVOS QUE SÍ DEBEN VERSIONARSE

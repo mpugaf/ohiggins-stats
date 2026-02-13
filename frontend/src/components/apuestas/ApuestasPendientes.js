@@ -12,6 +12,7 @@ function ApuestasPendientes({ onApuestaCreada }) {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [showConfirmModal, setShowConfirmModal] = useState(false);
   const [resultado, setResultado] = useState(null);
+  const [configInfo, setConfigInfo] = useState(null);
 
   useEffect(() => {
     fetchPartidosSinApostar();
@@ -27,6 +28,13 @@ function ApuestasPendientes({ onApuestaCreada }) {
 
       if (data.success) {
         setPartidos(data.partidos || []);
+
+        // Guardar información de configuración
+        setConfigInfo({
+          torneo_activo_id: data.torneo_activo_id,
+          torneo_activo_nombre: data.torneo_activo_nombre,
+          fecha_activa: data.fecha_activa
+        });
 
         // Cargar cuotas para cada partido
         const cuotasTemp = {};
@@ -144,56 +152,73 @@ function ApuestasPendientes({ onApuestaCreada }) {
     };
   };
 
+  // Agrupar partidos por torneo
+  const partidosAgrupados = React.useMemo(() => {
+    const grupos = {};
+    partidos.forEach(partido => {
+      const torneoKey = partido.nombre_torneo || 'Sin torneo';
+      if (!grupos[torneoKey]) {
+        grupos[torneoKey] = [];
+      }
+      grupos[torneoKey].push(partido);
+    });
+    return grupos;
+  }, [partidos]);
+
   if (loading) {
     return (
-      <div className="partidos-disponibles-container">
+      <div className="apuestas-plus-container">
         <div className="loading-spinner"></div>
-        <p>Cargando partidos pendientes de apostar...</p>
       </div>
     );
   }
 
   return (
-    <div className="partidos-disponibles-container">
-      <div className="section-header">
-        <h2 className="section-title">⏳ Apuestas Pendientes</h2>
-        <p className="section-subtitle">
-          Partidos del torneo/fecha activa donde aún no has apostado
-        </p>
-      </div>
+    <div className="apuestas-plus-container">
+      <h2 className="apuestas-plus-title">Apuestas Pendientes</h2>
+
+      {/* Información de configuración activa */}
+      {configInfo && (configInfo.torneo_activo_id || configInfo.fecha_activa) && (
+        <div className="info-banner">
+          <div className="info-content">
+            <strong>Configuración Activa</strong>
+            <p>
+              {configInfo.torneo_activo_nombre && `Torneo: ${configInfo.torneo_activo_nombre}`}
+              {configInfo.fecha_activa && ` | Fecha: ${configInfo.fecha_activa}`}
+            </p>
+          </div>
+        </div>
+      )}
 
       {error && (
         <div className="error-alert">
-          <span className="alert-icon">⚠️</span>
+          <span className="alert-icon">⚠</span>
           <span>{error}</span>
         </div>
       )}
 
       {resultado && (
-        <div className="resultado-apuestas">
+        <div className="resultado-envio">
           {resultado.exitosas.length > 0 && (
             <div className="resultado-exitosas">
-              <h3>✅ Apuestas realizadas exitosamente ({resultado.exitosas.length})</h3>
-              <ul>
-                {resultado.exitosas.map((r, idx) => (
-                  <li key={idx}>
-                    {r.equipoLocal} vs {r.equipoVisita} - Apostaste: {r.tipoApuesta}
-                  </li>
-                ))}
-              </ul>
+              <h4>Apuestas realizadas exitosamente ({resultado.exitosas.length})</h4>
+              {resultado.exitosas.map((r, idx) => (
+                <div key={idx} className="resultado-item">
+                  {r.equipoLocal} vs {r.equipoVisita} - Apostaste: {r.tipoApuesta}
+                </div>
+              ))}
             </div>
           )}
 
           {resultado.fallidas.length > 0 && (
             <div className="resultado-fallidas">
-              <h3>❌ Apuestas fallidas ({resultado.fallidas.length})</h3>
-              <ul>
-                {resultado.fallidas.map((r, idx) => (
-                  <li key={idx}>
-                    {r.equipoLocal} vs {r.equipoVisita} - Error: {r.error}
-                  </li>
-                ))}
-              </ul>
+              <h4>Apuestas fallidas ({resultado.fallidas.length})</h4>
+              {resultado.fallidas.map((r, idx) => (
+                <div key={idx} className="resultado-item">
+                  <div>{r.equipoLocal} vs {r.equipoVisita}</div>
+                  <div className="error-texto">Error: {r.error}</div>
+                </div>
+              ))}
             </div>
           )}
         </div>
@@ -201,113 +226,101 @@ function ApuestasPendientes({ onApuestaCreada }) {
 
       {partidos.length === 0 ? (
         <div className="empty-state">
-          <div className="empty-icon">🎉</div>
-          <p className="empty-message">¡Excelente!</p>
+          <div className="empty-icon">⚽</div>
+          <p>No hay partidos disponibles para apostar</p>
           <p className="empty-hint">
-            Ya has apostado en todos los partidos disponibles del torneo/fecha activa
+            {!configInfo?.torneo_activo_id
+              ? 'El administrador debe configurar un torneo activo antes de que puedas realizar apuestas.'
+              : 'Ya has apostado en todos los partidos disponibles del torneo/fecha activa.'}
           </p>
         </div>
       ) : (
         <>
-          <div className="partidos-grid">
-            {partidos.map((partido) => {
-              const cuotas = getCuotasPorTipo(partido.ID_PARTIDO);
-              const apuestaSeleccionada = apuestasSeleccionadas[partido.ID_PARTIDO];
+          {/* Renderizar por grupos de torneo */}
+          {Object.entries(partidosAgrupados).map(([nombreTorneo, partidosTorneo]) => (
+            <div key={nombreTorneo} className="torneo-section">
+              {/* Título del torneo */}
+              <h3 className="torneo-title">{nombreTorneo}</h3>
 
-              return (
-                <div
-                  key={partido.ID_PARTIDO}
-                  className={`partido-card ${apuestaSeleccionada ? 'partido-seleccionado' : ''}`}
-                >
-                  <div className="partido-header">
-                    <span className="partido-torneo">{partido.nombre_torneo}</span>
-                    <span className="partido-fecha">{formatFecha(partido.FECHA_PARTIDO)}</span>
-                  </div>
+              {/* Tabla de partidos */}
+              {partidosTorneo.map((partido) => {
+                const cuotas = getCuotasPorTipo(partido.ID_PARTIDO);
+                const apuestaSeleccionada = apuestasSeleccionadas[partido.ID_PARTIDO];
 
-                  <div className="partido-equipos">
-                    <div className="equipo">
-                      <TeamLogo
-                        imagen={partido.imagen_local}
-                        nombreEquipo={partido.equipo_local}
-                        size="large"
-                      />
-                      <span className="equipo-nombre">{partido.equipo_local}</span>
+                return (
+                  <div key={partido.ID_PARTIDO} className="partido-tabla">
+                    {/* Fecha del partido */}
+                    <div className="partido-fecha-header">
+                      {formatFecha(partido.FECHA_PARTIDO)}
                     </div>
 
-                    <div className="vs-separator">VS</div>
-
-                    <div className="equipo">
-                      <TeamLogo
-                        imagen={partido.imagen_visita}
-                        nombreEquipo={partido.equipo_visita}
-                        size="large"
-                      />
-                      <span className="equipo-nombre">{partido.equipo_visita}</span>
-                    </div>
-                  </div>
-
-                  <div className="cuotas-section">
-                    <h4 className="cuotas-titulo">Selecciona tu apuesta:</h4>
-
-                    <div className="cuotas-grid">
+                    {/* Tabla de 3 columnas: Local | Empate | Visita */}
+                    <div className="partido-grid">
+                      {/* Columna 1: Equipo Local */}
                       {cuotas.local && (
-                        <button
-                          className={`cuota-btn ${apuestaSeleccionada?.tipo === 'local' ? 'seleccionada' : ''}`}
+                        <div
+                          className={`opcion-cell opcion-local ${apuestaSeleccionada?.tipo === 'local' ? 'selected' : ''}`}
                           onClick={() => toggleSeleccionApuesta(partido, cuotas.local, 'local')}
-                          disabled={isSubmitting}
                         >
-                          <span className="cuota-label">Local</span>
-                          <span className="cuota-equipo">{partido.equipo_local}</span>
-                          <span className="cuota-valor">{parseFloat(cuotas.local.cuota_decimal).toFixed(2)}x</span>
-                        </button>
+                          <div className="opcion-logo">
+                            <TeamLogo
+                              imagen={partido.imagen_local}
+                              nombreEquipo={partido.equipo_local}
+                              size="large"
+                            />
+                          </div>
+                          <div className="opcion-cuota">
+                            {parseFloat(cuotas.local.cuota_decimal).toFixed(2)}
+                          </div>
+                        </div>
                       )}
 
+                      {/* Columna 2: Empate */}
                       {cuotas.empate && (
-                        <button
-                          className={`cuota-btn ${apuestaSeleccionada?.tipo === 'empate' ? 'seleccionada' : ''}`}
+                        <div
+                          className={`opcion-cell opcion-empate ${apuestaSeleccionada?.tipo === 'empate' ? 'selected' : ''}`}
                           onClick={() => toggleSeleccionApuesta(partido, cuotas.empate, 'empate')}
-                          disabled={isSubmitting}
                         >
-                          <span className="cuota-label">Empate</span>
-                          <span className="cuota-equipo">🤝</span>
-                          <span className="cuota-valor">{parseFloat(cuotas.empate.cuota_decimal).toFixed(2)}x</span>
-                        </button>
+                          <div className="opcion-label">EMPATE</div>
+                          <div className="opcion-cuota">
+                            {parseFloat(cuotas.empate.cuota_decimal).toFixed(2)}
+                          </div>
+                        </div>
                       )}
 
+                      {/* Columna 3: Equipo Visita */}
                       {cuotas.visita && (
-                        <button
-                          className={`cuota-btn ${apuestaSeleccionada?.tipo === 'visita' ? 'seleccionada' : ''}`}
+                        <div
+                          className={`opcion-cell opcion-visita ${apuestaSeleccionada?.tipo === 'visita' ? 'selected' : ''}`}
                           onClick={() => toggleSeleccionApuesta(partido, cuotas.visita, 'visita')}
-                          disabled={isSubmitting}
                         >
-                          <span className="cuota-label">Visita</span>
-                          <span className="cuota-equipo">{partido.equipo_visita}</span>
-                          <span className="cuota-valor">{parseFloat(cuotas.visita.cuota_decimal).toFixed(2)}x</span>
-                        </button>
+                          <div className="opcion-logo">
+                            <TeamLogo
+                              imagen={partido.imagen_visita}
+                              nombreEquipo={partido.equipo_visita}
+                              size="large"
+                            />
+                          </div>
+                          <div className="opcion-cuota">
+                            {parseFloat(cuotas.visita.cuota_decimal).toFixed(2)}
+                          </div>
+                        </div>
                       )}
                     </div>
                   </div>
-                </div>
-              );
-            })}
-          </div>
+                );
+              })}
+            </div>
+          ))}
 
           {Object.keys(apuestasSeleccionadas).length > 0 && (
-            <div className="submit-section">
-              <div className="submit-info">
-                <span className="submit-count">
-                  {Object.keys(apuestasSeleccionadas).length} apuesta(s) seleccionada(s)
-                </span>
-                <span className="submit-total">
-                  Total a apostar: $10,000 CLP x {Object.keys(apuestasSeleccionadas).length} = ${(10000 * Object.keys(apuestasSeleccionadas).length).toLocaleString('es-CL')} CLP
-                </span>
-              </div>
+            <div className="boton-confirmar-container">
               <button
                 className="btn-confirmar-apuestas"
                 onClick={abrirConfirmacion}
                 disabled={isSubmitting}
               >
-                Confirmar Apuestas
+                Confirmar {Object.keys(apuestasSeleccionadas).length} Apuesta(s) - ${(10000 * Object.keys(apuestasSeleccionadas).length).toLocaleString('es-CL')}
               </button>
             </div>
           )}
@@ -319,46 +332,56 @@ function ApuestasPendientes({ onApuestaCreada }) {
         <div className="modal-overlay" onClick={() => setShowConfirmModal(false)}>
           <div className="modal-content" onClick={(e) => e.stopPropagation()}>
             <div className="modal-header">
-              <h3>⚠️ Confirmar Apuestas</h3>
+              <h3>Confirmar Apuestas</h3>
+              <button className="btn-close" onClick={() => setShowConfirmModal(false)}>
+                &times;
+              </button>
             </div>
             <div className="modal-body">
-              <p className="modal-warning">
-                Estás a punto de realizar {Object.keys(apuestasSeleccionadas).length} apuesta(s).
-                <strong> Una vez confirmadas, no podrás modificarlas.</strong>
-              </p>
+              <div className="modal-warning">
+                <strong>¿Está seguro de confirmar estas apuestas?</strong>
+                <p>Las apuestas realizadas NO PODRÁN SER MODIFICADAS una vez confirmadas.</p>
+              </div>
 
-              <div className="modal-apuestas-lista">
+              <div className="resumen-apuestas">
                 <h4>Resumen de apuestas:</h4>
                 {Object.values(apuestasSeleccionadas).map((apuesta, idx) => (
-                  <div key={idx} className="modal-apuesta-item">
-                    <span className="modal-partido">
+                  <div key={idx} className="resumen-item">
+                    <div className="resumen-partido">
                       {apuesta.partidoInfo.equipoLocal} vs {apuesta.partidoInfo.equipoVisita}
-                    </span>
-                    <span className="modal-prediccion">
-                      Predicción: <strong>{apuesta.tipo.toUpperCase()}</strong>
-                    </span>
-                    <span className="modal-cuota">Cuota: {apuesta.cuota}x</span>
+                    </div>
+                    <div className="resumen-prediccion">
+                      Predicción: {apuesta.tipo.toUpperCase()}
+                    </div>
+                    <div className="resumen-cuota">
+                      Cuota: {apuesta.cuota}x
+                    </div>
+                    <div className="resumen-monto">
+                      $10,000 → ${(10000 * apuesta.cuota).toLocaleString('es-CL')}
+                    </div>
                   </div>
                 ))}
               </div>
 
-              <p className="modal-total">
-                <strong>Total a apostar: ${(10000 * Object.keys(apuestasSeleccionadas).length).toLocaleString('es-CL')} CLP</strong>
-              </p>
+              <div className="resumen-total">
+                <span>Total apuestas: {Object.keys(apuestasSeleccionadas).length}</span>
+                <span>Monto total: ${(10000 * Object.keys(apuestasSeleccionadas).length).toLocaleString('es-CL')}</span>
+              </div>
             </div>
             <div className="modal-footer">
               <button
-                className="btn-modal-cancelar"
+                className="btn-cancelar"
                 onClick={() => setShowConfirmModal(false)}
+                disabled={isSubmitting}
               >
                 Cancelar
               </button>
               <button
-                className="btn-modal-confirmar"
+                className="btn-confirmar"
                 onClick={confirmarApuestas}
                 disabled={isSubmitting}
               >
-                {isSubmitting ? 'Procesando...' : 'Sí, confirmar'}
+                {isSubmitting ? 'Procesando...' : 'Sí, confirmar apuestas'}
               </button>
             </div>
           </div>

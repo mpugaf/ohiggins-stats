@@ -96,19 +96,23 @@ exports.getPronosticosTodos = async (req, res) => {
 /**
  * Obtener tabla de posiciones
  * GET /api/pronosticos/tabla-posiciones
+ * Query params: idTorneo (requerido), fecha (opcional)
  * Basado en apuestas de 10,000 pesos por partido
  */
 exports.getTablaPosiciones = async (req, res) => {
   try {
-    // Obtener torneo y fecha configurados
-    const configData = await executeQuery(
-      `SELECT clave, valor FROM config_apuestas WHERE clave IN ('torneo_activo_id', 'fecha_habilitada')`
-    );
+    const { idTorneo, fecha } = req.query;
 
-    const configObj = {};
-    configData.forEach(item => {
-      configObj[item.clave] = item.valor;
-    });
+    // Validar que se proporcione el torneo
+    if (!idTorneo) {
+      return res.status(400).json({
+        success: false,
+        error: 'El parámetro idTorneo es requerido'
+      });
+    }
+
+    // Verificar si el usuario es admin (viene del middleware authenticateToken)
+    const esAdmin = req.user && req.user.role === 'admin';
 
     // Construir query con filtros
     let query = `
@@ -116,6 +120,7 @@ exports.getTablaPosiciones = async (req, res) => {
         u.id_usuario,
         u.username,
         u.nombre_completo,
+        u.activo,
         COUNT(a.id_apuesta) as total_apuestas,
         SUM(CASE WHEN a.estado = 'ganada' THEN 1 ELSE 0 END) as apuestas_ganadas,
         SUM(CASE WHEN a.estado = 'perdida' THEN 1 ELSE 0 END) as apuestas_perdidas,
@@ -132,21 +137,20 @@ exports.getTablaPosiciones = async (req, res) => {
       FROM usuarios u
       INNER JOIN apuestas_usuarios a ON u.id_usuario = a.id_usuario
       INNER JOIN HECHOS_RESULTADOS p ON a.id_partido = p.ID_PARTIDO
-      WHERE 1=1
+      WHERE a.id_torneo = ?
     `;
 
-    const params = [];
+    const params = [idTorneo];
 
-    // Filtrar por torneo si está configurado
-    if (configObj.torneo_activo_id && configObj.torneo_activo_id !== '') {
-      query += ' AND a.id_torneo = ?';
-      params.push(configObj.torneo_activo_id);
+    // Si NO es admin, filtrar solo usuarios activos
+    if (!esAdmin) {
+      query += ' AND u.activo = 1';
     }
 
-    // Filtrar por fecha si está configurada
-    if (configObj.fecha_habilitada && configObj.fecha_habilitada !== '') {
+    // Filtrar por fecha específica si se proporciona
+    if (fecha && fecha !== '' && fecha !== 'todas') {
       query += ' AND p.NUMERO_JORNADA = ?';
-      params.push(configObj.fecha_habilitada);
+      params.push(fecha);
     }
 
     query += `
@@ -165,8 +169,8 @@ exports.getTablaPosiciones = async (req, res) => {
     res.json({
       success: true,
       tabla: tablaConPosicion,
-      torneo: configObj.torneo_activo_id,
-      fecha: configObj.fecha_habilitada
+      torneo: idTorneo,
+      fecha: fecha || 'todas'
     });
 
   } catch (error) {
@@ -179,8 +183,111 @@ exports.getTablaPosiciones = async (req, res) => {
 };
 
 /**
+ * Obtener torneos disponibles con apuestas
+ * GET /api/pronosticos/torneos-disponibles
+ */
+exports.getTorneosDisponibles = async (req, res) => {
+  try {
+    const torneos = await executeQuery(`
+      SELECT DISTINCT
+        t.ID_TORNEO,
+        t.NOMBRE,
+        t.TEMPORADA
+      FROM DIM_TORNEO t
+      INNER JOIN apuestas_usuarios a ON t.ID_TORNEO = a.id_torneo
+      ORDER BY t.TEMPORADA DESC, t.NOMBRE ASC
+    `);
+
+    res.json({
+      success: true,
+      torneos
+    });
+
+  } catch (error) {
+    console.error('[PRONOSTICOS] Error obteniendo torneos:', error);
+    res.status(500).json({
+      success: false,
+      error: 'Error al obtener torneos disponibles'
+    });
+  }
+};
+
+/**
+ * Obtener fechas disponibles de un torneo
+ * GET /api/pronosticos/fechas-torneo/:idTorneo
+ */
+exports.getFechasTorneo = async (req, res) => {
+  try {
+    const { idTorneo } = req.params;
+
+    const fechas = await executeQuery(`
+      SELECT DISTINCT p.NUMERO_JORNADA as fecha
+      FROM HECHOS_RESULTADOS p
+      INNER JOIN apuestas_usuarios a ON p.ID_PARTIDO = a.id_partido
+      WHERE a.id_torneo = ?
+      ORDER BY p.NUMERO_JORNADA DESC
+    `, [idTorneo]);
+
+    res.json({
+      success: true,
+      fechas: fechas.map(f => f.fecha)
+    });
+
+  } catch (error) {
+    console.error('[PRONOSTICOS] Error obteniendo fechas del torneo:', error);
+    res.status(500).json({
+      success: false,
+      error: 'Error al obtener fechas del torneo'
+    });
+  }
+};
+
+/**
+ * Obtener la última fecha disponible
+ * GET /api/pronosticos/ultima-fecha
+ */
+exports.getUltimaFecha = async (req, res) => {
+  try {
+    const [ultimaInfo] = await executeQuery(`
+      SELECT
+        a.id_torneo,
+        t.NOMBRE as nombre_torneo,
+        p.NUMERO_JORNADA as ultima_fecha
+      FROM apuestas_usuarios a
+      INNER JOIN HECHOS_RESULTADOS p ON a.id_partido = p.ID_PARTIDO
+      INNER JOIN DIM_TORNEO t ON a.id_torneo = t.ID_TORNEO
+      ORDER BY p.NUMERO_JORNADA DESC
+      LIMIT 1
+    `);
+
+    if (!ultimaInfo) {
+      return res.json({
+        success: true,
+        torneo: null,
+        fecha: null
+      });
+    }
+
+    res.json({
+      success: true,
+      torneo: ultimaInfo.id_torneo,
+      fecha: ultimaInfo.ultima_fecha,
+      nombre_torneo: ultimaInfo.nombre_torneo
+    });
+
+  } catch (error) {
+    console.error('[PRONOSTICOS] Error obteniendo última fecha:', error);
+    res.status(500).json({
+      success: false,
+      error: 'Error al obtener última fecha disponible'
+    });
+  }
+};
+
+/**
  * Obtener apuestas de todos los usuarios por partido
  * GET /api/pronosticos/apuestas-por-partido
+ * Query params: idTorneo (opcional), fecha (opcional)
  * Solo accesible cuando las apuestas están deshabilitadas
  */
 exports.getApuestasPorPartido = async (req, res) => {
@@ -197,15 +304,26 @@ exports.getApuestasPorPartido = async (req, res) => {
       });
     }
 
-    // Obtener torneo y fecha configurados
-    const configData = await executeQuery(
-      `SELECT clave, valor FROM config_apuestas WHERE clave IN ('torneo_activo_id', 'fecha_habilitada')`
-    );
+    // Obtener torneo y fecha de query params O de configuración
+    const { idTorneo, fecha } = req.query;
 
-    const configObj = {};
-    configData.forEach(item => {
-      configObj[item.clave] = item.valor;
-    });
+    let torneoFinal = idTorneo;
+    let fechaFinal = fecha;
+
+    // Si no se proporcionan parámetros, usar configuración
+    if (!torneoFinal || !fechaFinal) {
+      const configData = await executeQuery(
+        `SELECT clave, valor FROM config_apuestas WHERE clave IN ('torneo_activo_id', 'fecha_habilitada')`
+      );
+
+      const configObj = {};
+      configData.forEach(item => {
+        configObj[item.clave] = item.valor;
+      });
+
+      torneoFinal = torneoFinal || configObj.torneo_activo_id;
+      fechaFinal = fechaFinal || configObj.fecha_habilitada;
+    }
 
     // Verificar si existe columna IMAGEN en DIM_EQUIPO
     let tieneColumnaImagen = false;
@@ -243,16 +361,16 @@ exports.getApuestasPorPartido = async (req, res) => {
 
     const params = [];
 
-    // Filtrar por torneo si está configurado
-    if (configObj.torneo_activo_id && configObj.torneo_activo_id !== '') {
+    // Filtrar por torneo si está especificado
+    if (torneoFinal && torneoFinal !== '') {
       queryPartidos += ' AND p.ID_TORNEO = ?';
-      params.push(configObj.torneo_activo_id);
+      params.push(torneoFinal);
     }
 
-    // Filtrar por fecha si está configurada
-    if (configObj.fecha_habilitada && configObj.fecha_habilitada !== '') {
+    // Filtrar por fecha si está especificada (no filtrar si es 'todas')
+    if (fechaFinal && fechaFinal !== '' && fechaFinal !== 'todas') {
       queryPartidos += ' AND p.NUMERO_JORNADA = ?';
-      params.push(configObj.fecha_habilitada);
+      params.push(fechaFinal);
     }
 
     queryPartidos += ' ORDER BY p.FECHA_PARTIDO, p.ID_PARTIDO';
@@ -301,8 +419,8 @@ exports.getApuestasPorPartido = async (req, res) => {
     res.json({
       success: true,
       partidos: partidosConApuestas,
-      torneo: configObj.torneo_activo_id,
-      fecha: configObj.fecha_habilitada
+      torneo: torneoFinal,
+      fecha: fechaFinal
     });
 
   } catch (error) {

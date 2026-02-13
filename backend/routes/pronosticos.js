@@ -15,9 +15,31 @@ router.get('/', authenticateToken, pronosticosController.getPronosticosTodos);
 /**
  * GET /api/pronosticos/tabla-posiciones
  * Obtener tabla de posiciones
+ * Query params: idTorneo (requerido), fecha (opcional)
  * Requiere autenticación
  */
 router.get('/tabla-posiciones', authenticateToken, pronosticosController.getTablaPosiciones);
+
+/**
+ * GET /api/pronosticos/torneos-disponibles
+ * Obtener lista de torneos con apuestas
+ * Requiere autenticación
+ */
+router.get('/torneos-disponibles', authenticateToken, pronosticosController.getTorneosDisponibles);
+
+/**
+ * GET /api/pronosticos/fechas-torneo/:idTorneo
+ * Obtener fechas disponibles de un torneo
+ * Requiere autenticación
+ */
+router.get('/fechas-torneo/:idTorneo', authenticateToken, pronosticosController.getFechasTorneo);
+
+/**
+ * GET /api/pronosticos/ultima-fecha
+ * Obtener la última fecha disponible
+ * Requiere autenticación
+ */
+router.get('/ultima-fecha', authenticateToken, pronosticosController.getUltimaFecha);
 
 /**
  * GET /api/pronosticos/apuestas-por-partido

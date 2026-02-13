@@ -12,6 +12,13 @@ const router = express.Router();
 router.post('/', authenticateToken, requireBettingPermission, apuestasController.crearApuesta);
 
 /**
+ * POST /api/apuestas/batch
+ * Crear múltiples apuestas en batch
+ * Requiere autenticación y permiso para apostar
+ */
+router.post('/batch', authenticateToken, requireBettingPermission, apuestasController.crearApuestasBatch);
+
+/**
  * GET /api/apuestas/mis-apuestas
  * Obtener apuestas del usuario autenticado
  * Query params: estado, torneo
@@ -53,5 +60,21 @@ router.get('/admin/usuarios-torneo/:idTorneo', authenticateToken, requireAdmin, 
  * Requiere autenticación y rol de administrador
  */
 router.delete('/admin/limpiar/:idUsuario/:idTorneo', authenticateToken, requireAdmin, apuestasController.limpiarApuestasUsuario);
+
+/**
+ * GET /api/apuestas/partidos-por-fecha
+ * Obtener partidos de un torneo/fecha específica con información de apuestas
+ * Query params: torneoId, fecha
+ * Requiere autenticación y rol de administrador
+ */
+router.get('/partidos-por-fecha', authenticateToken, requireAdmin, apuestasController.getPartidosPorFecha);
+
+/**
+ * POST /api/apuestas/limpiar-resultados
+ * Limpiar resultados de partidos para modo replay
+ * Body: { torneoId, fecha }
+ * Requiere autenticación y rol de administrador
+ */
+router.post('/limpiar-resultados', authenticateToken, requireAdmin, apuestasController.limpiarResultados);
 
 module.exports = router;

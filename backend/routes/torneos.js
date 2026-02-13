@@ -54,6 +54,16 @@ router.get('/data/positions', (req, res) => {
   playersController.getPositions(req, res);
 });
 
+// Obtener plantillas de fases disponibles
+router.get('/data/plantillas-fases', (req, res) => {
+  console.log('GET /torneos/data/plantillas-fases');
+  if (typeof torneoController.obtenerPlantillasFases === 'function') {
+    torneoController.obtenerPlantillasFases(req, res);
+  } else {
+    res.status(500).json({ error: 'Función obtenerPlantillasFases no implementada' });
+  }
+});
+
 // =============================================================================
 // RUTAS BÁSICAS CRUD PARA TORNEOS
 // =============================================================================
@@ -97,6 +107,26 @@ router.put('/:id', (req, res) => {
 router.delete('/:id', (req, res) => {
   console.log('DELETE /torneos/:id');
   torneoController.eliminarTorneo(req, res);
+});
+
+// Obtener fases de un torneo
+router.get('/:id/fases', (req, res) => {
+  console.log(`GET /torneos/${req.params.id}/fases`);
+  if (typeof torneoController.obtenerFasesTorneo === 'function') {
+    torneoController.obtenerFasesTorneo(req, res);
+  } else {
+    res.status(500).json({ error: 'Función obtenerFasesTorneo no implementada' });
+  }
+});
+
+// Agregar fase a un torneo
+router.post('/:id/fases', (req, res) => {
+  console.log(`POST /torneos/${req.params.id}/fases`);
+  if (typeof torneoController.agregarFaseTorneo === 'function') {
+    torneoController.agregarFaseTorneo(req, res);
+  } else {
+    res.status(500).json({ error: 'Función agregarFaseTorneo no implementada' });
+  }
 });
 
 // =============================================================================

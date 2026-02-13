@@ -20,6 +20,10 @@ const ListaTorneos = () => {
       setLoading(true);
       const response = await torneosService.getAll();
       const data = await handleResponse(response);
+      console.log('📋 Torneos recibidos del backend:', data);
+      if (data.length > 0) {
+        console.log('📋 Primer torneo (ejemplo):', data[0]);
+      }
       setTorneos(data);
       setError(null);
     } catch (error) {
@@ -145,7 +149,8 @@ const ListaTorneos = () => {
                   <th>Nombre</th>
                   <th>País Organizador</th>
                   <th>Temporada</th>
-                  <th>Rueda</th>
+                  <th>Formato</th>
+                  <th>Rueda/Fases</th>
                   <th>League ID FBR</th>
                   <th>Acciones</th>
                 </tr>
@@ -156,15 +161,49 @@ const ListaTorneos = () => {
                     <td>{torneo.ID_TORNEO || torneo.id}</td>
                     <td className="nombre-torneo">{torneo.NOMBRE}</td>
                     <td className="pais-organizador">
-                      <span className="pais-badge">
-                        {torneo.CODIGO_PAIS} - {torneo.NOMBRE_PAIS}
-                      </span>
+                      {(torneo.CODIGO_PAIS || torneo.CODIGO_FIFA) && torneo.NOMBRE_PAIS ? (
+                        <span className="pais-badge">
+                          {torneo.CODIGO_PAIS || torneo.CODIGO_FIFA} - {torneo.NOMBRE_PAIS}
+                        </span>
+                      ) : (
+                        <span className="pais-badge" style={{ opacity: 0.5 }}>
+                          Sin país
+                        </span>
+                      )}
                     </td>
                     <td className="temporada">{torneo.TEMPORADA}</td>
-                    <td className="rueda">
-                      <span className={`rueda-badge ${torneo.RUEDA.toLowerCase()}`}>
-                        {formatearRueda(torneo.RUEDA)}
+                    <td className="formato">
+                      <span className={`formato-badge ${torneo.FORMATO_TORNEO?.toLowerCase() || 'ruedas'}`}>
+                        {torneo.FORMATO_TORNEO === 'FASES' ? '🏆 Fases' : '⚽ Ruedas'}
                       </span>
+                    </td>
+                    <td className="rueda">
+                      {torneo.RUEDA ? (
+                        <span className={`rueda-badge ${torneo.RUEDA.toLowerCase()}`}>
+                          {formatearRueda(torneo.RUEDA)}
+                        </span>
+                      ) : torneo.FORMATO_TORNEO === 'FASES' && torneo.FASES && torneo.FASES.length > 0 ? (
+                        <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
+                          {torneo.FASES.slice(0, 3).map((fase, idx) => (
+                            <span key={idx} className="rueda-badge" style={{ opacity: 0.8, fontSize: '0.8em' }}>
+                              {fase.NOMBRE_FASE}
+                            </span>
+                          ))}
+                          {torneo.FASES.length > 3 && (
+                            <span className="rueda-badge" style={{ opacity: 0.5, fontSize: '0.75em' }}>
+                              +{torneo.FASES.length - 3} más
+                            </span>
+                          )}
+                        </div>
+                      ) : torneo.FORMATO_TORNEO === 'FASES' ? (
+                        <span className="rueda-badge" style={{ opacity: 0.5, fontSize: '0.85em' }}>
+                          Sin fases
+                        </span>
+                      ) : (
+                        <span className="rueda-badge" style={{ opacity: 0.5 }}>
+                          -
+                        </span>
+                      )}
                     </td>
                     <td className="league-id">
                       <code>{torneo.LEAGUE_ID_FBR}</code>

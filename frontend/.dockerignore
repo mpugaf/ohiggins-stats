@@ -1,0 +1,56 @@
+# ================================
+# FRONTEND .dockerignore
+# ================================
+
+# Node modules (se instalan en el contenedor)
+node_modules/
+npm-debug.log
+yarn-error.log
+
+# Build output (se genera en el contenedor)
+build/
+dist/
+
+# Archivos de entorno (se pasan como variables en docker-compose)
+.env
+.env.local
+.env.*.local
+
+# Git
+.git/
+.gitignore
+.gitattributes
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# Documentación temporal
+*.md
+!README.md
+
+# Testing
+coverage/
+.nyc_output/
+src/**/*.test.js
+src/**/*.spec.js
+
+# Archivos temporales
+*.tmp
+*.temp
+.cache/
+tmp/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Docker
+Dockerfile
+.dockerignore
+docker-compose.yml
+nginx.conf
+docker-entrypoint.sh

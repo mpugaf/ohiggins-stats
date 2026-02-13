@@ -46,7 +46,11 @@ const ListaUsuarios = () => {
 
   const handleToggleActivo = async (usuario) => {
     const accion = usuario.activo ? 'desactivar' : 'activar';
-    if (window.confirm(`¿Está seguro que desea ${accion} el usuario "${usuario.username}"?`)) {
+    const mensaje = usuario.activo
+      ? `¿Está seguro que desea desactivar el usuario "${usuario.username}"?\n\nEl usuario NO aparecerá en la tabla de posiciones/rankings.\nPodrá reactivarlo en cualquier momento.`
+      : `¿Está seguro que desea activar el usuario "${usuario.username}"?\n\nEl usuario aparecerá nuevamente en la tabla de posiciones/rankings.`;
+
+    if (window.confirm(mensaje)) {
       try {
         const response = await usuariosService.toggleActivo(usuario.id_usuario);
         const data = await handleResponse(response);
@@ -200,7 +204,9 @@ const ListaUsuarios = () => {
                         <button
                           onClick={() => handleToggleActivo(usuario)}
                           className={usuario.activo ? "btn-warning btn-sm" : "btn-success btn-sm"}
-                          title={usuario.activo ? "Desactivar usuario" : "Activar usuario"}
+                          title={usuario.activo
+                            ? "Desactivar usuario (no aparecerá en rankings)"
+                            : "Activar usuario (aparecerá en rankings)"}
                         >
                           {usuario.activo ? 'Desactivar' : 'Activar'}
                         </button>

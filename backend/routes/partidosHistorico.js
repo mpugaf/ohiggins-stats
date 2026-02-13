@@ -26,4 +26,11 @@ router.get('/torneos', authenticateToken, partidosHistoricoController.getTorneos
  */
 router.get('/torneos/:torneoId/fechas', authenticateToken, partidosHistoricoController.getFechasPorTorneo);
 
+/**
+ * GET /api/partidos-historico/torneos/:torneoId/equipos
+ * Obtener equipos que participaron en un torneo con partidos finalizados
+ * Requiere autenticación
+ */
+router.get('/torneos/:torneoId/equipos', authenticateToken, partidosHistoricoController.getEquiposPorTorneo);
+
 module.exports = router;

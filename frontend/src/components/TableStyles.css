@@ -733,3 +733,42 @@
   transform: translateY(-2px);
   box-shadow: 0 8px 25px rgba(33, 150, 243, 0.3);
 }
+/* =================================================================== */
+/* ESTILOS PARA BADGES DE FORMATO DE TORNEO */
+/* =================================================================== */
+
+.formato-badge {
+  padding: 5px 14px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: uppercase;
+  display: inline-block;
+  border: 1px solid;
+  transition: all 0.2s ease;
+}
+
+.formato-badge.ruedas {
+  background: rgba(33, 150, 243, 0.1);
+  color: #2196f3;
+  border-color: rgba(33, 150, 243, 0.3);
+}
+
+.formato-badge.fases {
+  background: rgba(156, 39, 176, 0.1);
+  color: #9c27b0;
+  border-color: rgba(156, 39, 176, 0.3);
+}
+
+.data-table tbody tr:hover .formato-badge {
+  transform: scale(1.05);
+  transition: transform 0.2s ease;
+}
+
+/* Responsive para formato-badge */
+@media (max-width: 768px) {
+  .formato-badge {
+    font-size: 10px;
+    padding: 3px 10px;
+  }
+}

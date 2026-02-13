@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { partidosHistoricoService, handleResponse } from '../../services/apiService';
+import TeamLogo from '../common/TeamLogo';
 import './PartidosHistoricos.css';
 
 function PartidosHistoricos() {
@@ -10,6 +11,10 @@ function PartidosHistoricos() {
   const [selectedTorneo, setSelectedTorneo] = useState('');
   const [selectedFecha, setSelectedFecha] = useState('');
   const [error, setError] = useState(null);
+
+  // Paginación
+  const [paginaActual, setPaginaActual] = useState(1);
+  const partidosPorPagina = 8;
 
   // Cargar torneos con partidos finalizados
   useEffect(() => {
@@ -26,7 +31,8 @@ function PartidosHistoricos() {
 
   // Cargar partidos cuando se selecciona una fecha
   useEffect(() => {
-    if (selectedFecha) {
+    if (selectedTorneo) {
+      setPaginaActual(1); // Reset página al cambiar fecha
       fetchPartidos();
     }
   }, [selectedFecha]);
@@ -68,8 +74,19 @@ function PartidosHistoricos() {
       const data = await handleResponse(response);
 
       if (data.success) {
-        setFechas(data.fechas || []);
-        setSelectedFecha(''); // Reset fecha selection
+        const fechasRecibidas = data.fechas || [];
+        setFechas(fechasRecibidas);
+
+        // Establecer la última fecha como default (la fecha más alta)
+        if (fechasRecibidas.length > 0) {
+          const ultimaFecha = Math.max(...fechasRecibidas.map(f => f.NUMERO_JORNADA));
+          setSelectedFecha(ultimaFecha.toString());
+        } else {
+          setSelectedFecha('');
+        }
+
+        // Reset paginación
+        setPaginaActual(1);
       }
     } catch (error) {
       console.error('Error al cargar fechas:', error);
@@ -134,6 +151,17 @@ function PartidosHistoricos() {
       default:
         return '';
     }
+  };
+
+  // Calcular paginación
+  const totalPaginas = Math.ceil(partidos.length / partidosPorPagina);
+  const indiceInicio = (paginaActual - 1) * partidosPorPagina;
+  const indiceFin = indiceInicio + partidosPorPagina;
+  const partidosPaginados = partidos.slice(indiceInicio, indiceFin);
+
+  const cambiarPagina = (numeroPagina) => {
+    setPaginaActual(numeroPagina);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
   if (loading && torneos.length === 0) {
@@ -239,67 +267,113 @@ function PartidosHistoricos() {
           </p>
         </div>
       ) : (
-        <div className="partidos-grid">
-          {partidos.map((partido) => (
-            <div key={partido.ID_PARTIDO} className="partido-card">
-              {/* Header del partido */}
-              <div className="partido-card-header">
-                <div className="partido-fecha">{formatFecha(partido.FECHA_PARTIDO)}</div>
-                <span className={`estado-badge ${getEstadoBadgeClass(partido.ESTADO_PARTIDO)}`}>
-                  {partido.ESTADO_PARTIDO}
-                </span>
-              </div>
+        <>
+          <div className="partidos-list">
+            {partidosPaginados.map((partido, index) => {
+            const isEven = index % 2 === 0;
+            return (
+              <div
+                key={partido.ID_PARTIDO}
+                className={`partido-row ${isEven ? 'row-dark' : 'row-light'}`}
+              >
+                {/* Info del partido (torneo, fecha y estado) */}
+                <div className="partido-info-header">
+                  <span className="torneo-nombre">{partido.nombre_torneo}</span>
+                  {partido.NUMERO_JORNADA && (
+                    <span className="jornada-badge">Fecha {partido.NUMERO_JORNADA}</span>
+                  )}
+                  <span className="partido-fecha">{formatFecha(partido.FECHA_PARTIDO)}</span>
+                  <span className={`estado-badge ${getEstadoBadgeClass(partido.ESTADO_PARTIDO)}`}>
+                    {partido.ESTADO_PARTIDO}
+                  </span>
+                </div>
 
-              {/* Información del torneo */}
-              <div className="partido-torneo-info">
-                <span className="torneo-nombre">{partido.nombre_torneo}</span>
-                {partido.NUMERO_JORNADA && (
-                  <span className="jornada-badge">Fecha {partido.NUMERO_JORNADA}</span>
+                {/* Fila principal con resultado */}
+                <div className="partido-row-content">
+                  {/* Equipo Local - CON LOGO */}
+                  <div className="equipo-cell equipo-local-cell">
+                    <TeamLogo
+                      imagen={partido.imagen_local}
+                      nombreEquipo={partido.equipo_local}
+                      size="small"
+                    />
+                    <span className="equipo-nombre">{partido.equipo_local}</span>
+                  </div>
+
+                  {/* Goles Local */}
+                  <div className="goles-cell">
+                    <div className="goles-value">{partido.GOLES_LOCAL ?? 0}</div>
+                  </div>
+
+                  {/* Separador */}
+                  <div className="separador-cell">
+                    <span className="separador">VS</span>
+                  </div>
+
+                  {/* Goles Visita */}
+                  <div className="goles-cell">
+                    <div className="goles-value">{partido.GOLES_VISITA ?? 0}</div>
+                  </div>
+
+                  {/* Equipo Visita - CON LOGO */}
+                  <div className="equipo-cell equipo-visita-cell">
+                    <span className="equipo-nombre">{partido.equipo_visita}</span>
+                    <TeamLogo
+                      imagen={partido.imagen_visita}
+                      nombreEquipo={partido.equipo_visita}
+                      size="small"
+                    />
+                  </div>
+                </div>
+
+                {/* Estadio (opcional) */}
+                {partido.nombre_estadio && (
+                  <div className="estadio-info">
+                    🏟️ {partido.nombre_estadio}
+                  </div>
                 )}
               </div>
+            );
+            })}
+          </div>
 
-              {/* Resultado del partido */}
-              <div className="resultado-section">
-                <div className="equipo equipo-local">
-                  <span className="equipo-nombre">{partido.equipo_local}</span>
-                  <span className="goles">{partido.GOLES_LOCAL ?? 0}</span>
-                </div>
+          {/* Controles de Paginación */}
+          {totalPaginas > 1 && (
+            <div className="paginacion-container">
+              <button
+                className="btn-pagina"
+                onClick={() => cambiarPagina(paginaActual - 1)}
+                disabled={paginaActual === 1}
+              >
+                ← Anterior
+              </button>
 
-                <div className="separador">-</div>
-
-                <div className="equipo equipo-visita">
-                  <span className="goles">{partido.GOLES_VISITA ?? 0}</span>
-                  <span className="equipo-nombre">{partido.equipo_visita}</span>
-                </div>
+              <div className="paginas-numeros">
+                {Array.from({ length: totalPaginas }, (_, i) => i + 1).map((num) => (
+                  <button
+                    key={num}
+                    className={`btn-numero ${paginaActual === num ? 'activo' : ''}`}
+                    onClick={() => cambiarPagina(num)}
+                  >
+                    {num}
+                  </button>
+                ))}
               </div>
 
-              {/* Estadio */}
-              {partido.nombre_estadio && (
-                <div className="estadio-info">
-                  🏟️ {partido.nombre_estadio}
-                </div>
-              )}
+              <button
+                className="btn-pagina"
+                onClick={() => cambiarPagina(paginaActual + 1)}
+                disabled={paginaActual === totalPaginas}
+              >
+                Siguiente →
+              </button>
 
-              {/* Estadísticas de apuestas */}
-              {partido.total_apuestas > 0 && (
-                <div className="apuestas-stats">
-                  <div className="stat-item">
-                    <span className="stat-label">Total Apuestas:</span>
-                    <span className="stat-value">{partido.total_apuestas}</span>
-                  </div>
-                  <div className="stat-item">
-                    <span className="stat-label stat-ganadas">Ganadas:</span>
-                    <span className="stat-value stat-ganadas">{partido.apuestas_ganadoras}</span>
-                  </div>
-                  <div className="stat-item">
-                    <span className="stat-label stat-perdidas">Perdidas:</span>
-                    <span className="stat-value stat-perdidas">{partido.apuestas_perdedoras}</span>
-                  </div>
-                </div>
-              )}
+              <div className="info-paginacion">
+                Mostrando {indiceInicio + 1}-{Math.min(indiceFin, partidos.length)} de {partidos.length} partidos
+              </div>
             </div>
-          ))}
-        </div>
+          )}
+        </>
       )}
 
       {/* Footer Info */}

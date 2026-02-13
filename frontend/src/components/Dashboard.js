@@ -328,11 +328,8 @@ const Dashboard = () => {
                 </div>
               </div>
               <div className="module-actions">
-                <button onClick={() => handleNavigation('/partidos')} className="action-btn primary">
-                  📋 Ver Partidos ({stats.partidos})
-                </button>
-                <button onClick={() => handleNavigation('/partidos')} className="action-btn success">
-                  ➕ Nuevo Partido
+                <button onClick={() => handleNavigation('/partidos-plus')} className="action-btn primary">
+                  🏆 Gestión de Partidos ({stats.partidos})
                 </button>
               </div>
               <div className="module-features">
@@ -344,6 +341,9 @@ const Dashboard = () => {
                   <li>✅ Fechas y horarios</li>
                   <li>✅ Resultados y estadísticas</li>
                   <li>✅ Búsqueda y filtros avanzados</li>
+                  <li>✅ Tabla moderna con gradientes</li>
+                  <li>✅ Edición y eliminación inline</li>
+                  <li>✅ Modal de edición intuitivo</li>
                 </ul>
               </div>
             </div>
@@ -364,6 +364,9 @@ const Dashboard = () => {
                 <button onClick={() => handleNavigation('/admin/usuarios/nuevo')} className="action-btn success">
                   ➕ Nuevo Usuario
                 </button>
+                <button onClick={() => handleNavigation('/admin/tokens-invitacion')} className="action-btn secondary">
+                  🎟️ Gestión de Tokens
+                </button>
               </div>
               <div className="module-features">
                 <h4>Funcionalidades:</h4>
@@ -374,6 +377,7 @@ const Dashboard = () => {
                   <li>✅ Activar/Desactivar usuarios</li>
                   <li>✅ Eliminar usuarios con validaciones</li>
                   <li>✅ Búsqueda y filtros avanzados</li>
+                  <li>🆕 Tokens de invitación únicos (un solo uso)</li>
                 </ul>
               </div>
             </div>
@@ -391,24 +395,21 @@ const Dashboard = () => {
                 <button onClick={() => handleNavigation('/admin/configuracion-apuestas')} className="action-btn primary">
                   ⚙️ Configurar Apuestas
                 </button>
-                <button onClick={() => handleNavigation('/gestion-cuotas')} className="action-btn secondary">
-                  💰 Gestión de Cuotas
-                </button>
-                <button onClick={() => handleNavigation('/liquidar-apuestas')} className="action-btn success">
-                  ✅ Liquidar Apuestas
-                </button>
-                <button onClick={() => handleNavigation('/admin/limpiar-apuestas-usuario')} className="action-btn danger">
+                <button onClick={() => handleNavigation('/admin/limpiar-apuestas-usuario')} className="action-btn warning">
                   🗑️ Limpiar Apuestas Usuario
+                </button>
+                <button onClick={() => handleNavigation('/admin/limpiar-resultados')} className="action-btn danger">
+                  🔄 Limpiar Resultados
                 </button>
               </div>
               <div className="module-features">
                 <h4>Funcionalidades:</h4>
                 <ul>
                   <li>✅ Habilitar/Deshabilitar apuestas globalmente</li>
-                  <li>✅ Configurar torneo y fecha habilitada</li>
-                  <li>✅ Gestionar cuotas de partidos</li>
-                  <li>✅ Liquidar apuestas de partidos finalizados</li>
-                  <li>✅ Limpiar apuestas de un usuario en el torneo activo</li>
+                  <li>✅ Configurar torneo y fecha habilitada para apuestas</li>
+                  <li>✅ Limpiar apuestas específicas (usuario + torneo + fecha)</li>
+                  <li>✅ Limpiar resultados de partidos (modo replay)</li>
+                  <li>✅ Permitir apuestas en fechas pasadas</li>
                   <li>✅ Ver tabla de posiciones de usuarios</li>
                   <li>✅ Control total del sistema de apuestas</li>
                 </ul>
@@ -428,6 +429,9 @@ const Dashboard = () => {
                 <button onClick={() => handleNavigation('/consultas/roster-jugadores')} className="action-btn primary">
                   📋 Roster de Jugadores
                 </button>
+                <button onClick={() => handleNavigation('/consultas/partidos-historicos-plus')} className="action-btn primary">
+                  🗂️ Partidos Históricos
+                </button>
               </div>
               <div className="module-features">
                 <h4>Funcionalidades:</h4>
@@ -436,6 +440,10 @@ const Dashboard = () => {
                   <li>✅ Organización por posiciones</li>
                   <li>✅ Información detallada de cada jugador</li>
                   <li>✅ Filtros por torneo y equipo</li>
+                  <li>✅ Partidos históricos con filtros avanzados</li>
+                  <li>✅ Filtrar por equipo y fecha del torneo</li>
+                  <li>✅ Rango de fechas personalizado</li>
+                  <li>✅ Tabla profesional con gradientes</li>
                   <li>✅ Interfaz visual amigable</li>
                 </ul>
               </div>

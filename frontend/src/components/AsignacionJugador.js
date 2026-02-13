@@ -537,6 +537,33 @@ const AsignacionJugador = () => {
         >
           ⚡ Asignación Masiva (Varios Torneos)
         </button>
+
+        <button
+          onClick={() => navigate('/clonar-asignaciones')}
+          style={{
+            marginTop: '15px',
+            background: 'linear-gradient(135deg, #20bf6b 0%, #26de81 100%)',
+            color: 'white',
+            border: 'none',
+            padding: '12px 24px',
+            borderRadius: '8px',
+            fontSize: '14px',
+            fontWeight: '600',
+            cursor: 'pointer',
+            boxShadow: '0 2px 8px rgba(32, 191, 107, 0.3)',
+            transition: 'all 0.3s ease'
+          }}
+          onMouseOver={(e) => {
+            e.target.style.transform = 'translateY(-2px)';
+            e.target.style.boxShadow = '0 4px 12px rgba(32, 191, 107, 0.4)';
+          }}
+          onMouseOut={(e) => {
+            e.target.style.transform = 'translateY(0)';
+            e.target.style.boxShadow = '0 2px 8px rgba(32, 191, 107, 0.3)';
+          }}
+        >
+          🔄 Clonar Asignaciones entre Torneos
+        </button>
       </div>
 
       {/* Mensajes */}

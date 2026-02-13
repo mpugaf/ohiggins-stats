@@ -60,55 +60,37 @@ function EstadisticasUsuario() {
 
   return (
     <div className="stats-container">
-      <h2 className="stats-title">Mis Estadísticas</h2>
+      <h3 className="stats-title">Mis Estadísticas</h3>
 
-      <div className="stats-grid">
-        <div className="stat-card stat-primary">
-          <div className="stat-icon">🎲</div>
-          <div className="stat-content">
-            <div className="stat-value">{stats.total_apuestas || 0}</div>
-            <div className="stat-label">Apuestas Totales</div>
-          </div>
+      <div className="stats-compact">
+        <div className="stat-item">
+          <div className="stat-label">Total</div>
+          <div className="stat-value">{stats.total_apuestas || 0}</div>
         </div>
 
-        <div className="stat-card stat-success">
-          <div className="stat-icon">✅</div>
-          <div className="stat-content">
-            <div className="stat-value">{stats.apuestas_ganadas || 0}</div>
-            <div className="stat-label">Apuestas Ganadas</div>
-          </div>
+        <div className="stat-item stat-success">
+          <div className="stat-label">Ganadas</div>
+          <div className="stat-value">{stats.apuestas_ganadas || 0}</div>
         </div>
 
-        <div className="stat-card stat-danger">
-          <div className="stat-icon">❌</div>
-          <div className="stat-content">
-            <div className="stat-value">{stats.apuestas_perdidas || 0}</div>
-            <div className="stat-label">Apuestas Perdidas</div>
-          </div>
+        <div className="stat-item stat-danger">
+          <div className="stat-label">Perdidas</div>
+          <div className="stat-value">{stats.apuestas_perdidas || 0}</div>
         </div>
 
-        <div className="stat-card stat-warning">
-          <div className="stat-icon">⏳</div>
-          <div className="stat-content">
-            <div className="stat-value">{stats.apuestas_pendientes || 0}</div>
-            <div className="stat-label">Apuestas Pendientes</div>
-          </div>
+        <div className="stat-item stat-warning">
+          <div className="stat-label">Pendientes</div>
+          <div className="stat-value">{stats.apuestas_pendientes || 0}</div>
         </div>
 
-        <div className="stat-card stat-points">
-          <div className="stat-icon">💰</div>
-          <div className="stat-content">
-            <div className="stat-value">{parseFloat(stats.total_puntos || 0).toFixed(2)}</div>
-            <div className="stat-label">Puntos Totales</div>
-          </div>
+        <div className="stat-item stat-points">
+          <div className="stat-label">Puntos</div>
+          <div className="stat-value">${parseFloat(stats.total_puntos || 0).toLocaleString('es-CL')}</div>
         </div>
 
-        <div className="stat-card stat-percentage">
-          <div className="stat-icon">📊</div>
-          <div className="stat-content">
-            <div className="stat-value">{parseFloat(stats.porcentaje_aciertos || 0).toFixed(1)}%</div>
-            <div className="stat-label">Porcentaje de Aciertos</div>
-          </div>
+        <div className="stat-item stat-percentage">
+          <div className="stat-label">Aciertos</div>
+          <div className="stat-value">{parseFloat(stats.porcentaje_aciertos || 0).toFixed(1)}%</div>
         </div>
       </div>
     </div>

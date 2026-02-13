@@ -14,6 +14,12 @@ function LimpiarApuestasUsuario() {
   const [torneoActivo, setTorneoActivo] = useState(null);
   const [usuarioExpandido, setUsuarioExpandido] = useState(null);
 
+  // Nuevos estados para selección de torneo y fecha
+  const [torneos, setTorneos] = useState([]);
+  const [torneoSeleccionado, setTorneoSeleccionado] = useState('');
+  const [fechasDisponibles, setFechasDisponibles] = useState([]);
+  const [fechaSeleccionada, setFechaSeleccionada] = useState('');
+
   useEffect(() => {
     fetchDatos();
   }, []);
@@ -31,6 +37,9 @@ function LimpiarApuestasUsuario() {
 
       const configData = await handleResponse(configResponse);
       const torneosData = await handleResponse(torneosResponse);
+
+      // Guardar todos los torneos disponibles
+      setTorneos(torneosData.torneos || []);
 
       // Verificar si hay un torneo activo configurado
       if (!configData.config.torneo_activo_id) {
@@ -51,6 +60,7 @@ function LimpiarApuestasUsuario() {
       }
 
       setTorneoActivo(torneoActivo);
+      setTorneoSeleccionado(torneoActivo.ID_TORNEO.toString());
 
       // Obtener usuarios con sus apuestas del torneo activo
       const usuariosResponse = await apuestasService.getUsuariosConApuestas(torneoActivo.ID_TORNEO);
@@ -70,10 +80,48 @@ function LimpiarApuestasUsuario() {
     setUsuarioSeleccionado(usuario);
     setError('');
     setMensaje('');
+
+    // Inicializar con el torneo activo
+    if (torneoActivo) {
+      setTorneoSeleccionado(torneoActivo.ID_TORNEO.toString());
+      cargarFechasTorneo(torneoActivo.ID_TORNEO);
+    }
+  };
+
+  const cargarFechasTorneo = async (idTorneo) => {
+    try {
+      const torneoEncontrado = torneos.find(t => t.ID_TORNEO.toString() === idTorneo.toString());
+      if (torneoEncontrado && torneoEncontrado.fechas) {
+        setFechasDisponibles(torneoEncontrado.fechas);
+        setFechaSeleccionada(''); // Reset fecha cuando cambia torneo
+      } else {
+        setFechasDisponibles([]);
+        setFechaSeleccionada('');
+      }
+    } catch (err) {
+      console.error('Error al cargar fechas:', err);
+      setFechasDisponibles([]);
+    }
+  };
+
+  const handleTorneoChange = (e) => {
+    const nuevoTorneo = e.target.value;
+    setTorneoSeleccionado(nuevoTorneo);
+    if (nuevoTorneo) {
+      cargarFechasTorneo(nuevoTorneo);
+    } else {
+      setFechasDisponibles([]);
+      setFechaSeleccionada('');
+    }
   };
 
   const confirmarLimpieza = async () => {
-    if (!usuarioSeleccionado || !torneoActivo) return;
+    if (!usuarioSeleccionado) return;
+
+    if (!torneoSeleccionado) {
+      setError('Debes seleccionar un torneo');
+      return;
+    }
 
     setLimpiando(true);
     setError('');
@@ -82,20 +130,26 @@ function LimpiarApuestasUsuario() {
     try {
       const response = await apuestasService.limpiarApuestasUsuario(
         usuarioSeleccionado.id_usuario,
-        torneoActivo.ID_TORNEO
+        torneoSeleccionado,
+        fechaSeleccionada || null
       );
       const data = await handleResponse(response);
 
+      const torneoNombre = torneos.find(t => t.ID_TORNEO.toString() === torneoSeleccionado)?.NOMBRE || 'Torneo';
+      const fechaTexto = fechaSeleccionada ? ` (Fecha ${fechaSeleccionada})` : '';
+
       setMensaje(
-        `✅ ${data.message}\nApuestas eliminadas: ${data.apuestas_eliminadas}`
+        `✅ ${data.message}\nTorneo: ${torneoNombre}${fechaTexto}\nApuestas eliminadas: ${data.apuestas_eliminadas}`
       );
 
       // Recargar datos
       setTimeout(() => {
         setUsuarioSeleccionado(null);
         setMensaje('');
+        setTorneoSeleccionado('');
+        setFechaSeleccionada('');
         fetchDatos();
-      }, 2000);
+      }, 3000);
 
     } catch (err) {
       console.error('Error al limpiar apuestas:', err);
@@ -310,33 +364,60 @@ function LimpiarApuestasUsuario() {
                     <strong>{usuarioSeleccionado.username}</strong> ({usuarioSeleccionado.nombre_completo || usuarioSeleccionado.email})
                   </span>
                 </div>
-
-                <div className="info-row">
-                  <span className="info-label">Torneo:</span>
-                  <span className="info-value">{torneoActivo.NOMBRE}</span>
-                </div>
-
-                <div className="info-row">
-                  <span className="info-label">Total de apuestas:</span>
-                  <span className="info-value">
-                    <strong>{usuarioSeleccionado.estadisticas.total_apuestas}</strong>
-                  </span>
-                </div>
-
-                <div className="info-row">
-                  <span className="info-label">Puntos acumulados:</span>
-                  <span className="info-value">
-                    <strong>{parseFloat(usuarioSeleccionado.estadisticas.total_puntos).toFixed(0)}</strong>
-                  </span>
-                </div>
               </div>
 
+              {/* Selector de Torneo */}
+              <div className="form-group">
+                <label className="form-label">
+                  <strong>Seleccionar Torneo:</strong>
+                </label>
+                <select
+                  className="form-select"
+                  value={torneoSeleccionado}
+                  onChange={handleTorneoChange}
+                  disabled={limpiando}
+                >
+                  <option value="">-- Seleccionar Torneo --</option>
+                  {torneos.map(torneo => (
+                    <option key={torneo.ID_TORNEO} value={torneo.ID_TORNEO}>
+                      {torneo.NOMBRE} - {torneo.TEMPORADA}
+                    </option>
+                  ))}
+                </select>
+              </div>
+
+              {/* Selector de Fecha */}
+              {fechasDisponibles.length > 0 && (
+                <div className="form-group">
+                  <label className="form-label">
+                    <strong>Seleccionar Fecha (opcional):</strong>
+                  </label>
+                  <select
+                    className="form-select"
+                    value={fechaSeleccionada}
+                    onChange={(e) => setFechaSeleccionada(e.target.value)}
+                    disabled={limpiando}
+                  >
+                    <option value="">-- Todas las fechas --</option>
+                    {fechasDisponibles.map(fecha => (
+                      <option key={fecha} value={fecha}>
+                        Fecha {fecha}
+                      </option>
+                    ))}
+                  </select>
+                  <small className="form-hint">
+                    Si no seleccionas una fecha, se eliminarán apuestas de todas las fechas del torneo
+                  </small>
+                </div>
+              )}
+
               <div className="modal-warning">
-                <p>⚠️ Esta acción eliminará <strong>TODAS</strong> las apuestas de este usuario en el torneo activo.</p>
+                <p>⚠️ Esta acción eliminará las apuestas seleccionadas.</p>
                 <p>Se eliminarán:</p>
                 <ul>
-                  <li>✗ {usuarioSeleccionado.estadisticas.total_apuestas} apuestas (ganadas, perdidas y pendientes)</li>
-                  <li>✗ Todo el historial de puntos ganados ({parseFloat(usuarioSeleccionado.estadisticas.total_puntos).toFixed(0)} puntos)</li>
+                  <li>✗ Apuestas del torneo seleccionado{fechaSeleccionada ? ` (Fecha ${fechaSeleccionada})` : ' (todas las fechas)'}</li>
+                  <li>✗ Apuestas en estado: ganadas, perdidas y pendientes</li>
+                  <li>✗ Historial de puntos asociados a esas apuestas</li>
                 </ul>
                 <p className="warning-critical"><strong>⚡ Esta acción no se puede deshacer.</strong></p>
               </div>

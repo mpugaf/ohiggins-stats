@@ -1,0 +1,275 @@
+/* ============================================================================
+   MENSAJES DE GANADORES POR JORNADA
+   ============================================================================ */
+
+.mensajes-ganadores-section {
+  margin-top: 40px;
+  padding: 30px;
+  background: white;
+  border-radius: 16px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.mensajes-titulo {
+  font-size: 28px;
+  font-weight: 700;
+  color: #1a1a1a;
+  margin: 0 0 10px 0;
+  text-align: center;
+}
+
+.mensajes-subtitulo {
+  font-size: 15px;
+  color: #6c757d;
+  text-align: center;
+  margin: 0 0 30px 0;
+}
+
+.loading-mensajes {
+  text-align: center;
+  padding: 40px;
+  color: #6c757d;
+  font-size: 16px;
+}
+
+.mensajes-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+  gap: 20px;
+}
+
+/* Card de mensaje */
+.mensaje-card {
+  border: 2px solid #e0e0e0;
+  border-radius: 12px;
+  overflow: hidden;
+  transition: all 0.3s ease;
+  background: white;
+}
+
+.mensaje-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+  border-color: #00BFFF;
+}
+
+/* Header del card */
+.mensaje-header {
+  background: linear-gradient(135deg, #64B5F6 0%, #42A5F5 100%);
+  padding: 15px 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.jornada-numero {
+  font-size: 14px;
+  font-weight: 700;
+  color: white;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.ganador-nombre {
+  font-size: 15px;
+  font-weight: 600;
+  color: white;
+  flex: 1;
+  text-align: center;
+}
+
+.puntos-ganador {
+  font-size: 13px;
+  font-weight: 700;
+  color: #FFD700;
+  background: rgba(255, 255, 255, 0.2);
+  padding: 4px 10px;
+  border-radius: 12px;
+}
+
+/* Body del card */
+.mensaje-body {
+  padding: 20px;
+  min-height: 100px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Mensaje guardado */
+.mensaje-guardado {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  width: 100%;
+}
+
+.mensaje-icono {
+  font-size: 32px;
+  flex-shrink: 0;
+}
+
+.mensaje-texto {
+  font-size: 16px;
+  color: #1a1a1a;
+  font-weight: 500;
+  line-height: 1.6;
+  font-style: italic;
+  background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+  padding: 15px;
+  border-radius: 8px;
+  border-left: 4px solid #00BFFF;
+  flex: 1;
+}
+
+/* Mensaje vacío */
+.mensaje-vacio {
+  width: 100%;
+  text-align: center;
+  padding: 20px;
+}
+
+.mensaje-pendiente {
+  font-size: 14px;
+  color: #6c757d;
+  font-style: italic;
+}
+
+/* Formulario de mensaje */
+.mensaje-form {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.mensaje-input {
+  width: 100%;
+  padding: 12px 16px;
+  font-size: 15px;
+  color: #1a1a1a;
+  border: 2px solid #00BFFF;
+  border-radius: 8px;
+  outline: none;
+  transition: all 0.3s ease;
+  font-family: inherit;
+}
+
+.mensaje-input:focus {
+  border-color: #007acc;
+  box-shadow: 0 0 0 3px rgba(0, 191, 255, 0.2);
+}
+
+.mensaje-input:disabled {
+  background: #f8f9fa;
+  border-color: #dee2e6;
+  cursor: not-allowed;
+}
+
+.mensaje-input::placeholder {
+  color: #adb5bd;
+}
+
+.mensaje-actions {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.caracteres-contador {
+  font-size: 13px;
+  color: #6c757d;
+  font-weight: 500;
+}
+
+.btn-guardar-mensaje {
+  padding: 10px 20px;
+  background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.btn-guardar-mensaje:hover:not(:disabled) {
+  background: linear-gradient(135deg, #218838 0%, #1aa179 100%);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(40, 167, 69, 0.3);
+}
+
+.btn-guardar-mensaje:disabled {
+  background: #6c757d;
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+.btn-guardar-mensaje:active:not(:disabled) {
+  transform: translateY(0);
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .mensajes-ganadores-section {
+    padding: 20px 15px;
+  }
+
+  .mensajes-titulo {
+    font-size: 22px;
+  }
+
+  .mensajes-subtitulo {
+    font-size: 14px;
+  }
+
+  .mensajes-grid {
+    grid-template-columns: 1fr;
+    gap: 15px;
+  }
+
+  .mensaje-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+  }
+
+  .ganador-nombre {
+    text-align: left;
+  }
+
+  .mensaje-texto {
+    font-size: 14px;
+  }
+}
+
+@media (max-width: 480px) {
+  .mensaje-header {
+    padding: 12px 15px;
+  }
+
+  .jornada-numero {
+    font-size: 12px;
+  }
+
+  .ganador-nombre {
+    font-size: 14px;
+  }
+
+  .puntos-ganador {
+    font-size: 12px;
+  }
+
+  .mensaje-input {
+    font-size: 14px;
+    padding: 10px 12px;
+  }
+
+  .btn-guardar-mensaje {
+    font-size: 13px;
+    padding: 8px 16px;
+  }
+}

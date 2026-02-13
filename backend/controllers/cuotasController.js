@@ -55,7 +55,7 @@ exports.upsertCuotas = async (req, res) => {
   }
 
   // Validar que cada cuota tiene los campos requeridos
-  const tiposRequeridos = ['local', 'empate', 'visita'];
+  const tiposRequeridos = ['local', 'empate', 'visita'].sort();
   const tiposProporcionados = cuotas.map(c => c.tipo_resultado).sort();
 
   if (JSON.stringify(tiposProporcionados) !== JSON.stringify(tiposRequeridos)) {
@@ -298,8 +298,10 @@ exports.getPartidosSinApostar = async (req, res) => {
         t.ID_TORNEO,
         el.NOMBRE,
         el.ID_EQUIPO,
+        ${tieneColumnaImagen ? 'el.IMAGEN,' : ''}
         ev.NOMBRE,
         ev.ID_EQUIPO,
+        ${tieneColumnaImagen ? 'ev.IMAGEN,' : ''}
         p.GOLES_LOCAL,
         p.GOLES_VISITA
       HAVING total_cuotas = 3
@@ -308,11 +310,34 @@ exports.getPartidosSinApostar = async (req, res) => {
 
     const partidos = await executeQuery(query, params);
 
+    // Obtener nombre del torneo activo si está configurado
+    let torneoActivoNombre = null;
+    if (config.torneo_activo_id) {
+      try {
+        const torneoInfo = await executeQuery(
+          `SELECT NOMBRE, TEMPORADA, RUEDA FROM DIM_TORNEO WHERE ID_TORNEO = ?`,
+          [config.torneo_activo_id]
+        );
+        if (torneoInfo.length > 0) {
+          const torneo = torneoInfo[0];
+          // Formatear: "Nombre Año - Rueda rueda"
+          let ruedaFormateada = '';
+          if (torneo.RUEDA && typeof torneo.RUEDA === 'string' && torneo.RUEDA.length > 0) {
+            ruedaFormateada = torneo.RUEDA.charAt(0).toUpperCase() + torneo.RUEDA.slice(1).toLowerCase() + ' rueda';
+          }
+          torneoActivoNombre = `${torneo.NOMBRE || ''} ${torneo.TEMPORADA || ''}${ruedaFormateada ? ' - ' + ruedaFormateada : ''}`.trim();
+        }
+      } catch (err) {
+        console.error('[CUOTAS] Error obteniendo info del torneo:', err);
+      }
+    }
+
     res.json({
       success: true,
       partidos,
       total: partidos.length,
-      torneo_activo: config.torneo_activo_id,
+      torneo_activo_id: config.torneo_activo_id,
+      torneo_activo_nombre: torneoActivoNombre,
       fecha_activa: config.fecha_habilitada
     });
 

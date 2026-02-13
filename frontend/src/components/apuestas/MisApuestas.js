@@ -18,18 +18,25 @@ function MisApuestas({ filtroInicial = '' }) {
   const [fechasPorTorneo, setFechasPorTorneo] = useState({});
   const [fechasDisponibles, setFechasDisponibles] = useState([]);
 
+  // Paginación
+  const [paginaActual, setPaginaActual] = useState(1);
+  const apuestasPorPagina = 8;
+
   useEffect(() => {
     fetchTorneosYFechas();
   }, []);
 
   useEffect(() => {
+    setPaginaActual(1); // Reset página al cambiar filtros
     fetchApuestas();
   }, [filtroEstado, filtroTorneo, filtroFecha]);
 
   // Actualizar fechas disponibles cuando cambia el torneo seleccionado
   useEffect(() => {
     if (filtroTorneo && fechasPorTorneo[filtroTorneo]) {
-      setFechasDisponibles(fechasPorTorneo[filtroTorneo]);
+      const fechas = fechasPorTorneo[filtroTorneo];
+      console.log('[MIS APUESTAS] Fechas disponibles para torneo', filtroTorneo, ':', fechas);
+      setFechasDisponibles(fechas);
     } else {
       setFechasDisponibles([]);
     }
@@ -41,6 +48,9 @@ function MisApuestas({ filtroInicial = '' }) {
     try {
       const response = await apuestasService.getTorneosYFechas();
       const data = await handleResponse(response);
+
+      console.log('[MIS APUESTAS] Torneos recibidos:', data.torneos);
+      console.log('[MIS APUESTAS] Fechas por torneo recibidas:', data.fechasPorTorneo);
 
       setTorneos(data.torneos || []);
       setFechasPorTorneo(data.fechasPorTorneo || {});
@@ -63,7 +73,12 @@ function MisApuestas({ filtroInicial = '' }) {
       const response = await apuestasService.getMisApuestas(params);
       const data = await handleResponse(response);
 
-      setApuestas(data.apuestas || []);
+      // Ordenar por fecha de apuesta, de más reciente a más antigua
+      const apuestasOrdenadas = (data.apuestas || []).sort((a, b) => {
+        return new Date(b.fecha_apuesta) - new Date(a.fecha_apuesta);
+      });
+
+      setApuestas(apuestasOrdenadas);
     } catch (err) {
       setError(err.message);
     } finally {
@@ -122,6 +137,17 @@ function MisApuestas({ filtroInicial = '' }) {
     );
   };
 
+  // Calcular paginación
+  const totalPaginas = Math.ceil(apuestas.length / apuestasPorPagina);
+  const indiceInicio = (paginaActual - 1) * apuestasPorPagina;
+  const indiceFin = indiceInicio + apuestasPorPagina;
+  const apuestasPaginadas = apuestas.slice(indiceInicio, indiceFin);
+
+  const cambiarPagina = (numeroPagina) => {
+    setPaginaActual(numeroPagina);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
   if (loading) {
     return (
       <div className="apuestas-container">
@@ -171,6 +197,7 @@ function MisApuestas({ filtroInicial = '' }) {
               {torneos.map((torneo) => (
                 <option key={torneo.ID_TORNEO} value={torneo.ID_TORNEO}>
                   {torneo.NOMBRE} ({torneo.TEMPORADA})
+                  {torneo.RUEDA && ` - ${torneo.RUEDA === 'PRIMERA' ? '1ª' : torneo.RUEDA === 'SEGUNDA' ? '2ª' : ''} Rueda`}
                 </option>
               ))}
             </select>
@@ -235,8 +262,9 @@ function MisApuestas({ filtroInicial = '' }) {
           </p>
         </div>
       ) : (
-        <div className="apuestas-list">
-          {apuestas.map((apuesta) => (
+        <>
+          <div className="apuestas-list">
+            {apuestasPaginadas.map((apuesta) => (
             <div key={apuesta.id_apuesta} className="apuesta-card">
               <div className="apuesta-header-card">
                 <div className="partido-info">
@@ -311,7 +339,45 @@ function MisApuestas({ filtroInicial = '' }) {
               </div>
             </div>
           ))}
-        </div>
+          </div>
+
+          {/* Controles de Paginación */}
+          {totalPaginas > 1 && (
+            <div className="paginacion-container">
+              <button
+                className="btn-pagina"
+                onClick={() => cambiarPagina(paginaActual - 1)}
+                disabled={paginaActual === 1}
+              >
+                ← Anterior
+              </button>
+
+              <div className="paginas-numeros">
+                {Array.from({ length: totalPaginas }, (_, i) => i + 1).map((num) => (
+                  <button
+                    key={num}
+                    className={`btn-numero ${paginaActual === num ? 'activo' : ''}`}
+                    onClick={() => cambiarPagina(num)}
+                  >
+                    {num}
+                  </button>
+                ))}
+              </div>
+
+              <button
+                className="btn-pagina"
+                onClick={() => cambiarPagina(paginaActual + 1)}
+                disabled={paginaActual === totalPaginas}
+              >
+                Siguiente →
+              </button>
+
+              <div className="info-paginacion">
+                Mostrando {indiceInicio + 1}-{Math.min(indiceFin, apuestas.length)} de {apuestas.length} apuestas
+              </div>
+            </div>
+          )}
+        </>
       )}
     </div>
   );

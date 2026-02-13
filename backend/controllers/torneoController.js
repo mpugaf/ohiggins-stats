@@ -51,42 +51,76 @@ const executeQuery = async (query, params = []) => {
 
 const crearTorneo = async (req, res) => {
   try {
-    const { nombre, paisOrganizador, rueda, temporada } = req.body;
-    
+    const { nombre, paisOrganizador, rueda, temporada, formatoTorneo, fases } = req.body;
+
     console.log('📝 Creando nuevo torneo:', req.body);
 
     // Validaciones básicas
-    if (!nombre || !paisOrganizador || !rueda || !temporada) {
+    if (!nombre || !temporada || !formatoTorneo) {
       return res.status(400).json({
-        error: 'Todos los campos son obligatorios: nombre, país organizador, rueda y temporada'
+        error: 'Los campos nombre, temporada y formato de torneo son obligatorios'
       });
     }
 
-    // Validar que la rueda sea válida
-    const ruedasValidas = ['PRIMERA', 'SEGUNDA', 'UNICA'];
-    if (!ruedasValidas.includes(rueda.toUpperCase())) {
+    // Validar formato de torneo
+    const formatosValidos = ['RUEDAS', 'FASES'];
+    if (!formatosValidos.includes(formatoTorneo.toUpperCase())) {
       return res.status(400).json({
-        error: 'La rueda debe ser: PRIMERA, SEGUNDA o UNICA'
+        error: 'El formato de torneo debe ser: RUEDAS o FASES'
       });
     }
 
-    // Verificar que el país existe
-    const paisExiste = await executeQuery(
-      'SELECT ID_PAIS FROM DIM_PAIS WHERE ID_PAIS = ?',
-      [paisOrganizador]
-    );
-
-    if (paisExiste.length === 0) {
+    // Si es formato RUEDAS, la rueda es obligatoria
+    if (formatoTorneo.toUpperCase() === 'RUEDAS' && !rueda) {
       return res.status(400).json({
-        error: 'El país organizador especificado no existe'
+        error: 'Para torneos con formato RUEDAS, debe especificar la rueda'
       });
     }
 
-    // Verificar si ya existe un torneo con el mismo nombre, país, rueda y temporada
-    const torneoExiste = await executeQuery(
-      'SELECT ID_TORNEO FROM DIM_TORNEO WHERE NOMBRE = ? AND PAIS_ORGANIZADOR = ? AND RUEDA = ? AND TEMPORADA = ?',
-      [nombre.toUpperCase(), paisOrganizador, rueda.toUpperCase(), temporada]
-    );
+    // Validar que la rueda sea válida (si se proporciona)
+    if (rueda) {
+      const ruedasValidas = ['PRIMERA', 'SEGUNDA', 'UNICA'];
+      if (!ruedasValidas.includes(rueda.toUpperCase())) {
+        return res.status(400).json({
+          error: 'La rueda debe ser: PRIMERA, SEGUNDA o UNICA'
+        });
+      }
+    }
+
+    // Si es formato FASES, las fases son obligatorias
+    if (formatoTorneo.toUpperCase() === 'FASES' && (!fases || fases.length === 0)) {
+      return res.status(400).json({
+        error: 'Para torneos con formato FASES, debe especificar al menos una fase'
+      });
+    }
+
+    // Verificar que el país existe (solo si se proporciona)
+    if (paisOrganizador) {
+      const paisExiste = await executeQuery(
+        'SELECT ID_PAIS FROM DIM_PAIS WHERE ID_PAIS = ?',
+        [paisOrganizador]
+      );
+
+      if (paisExiste.length === 0) {
+        return res.status(400).json({
+          error: 'El país organizador especificado no existe'
+        });
+      }
+    }
+
+    // Verificar si ya existe un torneo con el mismo nombre, temporada y formato
+    let torneoExiste;
+    if (formatoTorneo.toUpperCase() === 'RUEDAS') {
+      torneoExiste = await executeQuery(
+        'SELECT ID_TORNEO FROM DIM_TORNEO WHERE NOMBRE = ? AND RUEDA = ? AND TEMPORADA = ? AND FORMATO_TORNEO = ?',
+        [nombre.toUpperCase(), rueda.toUpperCase(), temporada, 'RUEDAS']
+      );
+    } else {
+      torneoExiste = await executeQuery(
+        'SELECT ID_TORNEO FROM DIM_TORNEO WHERE NOMBRE = ? AND TEMPORADA = ? AND FORMATO_TORNEO = ?',
+        [nombre.toUpperCase(), temporada, 'FASES']
+      );
+    }
 
     if (torneoExiste.length > 0) {
       console.log('❌ Torneo ya existe con esas características');
@@ -95,8 +129,7 @@ const crearTorneo = async (req, res) => {
       });
     }
 
-    // Generar LEAGUE_ID_FBR único (debe ser entero que quepa en int(11))
-    // Obtener el máximo ID actual y sumar 1
+    // Generar LEAGUE_ID_FBR único
     const maxIdResult = await executeQuery(
       'SELECT MAX(LEAGUE_ID_FBR) as max_id FROM DIM_TORNEO'
     );
@@ -105,22 +138,45 @@ const crearTorneo = async (req, res) => {
 
     // Insertar nuevo torneo
     const result = await executeQuery(
-      `INSERT INTO DIM_TORNEO (LEAGUE_ID_FBR, NOMBRE, PAIS_ORGANIZADOR, RUEDA, TEMPORADA)
-       VALUES (?, ?, ?, ?, ?)`,
-      [nuevoLeagueId, nombre.toUpperCase(), paisOrganizador, rueda.toUpperCase(), temporada]
+      `INSERT INTO DIM_TORNEO (LEAGUE_ID_FBR, NOMBRE, PAIS_ORGANIZADOR, RUEDA, TEMPORADA, FORMATO_TORNEO)
+       VALUES (?, ?, ?, ?, ?, ?)`,
+      [
+        nuevoLeagueId,
+        nombre.toUpperCase(),
+        paisOrganizador || null,
+        rueda ? rueda.toUpperCase() : null,
+        temporada,
+        formatoTorneo.toUpperCase()
+      ]
     );
 
-    console.log('✅ Torneo creado exitosamente con ID:', result.insertId);
+    const torneoId = result.insertId;
+    console.log('✅ Torneo creado exitosamente con ID:', torneoId);
+
+    // Si es formato FASES, insertar las fases
+    if (formatoTorneo.toUpperCase() === 'FASES' && fases && fases.length > 0) {
+      for (let i = 0; i < fases.length; i++) {
+        const fase = fases[i];
+        await executeQuery(
+          `INSERT INTO DIM_FASE_TORNEO (ID_TORNEO, NOMBRE_FASE, ORDEN, DESCRIPCION)
+           VALUES (?, ?, ?, ?)`,
+          [torneoId, fase.nombre, i + 1, fase.descripcion || null]
+        );
+      }
+      console.log(`✅ ${fases.length} fases insertadas para el torneo`);
+    }
 
     res.status(201).json({
       message: 'Torneo creado exitosamente',
       torneo: {
-        id: result.insertId,
+        id: torneoId,
         league_id_fbr: nuevoLeagueId,
         nombre: nombre.toUpperCase(),
         pais_organizador: paisOrganizador,
-        rueda: rueda.toUpperCase(),
-        temporada: temporada
+        rueda: rueda ? rueda.toUpperCase() : null,
+        temporada: temporada,
+        formato_torneo: formatoTorneo.toUpperCase(),
+        fases: fases || []
       }
     });
 
@@ -137,27 +193,42 @@ const crearTorneo = async (req, res) => {
 const obtenerTorneos = async (req, res) => {
   try {
     console.log('📋 Obteniendo lista de torneos...');
-    
+
     const query = `
-      SELECT 
+      SELECT
         t.ID_TORNEO,
         t.LEAGUE_ID_FBR,
         t.NOMBRE,
         t.PAIS_ORGANIZADOR,
         t.RUEDA,
         t.TEMPORADA,
+        t.FORMATO_TORNEO,
         p.NOMBRE as NOMBRE_PAIS,
         p.CODIGO_FIFA as CODIGO_PAIS
       FROM DIM_TORNEO t
       LEFT JOIN DIM_PAIS p ON t.PAIS_ORGANIZADOR = p.ID_PAIS
       ORDER BY t.TEMPORADA DESC, t.NOMBRE ASC
     `;
-    
+
     const torneos = await executeQuery(query);
-    
+
+    // Para cada torneo con formato FASES, obtener sus fases
+    for (const torneo of torneos) {
+      if (torneo.FORMATO_TORNEO === 'FASES') {
+        const fasesQuery = `
+          SELECT ID_FASE, NOMBRE_FASE, ORDEN, DESCRIPCION
+          FROM DIM_FASE_TORNEO
+          WHERE ID_TORNEO = ?
+          ORDER BY ORDEN
+        `;
+        const fases = await executeQuery(fasesQuery, [torneo.ID_TORNEO]);
+        torneo.FASES = fases;
+      }
+    }
+
     console.log(`✅ Se encontraron ${torneos.length} torneos`);
     res.json(torneos);
-    
+
   } catch (error) {
     console.error('❌ Error al obtener torneos:', error);
     res.status(500).json({
@@ -174,20 +245,21 @@ const obtenerTorneoPorId = async (req, res) => {
     console.log('🔍 Buscando torneo con ID:', id);
 
     const query = `
-      SELECT 
+      SELECT
         t.ID_TORNEO,
         t.LEAGUE_ID_FBR,
         t.NOMBRE,
         t.PAIS_ORGANIZADOR,
         t.RUEDA,
         t.TEMPORADA,
+        t.FORMATO_TORNEO,
         p.NOMBRE as NOMBRE_PAIS,
         p.CODIGO_FIFA as CODIGO_PAIS
       FROM DIM_TORNEO t
       LEFT JOIN DIM_PAIS p ON t.PAIS_ORGANIZADOR = p.ID_PAIS
       WHERE t.ID_TORNEO = ?
     `;
-    
+
     const torneo = await executeQuery(query, [id]);
 
     if (torneo.length === 0) {
@@ -197,9 +269,23 @@ const obtenerTorneoPorId = async (req, res) => {
       });
     }
 
-    console.log('✅ Torneo encontrado:', torneo[0].NOMBRE);
-    res.json(torneo[0]);
-    
+    const torneoData = torneo[0];
+
+    // Si es formato FASES, obtener las fases
+    if (torneoData.FORMATO_TORNEO === 'FASES') {
+      const fasesQuery = `
+        SELECT ID_FASE, NOMBRE_FASE, ORDEN, DESCRIPCION
+        FROM DIM_FASE_TORNEO
+        WHERE ID_TORNEO = ?
+        ORDER BY ORDEN
+      `;
+      const fases = await executeQuery(fasesQuery, [id]);
+      torneoData.FASES = fases;
+    }
+
+    console.log('✅ Torneo encontrado:', torneoData.NOMBRE);
+    res.json(torneoData);
+
   } catch (error) {
     console.error('❌ Error al obtener torneo:', error);
     res.status(500).json({
@@ -213,28 +299,45 @@ const obtenerTorneoPorId = async (req, res) => {
 const actualizarTorneo = async (req, res) => {
   try {
     const { id } = req.params;
-    const { nombre, paisOrganizador, rueda, temporada } = req.body;
-    
+    const { nombre, paisOrganizador, rueda, temporada, formatoTorneo, fases } = req.body;
+
     console.log('📝 Actualizando torneo ID:', id, 'con datos:', req.body);
 
     // Validaciones básicas
-    if (!nombre || !paisOrganizador || !rueda || !temporada) {
+    if (!nombre || !temporada || !formatoTorneo) {
       return res.status(400).json({
-        error: 'Todos los campos son obligatorios: nombre, país organizador, rueda y temporada'
+        error: 'Los campos nombre, temporada y formato de torneo son obligatorios'
       });
     }
 
-    // Validar que la rueda sea válida
-    const ruedasValidas = ['PRIMERA', 'SEGUNDA', 'UNICA'];
-    if (!ruedasValidas.includes(rueda.toUpperCase())) {
+    // Validar formato de torneo
+    const formatosValidos = ['RUEDAS', 'FASES'];
+    if (!formatosValidos.includes(formatoTorneo.toUpperCase())) {
       return res.status(400).json({
-        error: 'La rueda debe ser: PRIMERA, SEGUNDA o UNICA'
+        error: 'El formato de torneo debe ser: RUEDAS o FASES'
       });
+    }
+
+    // Si es formato RUEDAS, la rueda es obligatoria
+    if (formatoTorneo.toUpperCase() === 'RUEDAS' && !rueda) {
+      return res.status(400).json({
+        error: 'Para torneos con formato RUEDAS, debe especificar la rueda'
+      });
+    }
+
+    // Validar que la rueda sea válida (si se proporciona)
+    if (rueda) {
+      const ruedasValidas = ['PRIMERA', 'SEGUNDA', 'UNICA'];
+      if (!ruedasValidas.includes(rueda.toUpperCase())) {
+        return res.status(400).json({
+          error: 'La rueda debe ser: PRIMERA, SEGUNDA o UNICA'
+        });
+      }
     }
 
     // Verificar si el torneo existe
     const torneoExiste = await executeQuery(
-      'SELECT ID_TORNEO, LEAGUE_ID_FBR FROM DIM_TORNEO WHERE ID_TORNEO = ?',
+      'SELECT ID_TORNEO, LEAGUE_ID_FBR, FORMATO_TORNEO FROM DIM_TORNEO WHERE ID_TORNEO = ?',
       [id]
     );
 
@@ -245,23 +348,33 @@ const actualizarTorneo = async (req, res) => {
       });
     }
 
-    // Verificar que el país existe
-    const paisExiste = await executeQuery(
-      'SELECT ID_PAIS FROM DIM_PAIS WHERE ID_PAIS = ?',
-      [paisOrganizador]
-    );
+    // Verificar que el país existe (solo si se proporciona)
+    if (paisOrganizador) {
+      const paisExiste = await executeQuery(
+        'SELECT ID_PAIS FROM DIM_PAIS WHERE ID_PAIS = ?',
+        [paisOrganizador]
+      );
 
-    if (paisExiste.length === 0) {
-      return res.status(400).json({
-        error: 'El país organizador especificado no existe'
-      });
+      if (paisExiste.length === 0) {
+        return res.status(400).json({
+          error: 'El país organizador especificado no existe'
+        });
+      }
     }
 
     // Verificar si ya existe otro torneo con las mismas características
-    const torneoDuplicado = await executeQuery(
-      'SELECT ID_TORNEO FROM DIM_TORNEO WHERE NOMBRE = ? AND PAIS_ORGANIZADOR = ? AND RUEDA = ? AND TEMPORADA = ? AND ID_TORNEO != ?',
-      [nombre.toUpperCase(), paisOrganizador, rueda.toUpperCase(), temporada, id]
-    );
+    let torneoDuplicado;
+    if (formatoTorneo.toUpperCase() === 'RUEDAS') {
+      torneoDuplicado = await executeQuery(
+        'SELECT ID_TORNEO FROM DIM_TORNEO WHERE NOMBRE = ? AND RUEDA = ? AND TEMPORADA = ? AND FORMATO_TORNEO = ? AND ID_TORNEO != ?',
+        [nombre.toUpperCase(), rueda.toUpperCase(), temporada, 'RUEDAS', id]
+      );
+    } else {
+      torneoDuplicado = await executeQuery(
+        'SELECT ID_TORNEO FROM DIM_TORNEO WHERE NOMBRE = ? AND TEMPORADA = ? AND FORMATO_TORNEO = ? AND ID_TORNEO != ?',
+        [nombre.toUpperCase(), temporada, 'FASES', id]
+      );
+    }
 
     if (torneoDuplicado.length > 0) {
       console.log('❌ Ya existe otro torneo con esas características');
@@ -272,13 +385,43 @@ const actualizarTorneo = async (req, res) => {
 
     // Actualizar torneo
     await executeQuery(
-      `UPDATE DIM_TORNEO 
-       SET NOMBRE = ?, PAIS_ORGANIZADOR = ?, RUEDA = ?, TEMPORADA = ?
+      `UPDATE DIM_TORNEO
+       SET NOMBRE = ?, PAIS_ORGANIZADOR = ?, RUEDA = ?, TEMPORADA = ?, FORMATO_TORNEO = ?
        WHERE ID_TORNEO = ?`,
-      [nombre.toUpperCase(), paisOrganizador, rueda.toUpperCase(), temporada, id]
+      [
+        nombre.toUpperCase(),
+        paisOrganizador || null,
+        rueda ? rueda.toUpperCase() : null,
+        temporada,
+        formatoTorneo.toUpperCase(),
+        id
+      ]
     );
 
     console.log('✅ Torneo actualizado exitosamente');
+
+    // Si es formato FASES, actualizar las fases
+    if (formatoTorneo.toUpperCase() === 'FASES') {
+      // Eliminar fases existentes
+      await executeQuery('DELETE FROM DIM_FASE_TORNEO WHERE ID_TORNEO = ?', [id]);
+
+      // Insertar nuevas fases
+      if (fases && fases.length > 0) {
+        for (let i = 0; i < fases.length; i++) {
+          const fase = fases[i];
+          await executeQuery(
+            `INSERT INTO DIM_FASE_TORNEO (ID_TORNEO, NOMBRE_FASE, ORDEN, DESCRIPCION)
+             VALUES (?, ?, ?, ?)`,
+            [id, fase.nombre, i + 1, fase.descripcion || null]
+          );
+        }
+        console.log(`✅ ${fases.length} fases actualizadas para el torneo`);
+      }
+    } else if (torneoExiste[0].FORMATO_TORNEO === 'FASES') {
+      // Si el torneo cambió de FASES a RUEDAS, eliminar las fases
+      await executeQuery('DELETE FROM DIM_FASE_TORNEO WHERE ID_TORNEO = ?', [id]);
+      console.log('✅ Fases eliminadas (torneo cambió a formato RUEDAS)');
+    }
 
     res.json({
       message: 'Torneo actualizado exitosamente',
@@ -286,8 +429,9 @@ const actualizarTorneo = async (req, res) => {
         id: parseInt(id),
         nombre: nombre.toUpperCase(),
         pais_organizador: paisOrganizador,
-        rueda: rueda.toUpperCase(),
-        temporada: temporada
+        rueda: rueda ? rueda.toUpperCase() : null,
+        temporada: temporada,
+        formato_torneo: formatoTorneo.toUpperCase()
       }
     });
 
@@ -361,27 +505,45 @@ const obtenerPaises = async (req, res) => {
   }
 };
 
-// Función CORREGIDA: Obtener todos los torneos (no solo los únicos)
+// Función CORREGIDA: Obtener todos los torneos con información completa
 const getAllTorneos = async (req, res) => {
-  console.log('📋 Obteniendo TODOS los torneos (consulta simple)...');
-  
+  console.log('📋 Obteniendo TODOS los torneos con información completa...');
+
   try {
     const query = `
-      SELECT 
-        ID_TORNEO as id,
-        LEAGUE_ID_FBR,
-        NOMBRE,
-        PAIS_ORGANIZADOR,
-        RUEDA,
-        TEMPORADA,
-        CONCAT(NOMBRE, ' ', TEMPORADA, ' - ', RUEDA, ' rueda') as nombre_completo
-      FROM DIM_TORNEO
-      ORDER BY TEMPORADA DESC, NOMBRE ASC
+      SELECT
+        t.ID_TORNEO,
+        t.LEAGUE_ID_FBR,
+        t.NOMBRE,
+        t.PAIS_ORGANIZADOR,
+        t.RUEDA,
+        t.TEMPORADA,
+        t.FORMATO_TORNEO,
+        p.NOMBRE as NOMBRE_PAIS,
+        p.CODIGO_FIFA as CODIGO_PAIS
+      FROM DIM_TORNEO t
+      LEFT JOIN DIM_PAIS p ON t.PAIS_ORGANIZADOR = p.ID_PAIS
+      ORDER BY t.TEMPORADA DESC, t.NOMBRE ASC
     `;
-    
+
     const torneos = await executeQuery(query);
+
+    // Para cada torneo con formato FASES, obtener sus fases
+    for (const torneo of torneos) {
+      if (torneo.FORMATO_TORNEO === 'FASES') {
+        const fasesQuery = `
+          SELECT ID_FASE, NOMBRE_FASE, ORDEN, DESCRIPCION
+          FROM DIM_FASE_TORNEO
+          WHERE ID_TORNEO = ?
+          ORDER BY ORDEN
+        `;
+        const fases = await executeQuery(fasesQuery, [torneo.ID_TORNEO]);
+        torneo.FASES = fases;
+      }
+    }
+
     console.log(`✅ Se encontraron ${torneos.length} torneos totales`);
-    
+
     res.json(torneos);
   } catch (error) {
     console.error('❌ Error al obtener todos los torneos:', error);
@@ -1471,7 +1633,140 @@ const actualizarAsignacionCompleta = async (req, res) => {
   }
 };
 
-console.log('✅ Todas las funciones de torneoController definidas (CRUD + Asignaciones) - CORREGIDAS');
+// =====================================================================
+// NUEVAS FUNCIONES: Gestión de Fases
+// =====================================================================
+
+// Obtener plantillas de fases disponibles
+const obtenerPlantillasFases = async (req, res) => {
+  try {
+    console.log('📋 Obteniendo plantillas de fases...');
+
+    const query = `
+      SELECT DISTINCT TIPO_TORNEO
+      FROM DIM_PLANTILLA_FASE
+      ORDER BY TIPO_TORNEO
+    `;
+
+    const tipos = await executeQuery(query);
+
+    // Para cada tipo, obtener sus fases
+    const plantillas = {};
+    for (const tipo of tipos) {
+      const fasesQuery = `
+        SELECT ID_PLANTILLA, NOMBRE_FASE, ORDEN, DESCRIPCION
+        FROM DIM_PLANTILLA_FASE
+        WHERE TIPO_TORNEO = ?
+        ORDER BY ORDEN
+      `;
+      const fases = await executeQuery(fasesQuery, [tipo.TIPO_TORNEO]);
+      plantillas[tipo.TIPO_TORNEO] = fases;
+    }
+
+    console.log(`✅ Se encontraron ${Object.keys(plantillas).length} tipos de plantillas`);
+    res.json(plantillas);
+
+  } catch (error) {
+    console.error('❌ Error al obtener plantillas de fases:', error);
+    res.status(500).json({
+      error: 'Error al obtener plantillas de fases',
+      detalle: error.message,
+      timestamp: new Date().toISOString()
+    });
+  }
+};
+
+// Obtener fases de un torneo específico
+const obtenerFasesTorneo = async (req, res) => {
+  try {
+    const { id } = req.params;
+    console.log(`📋 Obteniendo fases del torneo ${id}...`);
+
+    const query = `
+      SELECT ID_FASE, NOMBRE_FASE, ORDEN, DESCRIPCION, FECHA_INICIO, FECHA_FIN
+      FROM DIM_FASE_TORNEO
+      WHERE ID_TORNEO = ?
+      ORDER BY ORDEN
+    `;
+
+    const fases = await executeQuery(query, [id]);
+
+    console.log(`✅ Se encontraron ${fases.length} fases para el torneo ${id}`);
+    res.json(fases);
+
+  } catch (error) {
+    console.error('❌ Error al obtener fases del torneo:', error);
+    res.status(500).json({
+      error: 'Error al obtener fases del torneo',
+      detalle: error.message,
+      timestamp: new Date().toISOString()
+    });
+  }
+};
+
+// Agregar fase a un torneo
+const agregarFaseTorneo = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { nombreFase, descripcion, fechaInicio, fechaFin } = req.body;
+
+    console.log(`📝 Agregando fase al torneo ${id}:`, req.body);
+
+    // Validar que el torneo existe y es de formato FASES
+    const torneoQuery = await executeQuery(
+      'SELECT FORMATO_TORNEO FROM DIM_TORNEO WHERE ID_TORNEO = ?',
+      [id]
+    );
+
+    if (torneoQuery.length === 0) {
+      return res.status(404).json({ error: 'Torneo no encontrado' });
+    }
+
+    if (torneoQuery[0].FORMATO_TORNEO !== 'FASES') {
+      return res.status(400).json({
+        error: 'Solo se pueden agregar fases a torneos con formato FASES'
+      });
+    }
+
+    // Obtener el orden máximo actual
+    const ordenQuery = await executeQuery(
+      'SELECT COALESCE(MAX(ORDEN), 0) as max_orden FROM DIM_FASE_TORNEO WHERE ID_TORNEO = ?',
+      [id]
+    );
+    const nuevoOrden = ordenQuery[0].max_orden + 1;
+
+    // Insertar la nueva fase
+    const result = await executeQuery(
+      `INSERT INTO DIM_FASE_TORNEO (ID_TORNEO, NOMBRE_FASE, ORDEN, DESCRIPCION, FECHA_INICIO, FECHA_FIN)
+       VALUES (?, ?, ?, ?, ?, ?)`,
+      [id, nombreFase, nuevoOrden, descripcion || null, fechaInicio || null, fechaFin || null]
+    );
+
+    console.log('✅ Fase agregada exitosamente con ID:', result.insertId);
+
+    res.status(201).json({
+      message: 'Fase agregada exitosamente',
+      fase: {
+        id: result.insertId,
+        nombre_fase: nombreFase,
+        orden: nuevoOrden,
+        descripcion,
+        fecha_inicio: fechaInicio,
+        fecha_fin: fechaFin
+      }
+    });
+
+  } catch (error) {
+    console.error('❌ Error al agregar fase:', error);
+    res.status(500).json({
+      error: 'Error al agregar fase',
+      detalle: error.message,
+      timestamp: new Date().toISOString()
+    });
+  }
+};
+
+console.log('✅ Todas las funciones de torneoController definidas (CRUD + Asignaciones + Fases) - CORREGIDAS');
 
 module.exports = {
   // Funciones originales CRUD
@@ -1481,7 +1776,7 @@ module.exports = {
   actualizarTorneo,
   eliminarTorneo,
   obtenerPaises,
-  
+
   // Nuevas funciones para asignaciones - ASEGURAR QUE TODAS ESTÉN AQUÍ
   getTorneosUnicos,
   getEquiposByTorneo,
@@ -1495,5 +1790,10 @@ module.exports = {
   actualizarPosicionesJugador,
   getAllTorneos,                  // ← NECESARIA para /all
   getJugadoresByTorneo,          // ← NECESARIA para /:torneoId/jugadores
-  getAsignacionesJugador
+  getAsignacionesJugador,
+
+  // Nuevas funciones para gestión de fases
+  obtenerPlantillasFases,
+  obtenerFasesTorneo,
+  agregarFaseTorneo
 };

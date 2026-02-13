@@ -180,7 +180,8 @@ export const cuotasService = {
   getPartidosSinApostar: () => api.get('/api/cuotas/partidos-sin-apostar'),
   getByPartido: (idPartido) => api.get(`/api/cuotas/partido/${idPartido}`),
   create: (data) => api.post('/api/cuotas', data),
-  update: (idCuota, data) => api.put(`/api/cuotas/${idCuota}`, data)
+  update: (idCuota, data) => api.put(`/api/cuotas/${idCuota}`, data),
+  upsertCuotas: (idPartido, data) => api.post(`/api/cuotas/partido/${idPartido}`, data)
 };
 
 export const apuestasService = {
@@ -191,9 +192,13 @@ export const apuestasService = {
   getEstadisticas: () => api.get('/api/apuestas/estadisticas'),
   getTorneosYFechas: () => api.get('/api/apuestas/torneos-fechas'),
   create: (data) => api.post('/api/apuestas', data),
+  createBatch: (apuestasArray) => api.post('/api/apuestas/batch', { apuestas: apuestasArray }),
   liquidar: (idPartido) => api.post(`/api/apuestas/liquidar/${idPartido}`),
   getUsuariosConApuestas: (idTorneo) => api.get(`/api/apuestas/admin/usuarios-torneo/${idTorneo}`),
-  limpiarApuestasUsuario: (idUsuario, idTorneo) => api.delete(`/api/apuestas/admin/limpiar/${idUsuario}/${idTorneo}`)
+  limpiarApuestasUsuario: (idUsuario, idTorneo, fecha = null) => {
+    const params = fecha ? `?fecha=${fecha}` : '';
+    return api.delete(`/api/apuestas/admin/limpiar/${idUsuario}/${idTorneo}${params}`);
+  }
 };
 
 export const usuariosService = {
@@ -207,13 +212,28 @@ export const usuariosService = {
 export const configApuestasService = {
   getConfig: () => api.get('/api/config-apuestas'),
   updateConfig: (data) => api.put('/api/config-apuestas', data),
-  getTorneosFechas: () => api.get('/api/config-apuestas/torneos-fechas')
+  getTorneosFechas: () => api.get('/api/config-apuestas/torneos-fechas'),
+  getPartidosPorTorneoFecha: (idTorneo, fecha) => api.get(`/api/config-apuestas/partidos/${idTorneo}/${fecha || 'todas'}`)
 };
 
 export const pronosticosService = {
   getTodos: () => api.get('/api/pronosticos'),
-  getTablaPosiciones: () => api.get('/api/pronosticos/tabla-posiciones'),
-  getApuestasPorPartido: () => api.get('/api/pronosticos/apuestas-por-partido')
+  getTablaPosiciones: (idTorneo, fecha) => {
+    const params = new URLSearchParams();
+    if (idTorneo) params.append('idTorneo', idTorneo);
+    if (fecha && fecha !== 'todas') params.append('fecha', fecha);
+    return api.get(`/api/pronosticos/tabla-posiciones?${params.toString()}`);
+  },
+  getTorneosDisponibles: () => api.get('/api/pronosticos/torneos-disponibles'),
+  getFechasTorneo: (idTorneo) => api.get(`/api/pronosticos/fechas-torneo/${idTorneo}`),
+  getUltimaFecha: () => api.get('/api/pronosticos/ultima-fecha'),
+  getApuestasPorPartido: () => api.get('/api/pronosticos/apuestas-por-partido'),
+  getApuestasPorPartidoFiltrado: (idTorneo, fecha) => {
+    const params = new URLSearchParams();
+    if (idTorneo) params.append('idTorneo', idTorneo);
+    if (fecha) params.append('fecha', fecha);
+    return api.get(`/api/pronosticos/apuestas-por-partido?${params.toString()}`);
+  }
 };
 
 export const partidosHistoricoService = {
@@ -222,7 +242,8 @@ export const partidosHistoricoService = {
     return api.get(`/api/partidos-historico${queryString}`);
   },
   getTorneos: () => api.get('/api/partidos-historico/torneos'),
-  getFechasPorTorneo: (torneoId) => api.get(`/api/partidos-historico/torneos/${torneoId}/fechas`)
+  getFechasPorTorneo: (torneoId) => api.get(`/api/partidos-historico/torneos/${torneoId}/fechas`),
+  getEquiposPorTorneo: (torneoId) => api.get(`/api/partidos-historico/torneos/${torneoId}/equipos`)
 };
 
 export const torneoJugadorService = {
@@ -234,7 +255,32 @@ export const torneoJugadorService = {
   eliminarAsignacion: (id) => api.delete(`/api/torneo-jugador/${id}`),
   // Asignación masiva
   crearAsignacionMasiva: (data) => api.post('/api/torneo-jugador/asignacion-masiva', data),
-  actualizarCamisetaTemporada: (data) => api.put('/api/torneo-jugador/actualizar-camiseta-temporada', data)
+  actualizarCamisetaTemporada: (data) => api.put('/api/torneo-jugador/actualizar-camiseta-temporada', data),
+  // Clonación de asignaciones entre torneos
+  verificarAsignacionesTorneo: (idTorneo) => api.get(`/api/torneo-jugador/verificar-asignaciones/${idTorneo}`),
+  getJugadoresPorEquipoYTorneo: (idTorneo, idEquipo) => api.get(`/api/torneo-jugador/jugadores-equipo/${idTorneo}/${idEquipo}`),
+  clonarAsignaciones: (data) => api.post('/api/torneo-jugador/clonar-asignaciones', data)
+};
+
+export const tokensInvitacionService = {
+  // Obtener todos los tokens (solo admin)
+  getAll: () => api.get('/api/tokens-invitacion'),
+  // Crear nuevo token (solo admin)
+  create: () => api.post('/api/tokens-invitacion', {}),
+  // Validar token (público)
+  validar: (token) => api.get(`/api/tokens-invitacion/validar/${token}`),
+  // Eliminar token (solo admin)
+  delete: (idToken) => api.delete(`/api/tokens-invitacion/${idToken}`)
+};
+
+export const mensajesGanadoresService = {
+  // Obtener ganadores de cada jornada de un torneo
+  getGanadores: (idTorneo) => api.get(`/api/mensajes-ganadores/ganadores/${idTorneo}`),
+  // Obtener todos los mensajes de un torneo
+  getMensajes: (idTorneo) => api.get(`/api/mensajes-ganadores/mensajes/${idTorneo}`),
+  // Guardar mensaje de ganador
+  guardarMensaje: (idTorneo, numeroJornada, mensaje) =>
+    api.post(`/api/mensajes-ganadores/mensajes/${idTorneo}/${numeroJornada}`, { mensaje })
 };
 
 export default api;
