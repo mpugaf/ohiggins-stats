@@ -28,8 +28,8 @@ router.get('/torneos-fechas', authenticateToken, requireAdmin, configApuestasCon
 /**
  * GET /api/config-apuestas/partidos/:idTorneo/:fecha
  * Obtener partidos de un torneo/fecha específica con sus cuotas
- * Requiere autenticación y rol de administrador
+ * Accesible para todos los usuarios autenticados (necesario para verificar jornadas finalizadas)
  */
-router.get('/partidos/:idTorneo/:fecha', authenticateToken, requireAdmin, configApuestasController.getPartidosPorTorneoFecha);
+router.get('/partidos/:idTorneo/:fecha', authenticateToken, configApuestasController.getPartidosPorTorneoFecha);
 
 module.exports = router;

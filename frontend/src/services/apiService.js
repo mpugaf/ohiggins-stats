@@ -205,6 +205,7 @@ export const usuariosService = {
   getAll: () => api.get('/api/usuarios'),
   getById: (id) => api.get(`/api/usuarios/${id}`),
   create: (data) => api.post('/api/usuarios', data),
+  update: (id, data) => api.put(`/api/usuarios/${id}`, data),
   delete: (id) => api.delete(`/api/usuarios/${id}`),
   toggleActivo: (id) => apiRequest(`/api/usuarios/${id}/toggle-activo`, { method: 'PATCH' })
 };
@@ -281,6 +282,16 @@ export const mensajesGanadoresService = {
   // Guardar mensaje de ganador
   guardarMensaje: (idTorneo, numeroJornada, mensaje) =>
     api.post(`/api/mensajes-ganadores/mensajes/${idTorneo}/${numeroJornada}`, { mensaje })
+};
+
+// ==================== PROGRAMAS ====================
+export const programasService = {
+  getAll: () => api.get('/api/programas'),
+  getById: (id) => api.get(`/api/programas/${id}`),
+  create: (data) => api.post('/api/programas', data),
+  update: (id, data) => api.put(`/api/programas/${id}`, data),
+  delete: (id) => api.delete(`/api/programas/${id}`),
+  getUsuarios: (id) => api.get(`/api/programas/${id}/usuarios`)
 };
 
 export default api;

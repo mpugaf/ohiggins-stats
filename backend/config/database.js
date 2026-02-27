@@ -9,7 +9,8 @@ const dbConfig = {
   database: process.env.DB_NAME || 'MP_DATA_DEV',
   port: process.env.DB_PORT || 3306,
   connectionLimit: 10,
-  queueLimit: 0
+  queueLimit: 0,
+  timezone: '-03:00'  // Chile GMT-3: las fechas DATETIME se interpretan como hora Chile
 };
 
 console.log('🔧 Configuración de base de datos:', {

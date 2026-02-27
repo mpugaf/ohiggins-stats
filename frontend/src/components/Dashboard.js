@@ -367,6 +367,9 @@ const Dashboard = () => {
                 <button onClick={() => handleNavigation('/admin/tokens-invitacion')} className="action-btn secondary">
                   🎟️ Gestión de Tokens
                 </button>
+                <button onClick={() => handleNavigation('/admin/gestion-programas')} className="action-btn info">
+                  🎙️ Gestión de Programas
+                </button>
               </div>
               <div className="module-features">
                 <h4>Funcionalidades:</h4>

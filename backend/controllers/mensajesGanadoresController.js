@@ -16,6 +16,7 @@ exports.getGanadoresPorJornada = async (req, res) => {
     }
 
     // Query para obtener el ganador de cada jornada
+    // En caso de empate en puntos, gana el usuario con fecha_creacion más antigua (se registró primero)
     const query = `
       SELECT
         p.NUMERO_JORNADA as numero_jornada,
@@ -31,7 +32,7 @@ exports.getGanadoresPorJornada = async (req, res) => {
         AND a.estado IN ('ganada', 'perdida')
         AND p.NUMERO_JORNADA IS NOT NULL
       GROUP BY p.NUMERO_JORNADA, u.id_usuario, u.username, u.nombre_completo
-      ORDER BY p.NUMERO_JORNADA ASC, puntos_jornada DESC
+      ORDER BY p.NUMERO_JORNADA ASC, puntos_jornada DESC, u.fecha_creacion ASC
     `;
 
     const resultados = await executeQuery(query, [idTorneo]);
@@ -153,6 +154,7 @@ exports.guardarMensaje = async (req, res) => {
     }
 
     // Verificar si el usuario es el ganador de esta jornada
+    // En caso de empate en puntos, gana el usuario con fecha_creacion más antigua (se registró primero)
     const queryGanador = `
       SELECT
         u.id_usuario,
@@ -164,7 +166,7 @@ exports.guardarMensaje = async (req, res) => {
         AND p.NUMERO_JORNADA = ?
         AND a.estado IN ('ganada', 'perdida')
       GROUP BY u.id_usuario
-      ORDER BY puntos_jornada DESC
+      ORDER BY puntos_jornada DESC, u.fecha_creacion ASC
       LIMIT 1
     `;
 

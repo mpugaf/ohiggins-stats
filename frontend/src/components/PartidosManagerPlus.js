@@ -1,18 +1,24 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { partidosService, handleResponse } from '../services/apiService';
+import { partidosService, apuestasService, handleResponse } from '../services/apiService';
 import TeamLogo from './common/TeamLogo';
 import './PartidosManagerPlus.css';
 
 const PartidosManagerPlus = () => {
   const navigate = useNavigate();
   const [partidos, setPartidos] = useState([]);
+  const [todosLosPartidos, setTodosLosPartidos] = useState([]); // sin filtro de jornada, para el combo
   const [torneos, setTorneos] = useState([]);
   const [equipos, setEquipos] = useState([]);
   const [estadios, setEstadios] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [successMessage, setSuccessMessage] = useState('');
+
+  // Valores por defecto para filtros
+  const [torneoActivo, setTorneoActivo] = useState(null);
+  const [jornadaActiva, setJornadaActiva] = useState(null);
+  const [defaultsCargados, setDefaultsCargados] = useState(false);
 
   // Filtros
   const [filtros, setFiltros] = useState({
@@ -27,6 +33,7 @@ const PartidosManagerPlus = () => {
   // Modal de edición/creación
   const [showModal, setShowModal] = useState(false);
   const [partidoEditando, setPartidoEditando] = useState(null);
+  const [modoRapido, setModoRapido] = useState(false);
   const [formData, setFormData] = useState({
     ID_TORNEO: '',
     ID_EQUIPO_LOCAL: '',
@@ -48,6 +55,7 @@ const PartidosManagerPlus = () => {
   const partidosPorPagina = 15;
 
   useEffect(() => {
+    window.scrollTo({ top: 0, behavior: 'auto' });
     cargarDatosIniciales();
   }, []);
 
@@ -59,19 +67,58 @@ const PartidosManagerPlus = () => {
     try {
       setLoading(true);
 
-      const [torneosRes, equiposRes, estadiosRes] = await Promise.all([
+      const [torneosRes, equiposRes, estadiosRes, torneosApuestasRes] = await Promise.all([
         partidosService.getTorneos(),
         partidosService.getEquiposData(),
-        partidosService.getEstadios()
+        partidosService.getEstadios(),
+        apuestasService.getTorneosYFechas()
       ]);
 
       const torneosData = await handleResponse(torneosRes);
       const equiposData = await handleResponse(equiposRes);
       const estadiosData = await handleResponse(estadiosRes);
+      const torneosApuestasData = await handleResponse(torneosApuestasRes);
 
       setTorneos(torneosData);
       setEquipos(equiposData);
       setEstadios(estadiosData);
+
+      // Establecer torneo activo por defecto
+      const torneoActivoId = torneosApuestasData.torneoActivo;
+      if (torneoActivoId && !defaultsCargados) {
+        setTorneoActivo(torneoActivoId);
+
+        // Obtener jornada activa/última del torneo
+        const partidosTorneoRes = await partidosService.getAll({ torneoId: torneoActivoId, limit: '200' });
+        const partidosTorneo = await handleResponse(partidosTorneoRes);
+
+        if (partidosTorneo && partidosTorneo.length > 0) {
+          // Buscar jornada con partidos PROGRAMADO o EN_CURSO
+          const jornadaPendiente = partidosTorneo.find(p =>
+            p.ESTADO_PARTIDO === 'PROGRAMADO' || p.ESTADO_PARTIDO === 'EN_CURSO'
+          );
+
+          let jornada;
+          if (jornadaPendiente) {
+            jornada = jornadaPendiente.NUMERO_JORNADA;
+          } else {
+            // Si no hay partidos pendientes, usar la jornada más reciente
+            const jornadas = [...new Set(partidosTorneo.map(p => p.NUMERO_JORNADA))];
+            jornada = Math.max(...jornadas);
+          }
+
+          setJornadaActiva(jornada);
+
+          // Establecer filtros por defecto
+          setFiltros(prev => ({
+            ...prev,
+            torneo: String(torneoActivoId),
+            numeroJornada: String(jornada)
+          }));
+
+          setDefaultsCargados(true);
+        }
+      }
 
     } catch (err) {
       console.error('Error al cargar datos iniciales:', err);
@@ -95,6 +142,10 @@ const PartidosManagerPlus = () => {
 
       const response = await partidosService.getAll(params);
       let data = await handleResponse(response);
+
+      // Guardar todos los partidos del torneo antes del filtro de jornada
+      // (necesario para que el combo muestre todas las jornadas disponibles)
+      setTodosLosPartidos(data);
 
       // Filtrar por número de jornada en frontend si está seleccionado
       if (filtros.numeroJornada) {
@@ -121,10 +172,10 @@ const PartidosManagerPlus = () => {
 
   const limpiarFiltros = () => {
     setFiltros({
-      torneo: '',
+      torneo: torneoActivo ? String(torneoActivo) : '',
       equipo: '',
       estado: '',
-      numeroJornada: '',
+      numeroJornada: jornadaActiva ? String(jornadaActiva) : '',
       fechaDesde: '',
       fechaHasta: ''
     });
@@ -132,6 +183,7 @@ const PartidosManagerPlus = () => {
 
   const abrirModalNuevo = () => {
     setPartidoEditando(null);
+    setModoRapido(false);
     setFormData({
       ID_TORNEO: '',
       ID_EQUIPO_LOCAL: '',
@@ -148,10 +200,13 @@ const PartidosManagerPlus = () => {
 
   const abrirModalEditar = (partido) => {
     setPartidoEditando(partido);
+    setModoRapido(true);
 
-    // Formatear fecha para input datetime-local
-    const fecha = new Date(partido.FECHA_PARTIDO);
-    const fechaFormateada = fecha.toISOString().slice(0, 16);
+    // Formatear fecha para input datetime-local en hora Chile (GMT-3)
+    const fechaFormateada = new Date(partido.FECHA_PARTIDO)
+      .toLocaleString('sv-SE', { timeZone: 'America/Santiago' })
+      .slice(0, 16)
+      .replace(' ', 'T');
 
     setFormData({
       ID_TORNEO: partido.ID_TORNEO || '',
@@ -170,6 +225,7 @@ const PartidosManagerPlus = () => {
   const cerrarModal = () => {
     setShowModal(false);
     setPartidoEditando(null);
+    setModoRapido(false);
   };
 
   const handleFormChange = (campo, valor) => {
@@ -196,7 +252,8 @@ const PartidosManagerPlus = () => {
         numeroJornada: formData.NUMERO_JORNADA ? parseInt(formData.NUMERO_JORNADA) : null,
         golesLocal: formData.GOLES_LOCAL === '' || formData.GOLES_LOCAL === null ? 0 : parseInt(formData.GOLES_LOCAL),
         golesVisita: formData.GOLES_VISITA === '' || formData.GOLES_VISITA === null ? 0 : parseInt(formData.GOLES_VISITA),
-        estadoPartido: formData.ESTADO_PARTIDO || 'PROGRAMADO',
+        // En modo rápido, forzar estado FINALIZADO
+        estadoPartido: modoRapido ? 'FINALIZADO' : (formData.ESTADO_PARTIDO || 'PROGRAMADO'),
         esCampoNeutro: false,
         arbitro: null,
         asistencia: null,
@@ -274,7 +331,8 @@ const PartidosManagerPlus = () => {
       month: 'short',
       year: 'numeric',
       hour: '2-digit',
-      minute: '2-digit'
+      minute: '2-digit',
+      timeZone: 'America/Santiago'
     });
   };
 
@@ -300,9 +358,10 @@ const PartidosManagerPlus = () => {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
-  // Obtener jornadas únicas del torneo seleccionado
+  // Obtener jornadas únicas del torneo seleccionado desde el estado SIN filtro de jornada
+  // (si se usara 'partidos' filtrado, el combo solo mostraría la jornada activa)
   const jornadasDisponibles = [...new Set(
-    partidos
+    todosLosPartidos
       .filter(p => !filtros.torneo || p.ID_TORNEO === parseInt(filtros.torneo))
       .map(p => p.NUMERO_JORNADA)
       .filter(j => j !== null && j !== undefined)
@@ -354,6 +413,8 @@ const PartidosManagerPlus = () => {
               {torneos.map(t => (
                 <option key={t.ID_TORNEO} value={t.ID_TORNEO}>
                   {t.NOMBRE} - {t.TEMPORADA}
+                  {t.RUEDA && ` - ${t.RUEDA === 'PRIMERA' ? '1ª' : t.RUEDA === 'SEGUNDA' ? '2ª' : ''} Rueda`}
+                  {t.ID_TORNEO === torneoActivo && ' ⭐'}
                 </option>
               ))}
             </select>
@@ -594,6 +655,23 @@ const PartidosManagerPlus = () => {
             </div>
 
             <form onSubmit={handleSubmit} className="modal-form-plus">
+              {/* Checkbox Modo Rápido - Solo en edición */}
+              {partidoEditando && (
+                <div className="modo-rapido-container">
+                  <label className="modo-rapido-label">
+                    <input
+                      type="checkbox"
+                      checked={modoRapido}
+                      onChange={(e) => setModoRapido(e.target.checked)}
+                      className="modo-rapido-checkbox"
+                    />
+                    <span className="modo-rapido-text">
+                      ⚡ <strong>Modo Rápido:</strong> Solo actualizar resultado (deshabilita otros campos y marca como FINALIZADO)
+                    </span>
+                  </label>
+                </div>
+              )}
+
               <div className="form-grid-plus">
                 <div className="form-group-plus">
                   <label>Torneo *</label>
@@ -601,6 +679,7 @@ const PartidosManagerPlus = () => {
                     value={formData.ID_TORNEO}
                     onChange={(e) => handleFormChange('ID_TORNEO', e.target.value)}
                     required
+                    disabled={modoRapido}
                     className="form-input-plus"
                   >
                     <option value="">Seleccionar...</option>
@@ -618,6 +697,7 @@ const PartidosManagerPlus = () => {
                     type="number"
                     value={formData.NUMERO_JORNADA}
                     onChange={(e) => handleFormChange('NUMERO_JORNADA', e.target.value)}
+                    disabled={modoRapido}
                     className="form-input-plus"
                     min="1"
                   />
@@ -629,6 +709,7 @@ const PartidosManagerPlus = () => {
                     value={formData.ID_EQUIPO_LOCAL}
                     onChange={(e) => handleFormChange('ID_EQUIPO_LOCAL', e.target.value)}
                     required
+                    disabled={modoRapido}
                     className="form-input-plus"
                   >
                     <option value="">Seleccionar...</option>
@@ -646,6 +727,7 @@ const PartidosManagerPlus = () => {
                     value={formData.ID_EQUIPO_VISITA}
                     onChange={(e) => handleFormChange('ID_EQUIPO_VISITA', e.target.value)}
                     required
+                    disabled={modoRapido}
                     className="form-input-plus"
                   >
                     <option value="">Seleccionar...</option>
@@ -662,6 +744,7 @@ const PartidosManagerPlus = () => {
                   <select
                     value={formData.ID_ESTADIO}
                     onChange={(e) => handleFormChange('ID_ESTADIO', e.target.value)}
+                    disabled={modoRapido}
                     className="form-input-plus"
                   >
                     <option value="">Seleccionar...</option>
@@ -680,6 +763,7 @@ const PartidosManagerPlus = () => {
                     value={formData.FECHA_PARTIDO}
                     onChange={(e) => handleFormChange('FECHA_PARTIDO', e.target.value)}
                     required
+                    disabled={modoRapido}
                     className="form-input-plus"
                   />
                 </div>
@@ -709,9 +793,10 @@ const PartidosManagerPlus = () => {
                 <div className="form-group-plus">
                   <label>Estado *</label>
                   <select
-                    value={formData.ESTADO_PARTIDO}
+                    value={modoRapido ? 'FINALIZADO' : formData.ESTADO_PARTIDO}
                     onChange={(e) => handleFormChange('ESTADO_PARTIDO', e.target.value)}
                     required
+                    disabled={modoRapido}
                     className="form-input-plus"
                   >
                     <option value="PROGRAMADO">PROGRAMADO</option>
@@ -720,6 +805,11 @@ const PartidosManagerPlus = () => {
                     <option value="SUSPENDIDO">SUSPENDIDO</option>
                     <option value="CANCELADO">CANCELADO</option>
                   </select>
+                  {modoRapido && (
+                    <small className="modo-rapido-hint">
+                      ⚡ Se marcará automáticamente como FINALIZADO
+                    </small>
+                  )}
                 </div>
               </div>
 

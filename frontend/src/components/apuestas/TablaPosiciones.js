@@ -18,6 +18,7 @@ const TablaPosiciones = () => {
   const [ganadoresJornadas, setGanadoresJornadas] = useState([]);
   const [mensajesGanadores, setMensajesGanadores] = useState({});
   const [loadingMensajes, setLoadingMensajes] = useState(false);
+  const [jornadasFinalizadas, setJornadasFinalizadas] = useState({});
 
   // Filtros
   const [torneos, setTorneos] = useState([]);
@@ -161,6 +162,26 @@ const TablaPosiciones = () => {
     setFechaSeleccionada(e.target.value);
   };
 
+  // Verificar si todos los partidos de una jornada están finalizados
+  const verificarJornadaFinalizada = async (idTorneo, numeroJornada) => {
+    try {
+      const response = await configApuestasService.getPartidosPorTorneoFecha(idTorneo, numeroJornada);
+      const data = await handleResponse(response);
+
+      if (data.success && data.partidos) {
+        // Verificar que TODOS los partidos estén finalizados
+        const todosFinalizados = data.partidos.every(
+          partido => partido.ESTADO_PARTIDO === 'FINALIZADO'
+        );
+        return todosFinalizados;
+      }
+      return false;
+    } catch (err) {
+      console.error(`Error verificando jornada ${numeroJornada}:`, err);
+      return false;
+    }
+  };
+
   // Funciones para mensajes de ganadores
   const cargarMensajesGanadores = async (idTorneo) => {
     if (!idTorneo) return;
@@ -174,6 +195,15 @@ const TablaPosiciones = () => {
 
       if (ganadoresData.success) {
         setGanadoresJornadas(ganadoresData.ganadores || []);
+
+        // Verificar cuáles jornadas están completamente finalizadas
+        const jornadasStatus = {};
+        for (const ganador of ganadoresData.ganadores) {
+          const jornada = ganador.numero_jornada;
+          const estaFinalizada = await verificarJornadaFinalizada(idTorneo, jornada);
+          jornadasStatus[jornada] = estaFinalizada;
+        }
+        setJornadasFinalizadas(jornadasStatus);
       }
 
       // Cargar mensajes existentes
@@ -359,12 +389,13 @@ const TablaPosiciones = () => {
 
   const formatDate = (dateString) => {
     const date = new Date(dateString);
-    return date.toLocaleDateString('es-ES', {
+    return date.toLocaleDateString('es-CL', {
       weekday: 'short',
       day: '2-digit',
       month: 'short',
       hour: '2-digit',
-      minute: '2-digit'
+      minute: '2-digit',
+      timeZone: 'America/Santiago'
     });
   };
 
@@ -677,9 +708,119 @@ const TablaPosiciones = () => {
 
           {!loadingApuestas && !errorApuestas && partidos.length > 0 && (
             <>
-              {/* Agrupar partidos por fecha si no hay fecha seleccionada */}
-              {fechaApuestas === 'todas' ? (
-                // Mostrar agrupado por fecha
+              {/* Mostrar agrupado por usuario o por partido según selección */}
+              {!usuarioSeleccionado ? (
+                // Agrupar por USUARIO cuando está seleccionado "Todos"
+                (() => {
+                  // Agrupar todas las apuestas por usuario
+                  const apuestasPorUsuario = {};
+
+                  partidos.forEach(partido => {
+                    (partido.apuestas || []).forEach(apuesta => {
+                      const userId = apuesta.id_usuario;
+                      if (!apuestasPorUsuario[userId]) {
+                        apuestasPorUsuario[userId] = {
+                          usuario: apuesta.nombre_completo || apuesta.username,
+                          username: apuesta.username,
+                          apuestas: []
+                        };
+                      }
+                      apuestasPorUsuario[userId].apuestas.push({
+                        ...apuesta,
+                        partido: partido
+                      });
+                    });
+                  });
+
+                  // Ordenar usuarios alfabéticamente
+                  const usuariosOrdenados = Object.entries(apuestasPorUsuario)
+                    .sort((a, b) => a[1].usuario.localeCompare(b[1].usuario));
+
+                  return usuariosOrdenados.map(([userId, userData]) => (
+                    <div key={userId} className="grupo-usuario">
+                      <h3 className="grupo-usuario-titulo">
+                        👤 {userData.usuario}
+                        <span className="total-apuestas-usuario">
+                          ({userData.apuestas.length} apuesta{userData.apuestas.length !== 1 ? 's' : ''})
+                        </span>
+                      </h3>
+                      <div className="tabla-wrapper">
+                        <table className="tabla-apuestas-moderna">
+                          <thead>
+                            <tr>
+                              <th>Partido</th>
+                              <th>Fecha/Hora</th>
+                              <th>Resultado</th>
+                              <th>Apuesta</th>
+                              <th>Estado</th>
+                              <th>Puntos</th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                            {userData.apuestas
+                              .sort((a, b) => new Date(a.partido.FECHA_PARTIDO) - new Date(b.partido.FECHA_PARTIDO))
+                              .map((apuesta) => {
+                                const partido = apuesta.partido;
+                                return (
+                                  <tr key={`${partido.ID_PARTIDO}-${userId}`}>
+                                    <td className="col-partido">
+                                      <div className="partido-info">
+                                        <TeamLogo imagen={partido.imagen_local} nombreEquipo={partido.equipo_local} size="small" />
+                                        <span className="vs-text">vs</span>
+                                        <TeamLogo imagen={partido.imagen_visita} nombreEquipo={partido.equipo_visita} size="small" />
+                                      </div>
+                                      <div className="equipos-nombres">
+                                        {partido.equipo_local} - {partido.equipo_visita}
+                                      </div>
+                                    </td>
+                                    <td className="col-fecha-hora">
+                                      {formatDate(partido.FECHA_PARTIDO)}
+                                    </td>
+                                    <td className="col-resultado text-center">
+                                      {partido.GOLES_LOCAL !== null && partido.GOLES_VISITA !== null ? (
+                                        <span className="resultado-marcador">
+                                          {partido.GOLES_LOCAL} - {partido.GOLES_VISITA}
+                                        </span>
+                                      ) : (
+                                        <span className="resultado-pendiente">-</span>
+                                      )}
+                                    </td>
+                                    <td className="col-apuesta text-center">
+                                      <span className={`badge-apuesta tipo-${apuesta.tipo_apuesta}`}>
+                                        {getTipoApuestaIcon(apuesta.tipo_apuesta)}
+                                        {' '}
+                                        {apuesta.tipo_apuesta === 'local' && partido.equipo_local}
+                                        {apuesta.tipo_apuesta === 'empate' && 'Empate'}
+                                        {apuesta.tipo_apuesta === 'visita' && partido.equipo_visita}
+                                      </span>
+                                    </td>
+                                    <td className={`col-estado text-center`}>
+                                      <span className={`badge ${getEstadoBadgeClass(apuesta.estado)}`}>
+                                        {apuesta.estado === 'ganada' && '✅ Ganada'}
+                                        {apuesta.estado === 'perdida' && '❌ Perdida'}
+                                        {apuesta.estado === 'pendiente' && '⏳ Pendiente'}
+                                      </span>
+                                    </td>
+                                    <td className="col-puntos text-right">
+                                      {apuesta.estado === 'ganada' ? (
+                                        <span className="puntos-ganados">
+                                          +${parseInt(apuesta.puntos_ganados || 0).toLocaleString('es-CL')}
+                                        </span>
+                                      ) : (
+                                        <span className="puntos-cero">$0</span>
+                                      )}
+                                    </td>
+                                  </tr>
+                                );
+                              })}
+                          </tbody>
+                        </table>
+                      </div>
+                    </div>
+                  ));
+                })()
+              ) : (
+                // Agrupar por FECHA cuando hay usuario seleccionado
                 (() => {
                   const partidosPorFecha = partidos.reduce((acc, partido) => {
                     const fecha = partido.NUMERO_JORNADA || 'Sin fecha';
@@ -706,110 +847,69 @@ const TablaPosiciones = () => {
                                 <th>Partido</th>
                                 <th>Fecha/Hora</th>
                                 <th>Resultado</th>
-                                {!usuarioSeleccionado && <th>Total Apuestas</th>}
-                                {usuarioSeleccionado && <th>Apuesta</th>}
-                                {usuarioSeleccionado && <th>Estado</th>}
-                                {usuarioSeleccionado && <th>Puntos</th>}
+                                <th>Apuesta</th>
+                                <th>Estado</th>
+                                <th>Puntos</th>
                               </tr>
                             </thead>
                             <tbody>
                               {partidosPorFecha[fecha].map((partido) => {
-                                if (usuarioSeleccionado) {
-                                  const apuestaUsuario = partido.apuestas.find(
-                                    a => a.id_usuario === parseInt(usuarioSeleccionado)
-                                  );
-                                  if (!apuestaUsuario) return null;
+                                const apuestaUsuario = partido.apuestas.find(
+                                  a => a.id_usuario === parseInt(usuarioSeleccionado)
+                                );
+                                if (!apuestaUsuario) return null;
 
-                                  return (
-                                    <tr key={partido.ID_PARTIDO}>
-                                      <td className="col-partido">
-                                        <div className="partido-info">
-                                          <TeamLogo imagen={partido.imagen_local} nombreEquipo={partido.equipo_local} size="small" />
-                                          <span className="vs-text">vs</span>
-                                          <TeamLogo imagen={partido.imagen_visita} nombreEquipo={partido.equipo_visita} size="small" />
-                                        </div>
-                                        <div className="equipos-nombres">
-                                          {partido.equipo_local} - {partido.equipo_visita}
-                                        </div>
-                                      </td>
-                                      <td className="col-fecha-hora">
-                                        {formatDate(partido.FECHA_PARTIDO)}
-                                      </td>
-                                      <td className="col-resultado text-center">
-                                        {partido.GOLES_LOCAL !== null && partido.GOLES_VISITA !== null ? (
-                                          <span className="resultado-marcador">
-                                            {partido.GOLES_LOCAL} - {partido.GOLES_VISITA}
-                                          </span>
-                                        ) : (
-                                          <span className="resultado-pendiente">-</span>
-                                        )}
-                                      </td>
-                                      <td className="col-apuesta text-center">
-                                        <span className={`badge-apuesta tipo-${apuestaUsuario.tipo_apuesta}`}>
-                                          {getTipoApuestaIcon(apuestaUsuario.tipo_apuesta)}
-                                          {' '}
-                                          {apuestaUsuario.tipo_apuesta === 'local' && partido.equipo_local}
-                                          {apuestaUsuario.tipo_apuesta === 'empate' && 'Empate'}
-                                          {apuestaUsuario.tipo_apuesta === 'visita' && partido.equipo_visita}
+                                return (
+                                  <tr key={partido.ID_PARTIDO}>
+                                    <td className="col-partido">
+                                      <div className="partido-info">
+                                        <TeamLogo imagen={partido.imagen_local} nombreEquipo={partido.equipo_local} size="small" />
+                                        <span className="vs-text">vs</span>
+                                        <TeamLogo imagen={partido.imagen_visita} nombreEquipo={partido.equipo_visita} size="small" />
+                                      </div>
+                                      <div className="equipos-nombres">
+                                        {partido.equipo_local} - {partido.equipo_visita}
+                                      </div>
+                                    </td>
+                                    <td className="col-fecha-hora">
+                                      {formatDate(partido.FECHA_PARTIDO)}
+                                    </td>
+                                    <td className="col-resultado text-center">
+                                      {partido.GOLES_LOCAL !== null && partido.GOLES_VISITA !== null ? (
+                                        <span className="resultado-marcador">
+                                          {partido.GOLES_LOCAL} - {partido.GOLES_VISITA}
                                         </span>
-                                      </td>
-                                      <td className={`col-estado text-center`}>
-                                        <span className={`badge ${getEstadoBadgeClass(apuestaUsuario.estado)}`}>
-                                          {apuestaUsuario.estado === 'ganada' && '✅ Ganada'}
-                                          {apuestaUsuario.estado === 'perdida' && '❌ Perdida'}
-                                          {apuestaUsuario.estado === 'pendiente' && '⏳ Pendiente'}
+                                      ) : (
+                                        <span className="resultado-pendiente">-</span>
+                                      )}
+                                    </td>
+                                    <td className="col-apuesta text-center">
+                                      <span className={`badge-apuesta tipo-${apuestaUsuario.tipo_apuesta}`}>
+                                        {getTipoApuestaIcon(apuestaUsuario.tipo_apuesta)}
+                                        {' '}
+                                        {apuestaUsuario.tipo_apuesta === 'local' && partido.equipo_local}
+                                        {apuestaUsuario.tipo_apuesta === 'empate' && 'Empate'}
+                                        {apuestaUsuario.tipo_apuesta === 'visita' && partido.equipo_visita}
+                                      </span>
+                                    </td>
+                                    <td className={`col-estado text-center`}>
+                                      <span className={`badge ${getEstadoBadgeClass(apuestaUsuario.estado)}`}>
+                                        {apuestaUsuario.estado === 'ganada' && '✅ Ganada'}
+                                        {apuestaUsuario.estado === 'perdida' && '❌ Perdida'}
+                                        {apuestaUsuario.estado === 'pendiente' && '⏳ Pendiente'}
+                                      </span>
+                                    </td>
+                                    <td className="col-puntos text-right">
+                                      {apuestaUsuario.estado === 'ganada' ? (
+                                        <span className="puntos-ganados">
+                                          +${parseInt(apuestaUsuario.puntos_ganados || 0).toLocaleString('es-CL')}
                                         </span>
-                                      </td>
-                                      <td className="col-puntos text-right">
-                                        {apuestaUsuario.estado === 'ganada' ? (
-                                          <span className="puntos-ganados">
-                                            +${parseInt(apuestaUsuario.puntos_ganados || 0).toLocaleString('es-CL')}
-                                          </span>
-                                        ) : (
-                                          <span className="puntos-cero">$0</span>
-                                        )}
-                                      </td>
-                                    </tr>
-                                  );
-                                } else {
-                                  // Mostrar todos los usuarios
-                                  return (
-                                    <tr key={partido.ID_PARTIDO}>
-                                      <td className="col-partido">
-                                        <div className="partido-info">
-                                          <TeamLogo imagen={partido.imagen_local} nombreEquipo={partido.equipo_local} size="small" />
-                                          <span className="vs-text">vs</span>
-                                          <TeamLogo imagen={partido.imagen_visita} nombreEquipo={partido.equipo_visita} size="small" />
-                                        </div>
-                                        <div className="equipos-nombres">
-                                          {partido.equipo_local} - {partido.equipo_visita}
-                                        </div>
-                                      </td>
-                                      <td className="col-fecha-hora">
-                                        {formatDate(partido.FECHA_PARTIDO)}
-                                      </td>
-                                      <td className="col-resultado text-center">
-                                        {partido.GOLES_LOCAL !== null && partido.GOLES_VISITA !== null ? (
-                                          <span className="resultado-marcador">
-                                            {partido.GOLES_LOCAL} - {partido.GOLES_VISITA}
-                                          </span>
-                                        ) : (
-                                          <span className="resultado-pendiente">-</span>
-                                        )}
-                                      </td>
-                                      <td className="col-total-apuestas text-center">
-                                        <div className="conteo-apuestas">
-                                          <span className="total-badge">{partido.conteoApuestas?.total || 0} total</span>
-                                          <div className="detalle-conteo">
-                                            <span className="conteo-local">🏠 {partido.conteoApuestas?.local || 0}</span>
-                                            <span className="conteo-empate">🤝 {partido.conteoApuestas?.empate || 0}</span>
-                                            <span className="conteo-visita">✈️ {partido.conteoApuestas?.visita || 0}</span>
-                                          </div>
-                                        </div>
-                                      </td>
-                                    </tr>
-                                  );
-                                }
+                                      ) : (
+                                        <span className="puntos-cero">$0</span>
+                                      )}
+                                    </td>
+                                  </tr>
+                                );
                               })}
                             </tbody>
                           </table>
@@ -817,122 +917,6 @@ const TablaPosiciones = () => {
                       </div>
                     ));
                 })()
-              ) : (
-                // Mostrar para una sola fecha
-                <div className="tabla-wrapper">
-                  <table className="tabla-apuestas-moderna">
-                    <thead>
-                      <tr>
-                        <th>Partido</th>
-                        <th>Fecha/Hora</th>
-                        <th>Resultado</th>
-                        {!usuarioSeleccionado && <th>Total Apuestas</th>}
-                        {usuarioSeleccionado && <th>Apuesta</th>}
-                        {usuarioSeleccionado && <th>Estado</th>}
-                        {usuarioSeleccionado && <th>Puntos</th>}
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {partidos.map((partido) => {
-                        if (usuarioSeleccionado) {
-                          const apuestaUsuario = partido.apuestas.find(
-                            a => a.id_usuario === parseInt(usuarioSeleccionado)
-                          );
-                          if (!apuestaUsuario) return null;
-
-                          return (
-                            <tr key={partido.ID_PARTIDO}>
-                              <td className="col-partido">
-                                <div className="partido-info">
-                                  <TeamLogo imagen={partido.imagen_local} nombreEquipo={partido.equipo_local} size="small" />
-                                  <span className="vs-text">vs</span>
-                                  <TeamLogo imagen={partido.imagen_visita} nombreEquipo={partido.equipo_visita} size="small" />
-                                </div>
-                                <div className="equipos-nombres">
-                                  {partido.equipo_local} - {partido.equipo_visita}
-                                </div>
-                              </td>
-                              <td className="col-fecha-hora">
-                                {formatDate(partido.FECHA_PARTIDO)}
-                              </td>
-                              <td className="col-resultado text-center">
-                                {partido.GOLES_LOCAL !== null && partido.GOLES_VISITA !== null ? (
-                                  <span className="resultado-marcador">
-                                    {partido.GOLES_LOCAL} - {partido.GOLES_VISITA}
-                                  </span>
-                                ) : (
-                                  <span className="resultado-pendiente">-</span>
-                                )}
-                              </td>
-                              <td className="col-apuesta text-center">
-                                <span className={`badge-apuesta tipo-${apuestaUsuario.tipo_apuesta}`}>
-                                  {getTipoApuestaIcon(apuestaUsuario.tipo_apuesta)}
-                                  {' '}
-                                  {apuestaUsuario.tipo_apuesta === 'local' && partido.equipo_local}
-                                  {apuestaUsuario.tipo_apuesta === 'empate' && 'Empate'}
-                                  {apuestaUsuario.tipo_apuesta === 'visita' && partido.equipo_visita}
-                                </span>
-                              </td>
-                              <td className={`col-estado text-center`}>
-                                <span className={`badge ${getEstadoBadgeClass(apuestaUsuario.estado)}`}>
-                                  {apuestaUsuario.estado === 'ganada' && '✅ Ganada'}
-                                  {apuestaUsuario.estado === 'perdida' && '❌ Perdida'}
-                                  {apuestaUsuario.estado === 'pendiente' && '⏳ Pendiente'}
-                                </span>
-                              </td>
-                              <td className="col-puntos text-right">
-                                {apuestaUsuario.estado === 'ganada' ? (
-                                  <span className="puntos-ganados">
-                                    +${parseInt(apuestaUsuario.puntos_ganados || 0).toLocaleString('es-CL')}
-                                  </span>
-                                ) : (
-                                  <span className="puntos-cero">$0</span>
-                                )}
-                              </td>
-                            </tr>
-                          );
-                        } else {
-                          return (
-                            <tr key={partido.ID_PARTIDO}>
-                              <td className="col-partido">
-                                <div className="partido-info">
-                                  <TeamLogo imagen={partido.imagen_local} nombreEquipo={partido.equipo_local} size="small" />
-                                  <span className="vs-text">vs</span>
-                                  <TeamLogo imagen={partido.imagen_visita} nombreEquipo={partido.equipo_visita} size="small" />
-                                </div>
-                                <div className="equipos-nombres">
-                                  {partido.equipo_local} - {partido.equipo_visita}
-                                </div>
-                              </td>
-                              <td className="col-fecha-hora">
-                                {formatDate(partido.FECHA_PARTIDO)}
-                              </td>
-                              <td className="col-resultado text-center">
-                                {partido.GOLES_LOCAL !== null && partido.GOLES_VISITA !== null ? (
-                                  <span className="resultado-marcador">
-                                    {partido.GOLES_LOCAL} - {partido.GOLES_VISITA}
-                                  </span>
-                                ) : (
-                                  <span className="resultado-pendiente">-</span>
-                                )}
-                              </td>
-                              <td className="col-total-apuestas text-center">
-                                <div className="conteo-apuestas">
-                                  <span className="total-badge">{partido.conteoApuestas?.total || 0} total</span>
-                                  <div className="detalle-conteo">
-                                    <span className="conteo-local">🏠 {partido.conteoApuestas?.local || 0}</span>
-                                    <span className="conteo-empate">🤝 {partido.conteoApuestas?.empate || 0}</span>
-                                    <span className="conteo-visita">✈️ {partido.conteoApuestas?.visita || 0}</span>
-                                  </div>
-                                </div>
-                              </td>
-                            </tr>
-                          );
-                        }
-                      })}
-                    </tbody>
-                  </table>
-                </div>
               )}
             </>
           )}
@@ -955,7 +939,8 @@ const TablaPosiciones = () => {
                 const jornada = ganador.numero_jornada;
                 const mensajeExistente = mensajesGanadores[jornada];
                 const esGanador = user && user.id_usuario === ganador.id_usuario_ganador;
-                const puedeEscribir = esGanador && !mensajeExistente;
+                const jornadaFinalizada = jornadasFinalizadas[jornada] === true;
+                const puedeEscribir = esGanador && !mensajeExistente && jornadaFinalizada;
 
                 return (
                   <div key={jornada} className="mensaje-card">
@@ -983,7 +968,9 @@ const TablaPosiciones = () => {
                       ) : (
                         <div className="mensaje-vacio">
                           <span className="mensaje-pendiente">
-                            {esGanador
+                            {esGanador && !jornadaFinalizada
+                              ? '⏳ Esperando finalización de todos los partidos de la jornada...'
+                              : esGanador
                               ? '✍️ Deja tu mensaje aquí'
                               : '⏳ El ganador aún no ha dejado su mensaje'}
                           </span>

@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, Link, useSearchParams } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
-import { tokensInvitacionService, handleResponse } from '../services/apiService';
+import { tokensInvitacionService, programasService, handleResponse } from '../services/apiService';
 import './Register.css';
 
 function Register() {
@@ -12,12 +12,14 @@ function Register() {
     username: '',
     password: '',
     confirmPassword: '',
-    nombre_completo: ''
+    nombre_completo: '',
+    id_programa: ''
   });
   const [error, setError] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [tokenValidado, setTokenValidado] = useState(false);
   const [validandoToken, setValidandoToken] = useState(!!invitationToken);
+  const [programas, setProgramas] = useState([]);
 
   const { register } = useAuth();
   const navigate = useNavigate();
@@ -51,6 +53,21 @@ function Register() {
 
     validarToken();
   }, [invitationToken]);
+
+  // Cargar programas disponibles
+  useEffect(() => {
+    const cargarProgramas = async () => {
+      try {
+        const response = await programasService.getAll();
+        const data = await handleResponse(response);
+        setProgramas(data.data || []);
+      } catch (err) {
+        console.error('Error al cargar programas:', err);
+        // No mostramos error al usuario, programas es opcional
+      }
+    };
+    cargarProgramas();
+  }, []);
 
   const handleChange = (e) => {
     setFormData({
@@ -97,7 +114,8 @@ function Register() {
       const registroData = {
         username: formData.username.trim(),
         password: formData.password,
-        nombre_completo: formData.nombre_completo.trim() || formData.username.trim()
+        nombre_completo: formData.nombre_completo.trim() || formData.username.trim(),
+        id_programa: formData.id_programa || null
         // Email NO se envía - el backend lo manejará como opcional
       };
 
@@ -237,6 +255,32 @@ function Register() {
                 />
                 <div className="input-border-animation"></div>
               </div>
+            </div>
+
+            <div className="form-field-modern">
+              <label htmlFor="id_programa" className="form-label-register">
+                Programa/Podcast 🎙️
+                <span className="optional-badge">Opcional</span>
+              </label>
+              <div className="input-container">
+                <select
+                  id="id_programa"
+                  name="id_programa"
+                  value={formData.id_programa}
+                  onChange={handleChange}
+                  disabled={isSubmitting}
+                  className="form-input-register form-select-register"
+                >
+                  <option value="">-- Sin afiliación --</option>
+                  {programas.map(programa => (
+                    <option key={programa.id_programa} value={programa.id_programa}>
+                      {programa.nombre} ({programa.tipo})
+                    </option>
+                  ))}
+                </select>
+                <div className="input-border-animation"></div>
+              </div>
+              <span className="input-helper">¿Representas a algún medio que cubre a O'Higgins?</span>
             </div>
 
             <div className="form-field-modern">

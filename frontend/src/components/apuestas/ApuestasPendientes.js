@@ -139,7 +139,8 @@ function ApuestasPendientes({ onApuestaCreada }) {
       month: '2-digit',
       year: 'numeric',
       hour: '2-digit',
-      minute: '2-digit'
+      minute: '2-digit',
+      timeZone: 'America/Santiago'
     });
   };
 
@@ -175,7 +176,6 @@ function ApuestasPendientes({ onApuestaCreada }) {
 
   return (
     <div className="apuestas-plus-container">
-      <h2 className="apuestas-plus-title">Apuestas Pendientes</h2>
 
       {/* Información de configuración activa */}
       {configInfo && (configInfo.torneo_activo_id || configInfo.fecha_activa) && (
@@ -226,13 +226,9 @@ function ApuestasPendientes({ onApuestaCreada }) {
 
       {partidos.length === 0 ? (
         <div className="empty-state">
-          <div className="empty-icon">⚽</div>
-          <p>No hay partidos disponibles para apostar</p>
-          <p className="empty-hint">
-            {!configInfo?.torneo_activo_id
-              ? 'El administrador debe configurar un torneo activo antes de que puedas realizar apuestas.'
-              : 'Ya has apostado en todos los partidos disponibles del torneo/fecha activa.'}
-          </p>
+          <h2 className="empty-title">Todas las apuestas realizadas</h2>
+          <img src="/images/site/montecinosapuestas.png" alt="Apuestas realizadas" className="empty-img" />
+          <p className="empty-footer">La próxima fecha viene pronto</p>
         </div>
       ) : (
         <>

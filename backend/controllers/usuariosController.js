@@ -277,6 +277,172 @@ const deleteUsuario = async (req, res) => {
 };
 
 /**
+ * Actualizar usuario
+ * Solo accesible para administradores
+ */
+const updateUsuario = async (req, res) => {
+    try {
+        const { id } = req.params;
+        const { username, email, password, nombre_completo, role, puede_apostar, activo } = req.body;
+
+        // Validar que el ID sea un número
+        if (isNaN(id)) {
+            return res.status(400).json({
+                success: false,
+                message: 'ID de usuario inválido'
+            });
+        }
+
+        // Verificar si el usuario existe
+        const usuarioExistente = await executeQuery(
+            'SELECT id_usuario, username, email FROM usuarios WHERE id_usuario = ?',
+            [id]
+        );
+
+        if (usuarioExistente.length === 0) {
+            return res.status(404).json({
+                success: false,
+                message: 'Usuario no encontrado'
+            });
+        }
+
+        // Validar role si se está actualizando
+        if (role) {
+            const validRoles = ['admin', 'usuario'];
+            if (!validRoles.includes(role)) {
+                return res.status(400).json({
+                    success: false,
+                    message: 'Rol inválido. Debe ser "admin" o "usuario"'
+                });
+            }
+        }
+
+        // Verificar si el username ya existe (en otro usuario)
+        if (username && username !== usuarioExistente[0].username) {
+            const checkUsername = await executeQuery(
+                'SELECT id_usuario FROM usuarios WHERE username = ? AND id_usuario != ?',
+                [username, id]
+            );
+
+            if (checkUsername.length > 0) {
+                return res.status(400).json({
+                    success: false,
+                    message: 'El nombre de usuario ya está en uso'
+                });
+            }
+        }
+
+        // Verificar si el email ya existe (en otro usuario)
+        if (email && email !== usuarioExistente[0].email) {
+            const checkEmail = await executeQuery(
+                'SELECT id_usuario FROM usuarios WHERE email = ? AND id_usuario != ?',
+                [email, id]
+            );
+
+            if (checkEmail.length > 0) {
+                return res.status(400).json({
+                    success: false,
+                    message: 'El email ya está registrado'
+                });
+            }
+        }
+
+        // Construir query de actualización dinámicamente
+        const updates = [];
+        const values = [];
+
+        if (username !== undefined) {
+            updates.push('username = ?');
+            values.push(username);
+        }
+
+        if (email !== undefined) {
+            updates.push('email = ?');
+            values.push(email);
+        }
+
+        if (nombre_completo !== undefined) {
+            updates.push('nombre_completo = ?');
+            values.push(nombre_completo || null);
+        }
+
+        if (role !== undefined) {
+            updates.push('role = ?');
+            values.push(role);
+        }
+
+        if (puede_apostar !== undefined) {
+            updates.push('puede_apostar = ?');
+            values.push(puede_apostar ? 1 : 0);
+        }
+
+        if (activo !== undefined) {
+            updates.push('activo = ?');
+            values.push(activo ? 1 : 0);
+        }
+
+        // Si se proporciona nueva contraseña, hashearla
+        if (password && password.trim() !== '') {
+            if (password.length < 6) {
+                return res.status(400).json({
+                    success: false,
+                    message: 'La contraseña debe tener al menos 6 caracteres'
+                });
+            }
+
+            const passwordHash = await bcrypt.hash(password, 10);
+            updates.push('password_hash = ?');
+            values.push(passwordHash);
+        }
+
+        // Si no hay nada que actualizar
+        if (updates.length === 0) {
+            return res.status(400).json({
+                success: false,
+                message: 'No se proporcionaron campos para actualizar'
+            });
+        }
+
+        // Agregar ID al final de los valores
+        values.push(id);
+
+        // Ejecutar actualización
+        const query = `UPDATE usuarios SET ${updates.join(', ')} WHERE id_usuario = ?`;
+        await executeQuery(query, values);
+
+        // Obtener usuario actualizado
+        const usuarioActualizado = await executeQuery(
+            `SELECT
+                id_usuario,
+                username,
+                email,
+                nombre_completo,
+                role,
+                puede_apostar,
+                fecha_creacion,
+                ultimo_acceso,
+                activo
+            FROM usuarios WHERE id_usuario = ?`,
+            [id]
+        );
+
+        res.json({
+            success: true,
+            message: 'Usuario actualizado exitosamente',
+            data: usuarioActualizado[0]
+        });
+
+    } catch (error) {
+        console.error('Error al actualizar usuario:', error);
+        res.status(500).json({
+            success: false,
+            message: 'Error al actualizar usuario',
+            error: error.message
+        });
+    }
+};
+
+/**
  * Activar/Desactivar usuario
  * Alternativa a eliminar permanentemente
  */
@@ -334,6 +500,7 @@ module.exports = {
     getAllUsuarios,
     getUsuarioById,
     createUsuario,
+    updateUsuario,
     deleteUsuario,
     toggleUsuarioActivo
 };

@@ -186,11 +186,37 @@
 .opcion-cell:hover {
   background: linear-gradient(135deg, #F0F9FF 0%, #E0F2FE 100%);
   transform: translateY(-2px);
+  position: relative;
+}
+
+/* Agregar iconos de fútbol en hover */
+.opcion-cell:hover::before {
+  content: '⚽';
+  position: absolute;
+  top: -20px;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 24px;
+  animation: bounceGoal 0.5s ease;
+}
+
+@keyframes bounceGoal {
+  0%, 100% { transform: translateX(-50%) translateY(0); }
+  50% { transform: translateX(-50%) translateY(-10px); }
 }
 
 .opcion-cell.selected {
-  background: linear-gradient(135deg, #ECFDF5 0%, #D1FAE5 100%);
-  box-shadow: inset 0 0 0 3px #10b981;
+  background: var(--gradient-ohiggins);
+  color: white;
+  transform: translateY(-2px) scale(1.05);
+  box-shadow: 0 8px 20px rgba(0, 191, 255, 0.4);
+  position: relative;
+}
+
+.opcion-cell.selected .opcion-cuota,
+.opcion-cell.selected .opcion-label {
+  color: white;
+  text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.5);
 }
 
 /* Logo del equipo */
@@ -506,9 +532,37 @@
 /* Empty state */
 .empty-state {
   text-align: center;
-  padding: 60px 20px;
-  background: white;
-  border-radius: 8px;
+  padding: 60px 28px 48px;
+  background: linear-gradient(150deg, #00BFFF 0%, #33CCFF 50%, #66D9FF 100%);
+  border-radius: 16px;
+  box-shadow:
+    0 8px 32px rgba(0, 191, 255, 0.35),
+    0 0 0 1px rgba(0, 153, 204, 0.25),
+    inset 0 1px 0 rgba(255, 255, 255, 0.3);
+  position: relative;
+  overflow: hidden;
+}
+
+.empty-state::before {
+  content: '';
+  position: absolute;
+  top: -40%;
+  right: -15%;
+  width: 340px;
+  height: 340px;
+  background: radial-gradient(circle, rgba(255, 255, 255, 0.18) 0%, transparent 65%);
+  pointer-events: none;
+}
+
+.empty-state::after {
+  content: '';
+  position: absolute;
+  bottom: -30%;
+  left: -10%;
+  width: 260px;
+  height: 260px;
+  background: radial-gradient(circle, rgba(0, 0, 0, 0.06) 0%, transparent 65%);
+  pointer-events: none;
 }
 
 .empty-icon {
@@ -516,15 +570,55 @@
   margin-bottom: 16px;
 }
 
+.empty-img {
+  width: 100%;
+  max-width: 480px;
+  margin-bottom: 20px;
+  border-radius: 10px;
+  object-fit: contain;
+  position: relative;
+  filter: drop-shadow(0 4px 20px rgba(0, 191, 255, 0.25));
+}
+
 .empty-state p {
   font-size: 16px;
   font-weight: 700;
   margin-bottom: 8px;
+  color: #000000;
 }
 
 .empty-hint {
   font-size: 13px;
-  color: #64748b;
+  color: rgba(0, 0, 0, 0.55);
+}
+
+.empty-title {
+  font-size: 18px;
+  font-weight: 700;
+  color: #000000;
+  margin-bottom: 24px;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  position: relative;
+  display: inline-block;
+}
+
+.empty-title::after {
+  content: '';
+  display: block;
+  margin: 8px auto 0;
+  width: 48px;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, #000000, transparent);
+  border-radius: 2px;
+}
+
+.empty-footer {
+  font-size: 13px;
+  color: #003d52;
+  margin-top: 12px;
+  font-style: italic;
+  letter-spacing: 0.4px;
 }
 
 /* Loading */

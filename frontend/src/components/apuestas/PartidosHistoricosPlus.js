@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { partidosHistoricoService, handleResponse } from '../../services/apiService';
+import { partidosHistoricoService, apuestasService, handleResponse } from '../../services/apiService';
 import TeamLogo from '../common/TeamLogo';
 import './PartidosHistoricosPlus.css';
 
@@ -42,7 +42,7 @@ function PartidosHistoricosPlus() {
     if (selectedTorneo) {
       fetchEquiposPorTorneo(selectedTorneo);
       fetchFechasPorTorneo(selectedTorneo);
-      fetchPartidos();
+      // No llamar fetchPartidos aquí - se llamará cuando selectedFecha se establezca
     } else {
       setEquipos([]);
       setFechas([]);
@@ -51,12 +51,16 @@ function PartidosHistoricosPlus() {
   }, [selectedTorneo]);
 
   // Cargar partidos cuando cambian los filtros
+  // Solo cargar si:
+  // 1. Hay una fecha específica seleccionada, O
+  // 2. Hay un equipo seleccionado (permite "todas las fechas")
+  // NO cargar si no hay fecha Y no hay equipo (placeholder "Seleccionar fecha del torneo")
   useEffect(() => {
-    if (selectedTorneo && !usarRangoFechas) {
+    if (selectedTorneo && !usarRangoFechas && (selectedFecha !== '' || selectedEquipo !== '')) {
       setPaginaActual(1);
       fetchPartidos();
     }
-  }, [selectedEquipo, selectedFecha]);
+  }, [selectedEquipo, selectedFecha, selectedTorneo, usarRangoFechas]);
 
   // Cargar partidos cuando se usa rango de fechas
   useEffect(() => {
@@ -71,6 +75,7 @@ function PartidosHistoricosPlus() {
       setLoading(true);
       setError(null);
 
+      // Cargar torneos disponibles
       const response = await partidosHistoricoService.getTorneos();
       const data = await handleResponse(response);
 
@@ -79,7 +84,28 @@ function PartidosHistoricosPlus() {
         setTorneos(torneosRecibidos);
 
         if (torneosRecibidos.length > 0) {
-          setSelectedTorneo(torneosRecibidos[0].ID_TORNEO.toString());
+          // Intentar obtener el torneo activo/vigente
+          let torneoDefecto = torneosRecibidos[0].ID_TORNEO;
+
+          try {
+            const apuestasResponse = await apuestasService.getTorneosYFechas();
+            const apuestasData = await handleResponse(apuestasResponse);
+
+            if (apuestasData.torneoActivo) {
+              // Verificar que el torneo activo esté en la lista de torneos históricos
+              const torneoActivoExiste = torneosRecibidos.find(
+                t => t.ID_TORNEO === apuestasData.torneoActivo
+              );
+
+              if (torneoActivoExiste) {
+                torneoDefecto = apuestasData.torneoActivo;
+              }
+            }
+          } catch (err) {
+            console.log('[HISTORICO+] No se pudo obtener torneo activo, usando primero de la lista');
+          }
+
+          setSelectedTorneo(torneoDefecto.toString());
         } else {
           setError('No hay torneos con partidos finalizados disponibles');
         }
@@ -115,8 +141,20 @@ function PartidosHistoricosPlus() {
       const data = await handleResponse(response);
 
       if (data.success) {
-        setFechas(data.fechas || []);
-        setSelectedFecha('');
+        const fechasRecibidas = data.fechas || [];
+        setFechas(fechasRecibidas);
+
+        // Auto-seleccionar la última fecha con todos sus partidos finalizados
+        const fechasCompletas = fechasRecibidas.filter(
+          f => Number(f.total_partidos) === Number(f.partidos_finalizados)
+        );
+        if (fechasCompletas.length > 0) {
+          setSelectedFecha(fechasCompletas[fechasCompletas.length - 1].NUMERO_JORNADA.toString());
+        } else if (fechasRecibidas.length > 0) {
+          setSelectedFecha(fechasRecibidas[fechasRecibidas.length - 1].NUMERO_JORNADA.toString());
+        } else {
+          setSelectedFecha('');
+        }
       }
     } catch (error) {
       console.error('[HISTORICO+] Error al cargar fechas:', error);
@@ -198,7 +236,8 @@ function PartidosHistoricosPlus() {
     return fecha.toLocaleDateString('es-CL', {
       day: '2-digit',
       month: 'short',
-      year: 'numeric'
+      year: 'numeric',
+      timeZone: 'America/Santiago'
     });
   };
 
@@ -206,7 +245,8 @@ function PartidosHistoricosPlus() {
     const fecha = new Date(fechaStr);
     return fecha.toLocaleTimeString('es-CL', {
       hour: '2-digit',
-      minute: '2-digit'
+      minute: '2-digit',
+      timeZone: 'America/Santiago'
     });
   };
 
@@ -374,14 +414,14 @@ function PartidosHistoricosPlus() {
                   <div className="filtro-item-plus">
                     <label className="filtro-label-plus">
                       <span className="label-icon">📋</span>
-                      <span className="label-text">Fecha/Jornada</span>
+                      <span className="label-text">Fecha/Jornada <span className="required-mark">*</span></span>
                     </label>
                     <select
                       className="filtro-select-plus"
                       value={selectedFecha}
                       onChange={handleFechaChange}
                     >
-                      <option value="">Todas las fechas</option>
+                      {selectedEquipo && <option value="">Todas las fechas</option>}
                       {fechas.map((fecha) => (
                         <option key={fecha.NUMERO_JORNADA} value={fecha.NUMERO_JORNADA}>
                           Fecha {fecha.NUMERO_JORNADA}

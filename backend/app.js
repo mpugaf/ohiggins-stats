@@ -13,8 +13,16 @@ const app = express();
 
 // Middleware básico
 console.log('⚙️ Configurando middleware...');
+
+// CORS Configuration - Support for multiple frontend URLs
+const frontendUrls = process.env.FRONTEND_URL
+  ? process.env.FRONTEND_URL.split(',').map(url => url.trim())
+  : ['http://192.168.100.16:3001', 'http://localhost:3001'];
+
+console.log('🌐 CORS permitido para:', frontendUrls);
+
 app.use(cors({
-  origin: ['http://192.168.100.16:3001', 'http://localhost:3001'],
+  origin: frontendUrls,
   credentials: true
 }));
 app.use(express.json());
@@ -193,6 +201,17 @@ try {
   console.error('📍 Stack:', error.stack);
 }
 
+// Rutas de programas (autenticadas)
+console.log('📥 Cargando rutas de programas...');
+try {
+  const programasRoutes = require('./routes/programas');
+  app.use('/api/programas', programasRoutes);
+  console.log('✅ Rutas de programas cargadas exitosamente');
+} catch (error) {
+  console.error('❌ Error cargando rutas de programas:', error.message);
+  console.error('📍 Stack:', error.stack);
+}
+
 // Ruta raíz
 app.get('/', (req, res) => {
   res.json({
@@ -222,6 +241,7 @@ app.get('/', (req, res) => {
         equipos: '/api/equipos (requiere token y rol admin)',
         jugadores: '/api/players (requiere token y rol admin)',
         usuarios: '/api/usuarios (requiere token y rol admin)',
+        programas: '/api/programas (requiere token, admin para crear/editar)',
         liquidarApuestas: 'POST /api/apuestas/liquidar/:idPartido (requiere token y rol admin)',
         gestionCuotas: 'POST /api/cuotas/partido/:idPartido (requiere token y rol admin)'
       }

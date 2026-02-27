@@ -27,6 +27,7 @@ import LimpiarApuestasUsuario from './components/admin/LimpiarApuestasUsuario';
 import LimpiarResultados from './components/admin/LimpiarResultados';
 import ConfiguracionApuestas from './components/admin/ConfiguracionApuestas';
 import GestionTokens from './components/admin/GestionTokens';
+import GestionProgramas from './components/admin/GestionProgramas';
 
 // Original Management Components (Admin Only)
 import NuevoEstadio from './components/NuevoEstadio';
@@ -49,6 +50,7 @@ import PartidosManagerPlus from './components/PartidosManagerPlus';
 // User Management Components (Admin Only)
 import ListaUsuarios from './components/usuarios/ListaUsuarios';
 import NuevoUsuario from './components/usuarios/NuevoUsuario';
+import EditarUsuario from './components/usuarios/EditarUsuario';
 
 import './App.css';
 
@@ -140,6 +142,16 @@ function App() {
               element={
                 <ProtectedRoute requireAdmin={true}>
                   <GestionTokens />
+                </ProtectedRoute>
+              }
+            />
+
+            {/* Gestión de Programas/Podcasts (Admin) */}
+            <Route
+              path="/admin/gestion-programas"
+              element={
+                <ProtectedRoute requireAdmin={true}>
+                  <GestionProgramas />
                 </ProtectedRoute>
               }
             />
@@ -298,6 +310,14 @@ function App() {
               element={
                 <ProtectedRoute requireAdmin={true}>
                   <NuevoUsuario />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/admin/usuarios/editar/:id"
+              element={
+                <ProtectedRoute requireAdmin={true}>
+                  <EditarUsuario />
                 </ProtectedRoute>
               }
             />

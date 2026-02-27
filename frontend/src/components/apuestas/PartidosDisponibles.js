@@ -102,13 +102,14 @@ function PartidosDisponibles({ onApuestaCreada }) {
 
   const formatDate = (dateString) => {
     const date = new Date(dateString);
-    return date.toLocaleDateString('es-ES', {
+    return date.toLocaleDateString('es-CL', {
       weekday: 'short',
       day: '2-digit',
       month: 'short',
       year: 'numeric',
       hour: '2-digit',
-      minute: '2-digit'
+      minute: '2-digit',
+      timeZone: 'America/Santiago'
     });
   };
 

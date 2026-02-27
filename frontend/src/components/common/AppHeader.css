@@ -330,11 +330,20 @@
     transform: translateY(0) rotate(0deg);
   }
   25% {
-    transform: translateY(-6px) rotate(2deg);
+    transform: translateY(-6px) rotate(5deg);
+  }
+  50% {
+    transform: translateY(-8px) rotate(0deg);
   }
   75% {
-    transform: translateY(-3px) rotate(-2deg);
+    transform: translateY(-3px) rotate(-5deg);
   }
+}
+
+/* Animación de balón rotando (para futuros elementos decorativos) */
+@keyframes rotateBall {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
 }
 
 .brand-glow {

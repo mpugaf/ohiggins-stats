@@ -183,24 +183,31 @@ const ListaUsuarios = () => {
               <tbody>
                 {usuariosFiltrados.map((usuario) => (
                   <tr key={usuario.id_usuario}>
-                    <td className="username-cell">
+                    <td className="username-cell" data-label="Username">
                       <strong>{usuario.username}</strong>
                     </td>
-                    <td>{usuario.email}</td>
-                    <td>{usuario.nombre_completo || 'N/A'}</td>
-                    <td>{obtenerBadgeRole(usuario.role)}</td>
-                    <td>{obtenerBadgeEstado(usuario.activo)}</td>
-                    <td className="text-center">
+                    <td data-label="Email">{usuario.email}</td>
+                    <td data-label="Nombre">{usuario.nombre_completo || 'N/A'}</td>
+                    <td data-label="Rol">{obtenerBadgeRole(usuario.role)}</td>
+                    <td data-label="Estado">{obtenerBadgeEstado(usuario.activo)}</td>
+                    <td className="text-center" data-label="Puede Apostar">
                       {usuario.puede_apostar ? (
                         <span className="badge badge-success">Sí</span>
                       ) : (
                         <span className="badge badge-danger">No</span>
                       )}
                     </td>
-                    <td>{formatearFecha(usuario.fecha_creacion)}</td>
-                    <td>{formatearFecha(usuario.ultimo_acceso)}</td>
-                    <td className="actions-cell">
+                    <td data-label="Creación">{formatearFecha(usuario.fecha_creacion)}</td>
+                    <td data-label="Último Acceso">{formatearFecha(usuario.ultimo_acceso)}</td>
+                    <td className="actions-cell" data-label="Acciones">
                       <div className="action-buttons">
+                        <button
+                          onClick={() => navigate(`/admin/usuarios/editar/${usuario.id_usuario}`)}
+                          className="btn-primary btn-sm"
+                          title="Editar datos del usuario"
+                        >
+                          Editar
+                        </button>
                         <button
                           onClick={() => handleToggleActivo(usuario)}
                           className={usuario.activo ? "btn-warning btn-sm" : "btn-success btn-sm"}

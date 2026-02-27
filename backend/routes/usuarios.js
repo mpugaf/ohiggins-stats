@@ -49,6 +49,17 @@ router.post('/', (req, res) => {
     usuariosController.createUsuario(req, res);
 });
 
+// PUT /api/usuarios/:id - Actualizar usuario
+router.put('/:id', (req, res) => {
+    console.log(`Procesando PUT /api/usuarios/${req.params.id}`);
+    console.log('Body:', req.body);
+    if (typeof usuariosController.updateUsuario !== 'function') {
+        console.error('ERROR: updateUsuario no es una función');
+        return res.status(500).json({ error: 'Controlador no configurado correctamente' });
+    }
+    usuariosController.updateUsuario(req, res);
+});
+
 // DELETE /api/usuarios/:id - Eliminar usuario
 router.delete('/:id', (req, res) => {
     console.log(`Procesando DELETE /api/usuarios/${req.params.id}`);

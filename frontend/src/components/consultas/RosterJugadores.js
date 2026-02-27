@@ -420,11 +420,17 @@ const RosterJugadores = () => {
             disabled={loading}
           >
             <option value="">-- Seleccione un torneo --</option>
-            {torneos.map(torneo => (
-              <option key={torneo.ID_TORNEO} value={torneo.ID_TORNEO}>
-                {torneo.nombre_completo || `${torneo.NOMBRE} ${torneo.TEMPORADA} - ${torneo.RUEDA} rueda`}
-              </option>
-            ))}
+            {torneos.map(torneo => {
+              const nombreBase = `${torneo.NOMBRE} ${torneo.TEMPORADA}`;
+              // Solo agregar rueda si existe y no es null/undefined/vacío
+              const tieneRueda = torneo.RUEDA && torneo.RUEDA !== 'null' && torneo.RUEDA.trim() !== '';
+              const nombreConRueda = tieneRueda ? `${nombreBase} - ${torneo.RUEDA}` : nombreBase;
+              return (
+                <option key={torneo.ID_TORNEO} value={torneo.ID_TORNEO}>
+                  {torneo.nombre_completo || nombreConRueda}
+                </option>
+              );
+            })}
           </select>
         </div>
 

@@ -14,7 +14,7 @@ exports.register = async (req, res) => {
     return res.status(400).json({ errors: errors.array() });
   }
 
-  const { username, email, password, nombre_completo, invitationToken } = req.body;
+  const { username, email, password, nombre_completo, invitationToken, id_programa } = req.body;
 
   try {
     // Si se proporciona token de invitación, validarlo primero
@@ -72,8 +72,8 @@ exports.register = async (req, res) => {
 
     // Crear usuario
     const result = await executeQuery(
-      'INSERT INTO usuarios (username, email, password_hash, nombre_completo, role, puede_apostar) VALUES (?, ?, ?, ?, ?, ?)',
-      [username, userEmail, passwordHash, nombre_completo || username, 'usuario', 1]
+      'INSERT INTO usuarios (username, email, password_hash, nombre_completo, role, puede_apostar, id_programa) VALUES (?, ?, ?, ?, ?, ?, ?)',
+      [username, userEmail, passwordHash, nombre_completo || username, 'usuario', 1, id_programa || null]
     );
 
     const newUserId = result.insertId;
@@ -194,7 +194,12 @@ exports.login = async (req, res) => {
 exports.getProfile = async (req, res) => {
   try {
     const [user] = await executeQuery(
-      'SELECT id_usuario, username, email, nombre_completo, role, puede_apostar, fecha_creacion, ultimo_acceso FROM usuarios WHERE id_usuario = ?',
+      `SELECT u.id_usuario, u.username, u.email, u.nombre_completo, u.role, u.puede_apostar,
+              u.fecha_creacion, u.ultimo_acceso, u.activo,
+              p.id_programa, p.nombre AS programa_nombre, p.tipo AS programa_tipo
+       FROM usuarios u
+       LEFT JOIN programas p ON u.id_programa = p.id_programa
+       WHERE u.id_usuario = ?`,
       [req.user.id_usuario]
     );
 

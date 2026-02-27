@@ -162,14 +162,15 @@ exports.getFechasPorTorneo = async (req, res) => {
     const { torneoId } = req.params;
 
     const fechas = await executeQuery(
-      `SELECT DISTINCT
+      `SELECT
         NUMERO_JORNADA,
-        COUNT(*) as total_partidos
+        COUNT(*) as total_partidos,
+        SUM(CASE WHEN ESTADO_PARTIDO IN ('FINALIZADO', 'SUSPENDIDO', 'CANCELADO') THEN 1 ELSE 0 END) as partidos_finalizados
       FROM HECHOS_RESULTADOS
       WHERE ID_TORNEO = ?
-        AND ESTADO_PARTIDO IN ('FINALIZADO', 'SUSPENDIDO', 'CANCELADO')
         AND NUMERO_JORNADA IS NOT NULL
       GROUP BY NUMERO_JORNADA
+      HAVING partidos_finalizados > 0
       ORDER BY NUMERO_JORNADA`,
       [torneoId]
     );

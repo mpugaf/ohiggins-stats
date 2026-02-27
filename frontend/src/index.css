@@ -22,6 +22,22 @@
   --gradient-celeste: linear-gradient(135deg, #66D9FF 0%, #0099CC 100%);
   --gradient-dark: linear-gradient(135deg, #333333 0%, #000000 100%);
 
+  /* === COLORES OFICIALES O'HIGGINS FC === */
+  --color-ohiggins-celeste: #00BFFF;
+  --color-ohiggins-negro: #000000;
+  --color-ohiggins-blanco: #FFFFFF;
+
+  /* Gradientes temáticos O'Higgins */
+  --gradient-ohiggins: linear-gradient(135deg, #00BFFF 0%, #000000 100%);
+  --gradient-ohiggins-reverse: linear-gradient(135deg, #000000 0%, #00BFFF 100%);
+  --gradient-ohiggins-light: linear-gradient(135deg, #66D9FF 0%, #00BFFF 50%, #0099CC 100%);
+
+  /* Colores de fútbol */
+  --color-cancha-verde: #2ECC71;
+  --color-gol: #F39C12;
+  --color-tarjeta-amarilla: #FFC107;
+  --color-tarjeta-roja: #E74C3C;
+
   /* Status colors */
   --color-success: #28a745;
   --color-error: #dc3545;

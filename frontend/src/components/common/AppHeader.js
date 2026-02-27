@@ -153,8 +153,8 @@ const AppHeader = () => {
                 <div className="brand-glow"></div>
               </div>
               <div className="brand-text">
-                <span className="brand-name">O'HIGGINS BETS</span>
-                <span className="brand-subtitle">Plataforma para celestes</span>
+                <span className="brand-name">O'HIGGINS STATS</span>
+                <span className="brand-subtitle">Por los hinchas, para los hinchas</span>
               </div>
             </div>
           </div>

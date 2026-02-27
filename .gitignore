@@ -11,6 +11,13 @@
 .env.development.local
 .env.test.local
 .env.production.local
+.env.production
+
+# Archivos de ejemplo con credenciales (NO deben subirse al repo)
+# Crear manualmente con tus datos reales sin subirlos
+.env.example
+.env.docker.example
+**/.env.example
 
 # Credenciales de API de FBRef
 fbr_api_project/api_key.json
@@ -264,19 +271,24 @@ NOTAS_*.md
 # Estos archivos SON NECESARIOS y deben estar en el repositorio:
 # - package.json (backend y frontend)
 # - requirements.txt (Python)
-# - .env.example (plantilla de configuración)
 # - Scripts SQL de schema (backend/scripts/*.sql, statsPipeline/*.sql)
 # - Código fuente (*.js, *.jsx, *.py)
 # - Archivos de configuración del proyecto
 # - Documentación (*.md)
 # - Archivos estáticos públicos (frontend/public/)
+#
+# ⚠️  .env.example NO se versiona: puede contener IPs, usuarios u otros
+#     datos de infraestructura. Crear los archivos .env localmente con
+#     los valores reales de cada entorno.
 
 # =====================================
 # 📋 NOTAS IMPORTANTES
 # =====================================
 # 1. ANTES DE HACER PUSH: Verificar que api_key.json NO esté en staging
 # 2. package-lock.json: Se mantiene para reproducibilidad de builds
-# 3. Los archivos .env deben crearse localmente desde .env.example
+# 3. Los archivos .env deben crearse manualmente (NO usar .env.example del repo)
+#    backend/.env  → ver CLAUDE.md para las variables necesarias
+#    frontend/.env → REACT_APP_API_URL y PORT
 # 4. Los datos CSV se regeneran con los scripts de pipeline
 # 5. Los builds de frontend se generan con: cd frontend && npm run build
 

@@ -75,9 +75,12 @@ function Login() {
             <div className="badge-glow"></div>
           </div>
           <h1 className="login-title">
-            <span className="title-ohiggins">O'HIGGINS BETS</span>
-            <span className="title-subtitle">Plataforma para celestes</span>
+            <span className="title-ohiggins">⚽ O'HIGGINS STATS</span>
+            <span className="title-subtitle">Sistema de Apuestas para Capos</span>
           </h1>
+          <div className="team-badge-colors">
+            <span className="badge-text">Celeste y Negro</span>
+          </div>
           <div className="title-underline"></div>
         </div>
 

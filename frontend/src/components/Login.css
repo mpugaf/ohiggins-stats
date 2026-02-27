@@ -362,6 +362,21 @@
   text-transform: uppercase;
 }
 
+.team-badge-colors {
+  display: inline-block;
+  padding: 8px 16px;
+  background: linear-gradient(135deg, #00BFFF 50%, #000000 50%);
+  border-radius: 20px;
+  margin-top: 10px;
+}
+
+.badge-text {
+  color: white;
+  font-weight: 700;
+  font-size: 14px;
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);
+}
+
 .title-underline {
   width: 64px; /* 80px * 0.8 = 64px */
   height: 3px; /* 4px * 0.8 ≈ 3px */

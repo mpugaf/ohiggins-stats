@@ -704,9 +704,35 @@ exports.getTorneosYFechasUsuario = async (req, res) => {
       fechasPorTorneo
     });
 
+    // Determinar torneo activo/vigente
+    // 1. Intentar obtener de config_apuestas
+    let torneoActivo = null;
+    try {
+      const configResult = await executeQuery(
+        `SELECT valor FROM config_apuestas WHERE clave = 'torneo_activo_id' LIMIT 1`
+      );
+
+      if (configResult.length > 0 && configResult[0].valor) {
+        const torneoActivoId = parseInt(configResult[0].valor);
+        // Verificar que el usuario tenga apuestas en ese torneo
+        const tieneApuestas = torneos.find(t => t.ID_TORNEO === torneoActivoId);
+        if (tieneApuestas) {
+          torneoActivo = torneoActivoId;
+        }
+      }
+    } catch (err) {
+      console.log('[APUESTAS] No se pudo obtener torneo activo de config:', err.message);
+    }
+
+    // 2. Si no hay torneo activo configurado, usar el más reciente donde tiene apuestas
+    if (!torneoActivo && torneos.length > 0) {
+      torneoActivo = torneos[0].ID_TORNEO; // Ya está ordenado por TEMPORADA DESC
+    }
+
     res.json({
       torneos,
-      fechasPorTorneo
+      fechasPorTorneo,
+      torneoActivo
     });
 
   } catch (error) {

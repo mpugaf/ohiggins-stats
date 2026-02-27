@@ -17,6 +17,9 @@ function MisApuestas({ filtroInicial = '' }) {
   const [torneos, setTorneos] = useState([]);
   const [fechasPorTorneo, setFechasPorTorneo] = useState({});
   const [fechasDisponibles, setFechasDisponibles] = useState([]);
+  const [torneoActivo, setTorneoActivo] = useState(null);
+  const [fechaActiva, setFechaActiva] = useState(null);
+  const [torneoInicialCargado, setTorneoInicialCargado] = useState(false);
 
   // Paginación
   const [paginaActual, setPaginaActual] = useState(1);
@@ -27,6 +30,9 @@ function MisApuestas({ filtroInicial = '' }) {
   }, []);
 
   useEffect(() => {
+    // No hacer fetch hasta que torneo Y fecha estén establecidos para evitar
+    // mostrar apuestas de otras fechas/torneos mientras cargan los filtros
+    if (!filtroTorneo || !filtroFecha) return;
     setPaginaActual(1); // Reset página al cambiar filtros
     fetchApuestas();
   }, [filtroEstado, filtroTorneo, filtroFecha]);
@@ -37,11 +43,17 @@ function MisApuestas({ filtroInicial = '' }) {
       const fechas = fechasPorTorneo[filtroTorneo];
       console.log('[MIS APUESTAS] Fechas disponibles para torneo', filtroTorneo, ':', fechas);
       setFechasDisponibles(fechas);
+
+      // Siempre establecer la fecha más reciente como filtro por defecto
+      if (fechas && fechas.length > 0) {
+        const fechaMasReciente = Math.max(...fechas);
+        setFechaActiva(fechaMasReciente);
+        setFiltroFecha(String(fechaMasReciente));
+      }
     } else {
       setFechasDisponibles([]);
+      setFiltroFecha('');
     }
-    // Reset fecha cuando cambia el torneo
-    setFiltroFecha('');
   }, [filtroTorneo, fechasPorTorneo]);
 
   const fetchTorneosYFechas = async () => {
@@ -51,9 +63,17 @@ function MisApuestas({ filtroInicial = '' }) {
 
       console.log('[MIS APUESTAS] Torneos recibidos:', data.torneos);
       console.log('[MIS APUESTAS] Fechas por torneo recibidas:', data.fechasPorTorneo);
+      console.log('[MIS APUESTAS] Torneo activo:', data.torneoActivo);
 
       setTorneos(data.torneos || []);
       setFechasPorTorneo(data.fechasPorTorneo || {});
+      setTorneoActivo(data.torneoActivo);
+
+      // Establecer el torneo activo como filtro inicial (solo la primera vez)
+      if (!torneoInicialCargado && data.torneoActivo) {
+        setFiltroTorneo(String(data.torneoActivo));
+        setTorneoInicialCargado(true);
+      }
     } catch (err) {
       console.error('Error al cargar torneos y fechas:', err);
     }
@@ -88,18 +108,21 @@ function MisApuestas({ filtroInicial = '' }) {
 
   const limpiarFiltros = () => {
     setFiltroEstado('');
-    setFiltroTorneo('');
-    setFiltroFecha('');
+    // Volver al torneo activo en lugar de vacío
+    setFiltroTorneo(torneoActivo ? String(torneoActivo) : '');
+    // Volver a la fecha activa en lugar de vacía
+    setFiltroFecha(fechaActiva ? String(fechaActiva) : '');
   };
 
   const formatDate = (dateString) => {
     const date = new Date(dateString);
-    return date.toLocaleDateString('es-ES', {
+    return date.toLocaleDateString('es-CL', {
       day: '2-digit',
       month: '2-digit',
       year: 'numeric',
       hour: '2-digit',
-      minute: '2-digit'
+      minute: '2-digit',
+      timeZone: 'America/Santiago'
     });
   };
 
@@ -190,16 +213,22 @@ function MisApuestas({ filtroInicial = '' }) {
             <select
               id="filtroTorneo"
               value={filtroTorneo}
-              onChange={(e) => setFiltroTorneo(e.target.value)}
+              onChange={(e) => { setFiltroTorneo(e.target.value); setFiltroFecha(''); }}
               className="filter-select"
             >
-              <option value="">Todos los torneos</option>
-              {torneos.map((torneo) => (
-                <option key={torneo.ID_TORNEO} value={torneo.ID_TORNEO}>
-                  {torneo.NOMBRE} ({torneo.TEMPORADA})
-                  {torneo.RUEDA && ` - ${torneo.RUEDA === 'PRIMERA' ? '1ª' : torneo.RUEDA === 'SEGUNDA' ? '2ª' : ''} Rueda`}
-                </option>
-              ))}
+              {torneos.length === 0 ? (
+                <option value="">No hay torneos con apuestas</option>
+              ) : (
+                <>
+                  {torneos.map((torneo) => (
+                    <option key={torneo.ID_TORNEO} value={torneo.ID_TORNEO}>
+                      {torneo.NOMBRE} ({torneo.TEMPORADA})
+                      {torneo.RUEDA && ` - ${torneo.RUEDA === 'PRIMERA' ? '1ª' : torneo.RUEDA === 'SEGUNDA' ? '2ª' : ''} Rueda`}
+                      {torneo.ID_TORNEO === torneoActivo && ' ⭐'}
+                    </option>
+                  ))}
+                </>
+              )}
             </select>
           </div>
 
@@ -212,16 +241,16 @@ function MisApuestas({ filtroInicial = '' }) {
               className="filter-select"
               disabled={!filtroTorneo || fechasDisponibles.length === 0}
             >
-              <option value="">Todas las fechas</option>
               {fechasDisponibles.map((fecha) => (
                 <option key={fecha} value={fecha}>
                   Fecha {fecha}
+                  {fecha === fechaActiva && ' ⭐'}
                 </option>
               ))}
             </select>
           </div>
 
-          {(filtroEstado || filtroTorneo || filtroFecha) && (
+          {(filtroEstado || (filtroTorneo && filtroTorneo !== String(torneoActivo)) || (filtroFecha && parseInt(filtroFecha) !== fechaActiva)) && (
             <button
               className="btn-limpiar-filtros"
               onClick={limpiarFiltros}
@@ -232,16 +261,18 @@ function MisApuestas({ filtroInicial = '' }) {
           )}
         </div>
 
-        {(filtroEstado || filtroTorneo || filtroFecha) && (
+        {(filtroEstado || (filtroTorneo && filtroTorneo !== String(torneoActivo)) || (filtroFecha && parseInt(filtroFecha) !== fechaActiva)) && (
           <div className="filtros-activos">
             <span className="filtros-label">Filtros activos:</span>
             {filtroEstado && <span className="filtro-badge">Estado: {filtroEstado}</span>}
-            {filtroTorneo && (
+            {filtroTorneo && filtroTorneo !== String(torneoActivo) && (
               <span className="filtro-badge">
                 Torneo: {torneos.find(t => t.ID_TORNEO === parseInt(filtroTorneo))?.NOMBRE}
               </span>
             )}
-            {filtroFecha && <span className="filtro-badge">Fecha: {filtroFecha}</span>}
+            {filtroFecha && parseInt(filtroFecha) !== fechaActiva && (
+              <span className="filtro-badge">Fecha: {filtroFecha}</span>
+            )}
           </div>
         )}
       </div>

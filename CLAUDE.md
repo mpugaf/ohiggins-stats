@@ -843,6 +843,228 @@ const data = await handleResponse(response);
   ```
   La UI muestra este valor como "no modificable" y lo incluye en la información del modal de confirmación.
 
+### Reglas de Habilitación/Deshabilitación de Apuestas
+
+**REGLA CRÍTICA**: Las apuestas tienen ventanas de tiempo específicas basadas en el primer partido de cada fecha.
+
+#### **Ventana de Apuestas:**
+- ✅ **HABILITADAS**: Desde el momento de creación del partido hasta **24 horas antes** del primer partido de la fecha
+- ❌ **DESHABILITADAS**: Desde 24 horas antes del primer partido hasta que todos los partidos de la fecha finalicen
+- 🔄 **REHABILITADAS**: Una vez finalizado el último partido de la fecha, se habilita la siguiente fecha
+
+#### **Lógica de Implementación:**
+
+**Backend** (`backend/controllers/apuestasController.js`):
+```javascript
+// Verificar si las apuestas están habilitadas
+const ahora = new Date();
+const primerPartido = await obtenerPrimerPartidoDeFecha(idTorneo, fecha);
+const fechaLimite = new Date(primerPartido.FECHA_PARTIDO);
+fechaLimite.setHours(fechaLimite.getHours() - 24); // 24 horas antes
+
+if (ahora >= fechaLimite) {
+  return res.status(400).json({
+    success: false,
+    message: 'Las apuestas para esta fecha están cerradas',
+    fecha_cierre: fechaLimite,
+    primer_partido: primerPartido.FECHA_PARTIDO
+  });
+}
+```
+
+**Frontend** (mostrar estado de apuestas):
+- Mostrar mensaje claro: "Apuestas abiertas hasta [fecha]"
+- Mostrar countdown: "Cierre de apuestas en: 23h 45m"
+- Deshabilitar botones de apuesta si ya pasó el límite
+- Mostrar mensaje: "Apuestas cerradas - Primer partido: [fecha]"
+
+#### **Flujo del Proceso de Apuestas:**
+
+**1. Preparación de la Fecha (Admin):**
+```
+a) Admin crea partidos de la nueva fecha en el torneo
+b) Admin configura cuotas para cada partido
+   - Local: cuota_decimal (ej: 2.50)
+   - Empate: cuota_decimal (ej: 3.20)
+   - Visita: cuota_decimal (ej: 2.80)
+c) Sistema calcula automáticamente fecha límite (24h antes del 1er partido)
+d) Apuestas se HABILITAN automáticamente
+```
+
+**2. Periodo de Apuestas (Usuarios):**
+```
+a) Usuarios acceden a "Partidos Disponibles"
+b) Sistema muestra:
+   - Partidos de la fecha actual
+   - Cuotas para cada resultado
+   - Tiempo restante hasta cierre
+   - Retorno potencial (cuota × monto)
+c) Usuario selecciona resultado y confirma
+d) Sistema valida:
+   ✓ Fecha límite no alcanzada
+   ✓ Usuario no tiene apuesta previa en ese partido
+   ✓ Cuota está activa
+   ✓ Usuario tiene permisos para apostar
+e) Apuesta se registra con estado 'pendiente'
+```
+
+**3. Cierre de Apuestas (Automático):**
+```
+a) Sistema alcanza 24h antes del primer partido
+b) Backend rechaza nuevas apuestas para esa fecha
+c) Frontend muestra mensaje de cierre
+d) Usuarios pueden ver sus apuestas pero no modificarlas
+```
+
+**4. Ejecución de Partidos:**
+```
+a) Partidos se juegan (datos ingresados manualmente o vía API)
+b) Admin actualiza resultados:
+   - GOLES_LOCAL
+   - GOLES_VISITA
+   - ESTADO_PARTIDO = 'FINALIZADO'
+c) Sistema no liquida automáticamente
+```
+
+**5. Liquidación de Apuestas (Admin - Manual):**
+```
+a) Admin accede a "Liquidar Apuestas"
+b) Selecciona el partido finalizado
+c) Sistema:
+   - Identifica todas las apuestas del partido
+   - Compara predicción vs resultado real
+   - Calcula ganadores:
+     * Ganadores: estado = 'ganada', puntos = monto × cuota
+     * Perdedores: estado = 'perdida', puntos = 0
+   - Actualiza tabla 'apuestas_usuarios'
+   - Registra en 'historial_puntos'
+d) Sistema actualiza tabla de posiciones/ranking
+```
+
+**6. Consulta de Resultados (Usuarios):**
+```
+a) Usuarios acceden a "Mis Apuestas"
+b) Ven historial:
+   - Apuestas ganadas (con puntos obtenidos)
+   - Apuestas perdidas
+   - Apuestas pendientes (partidos no jugados)
+c) Usuarios consultan "Tabla de Posiciones"
+   - Ranking por torneo
+   - Puntos acumulados
+   - Porcentaje de aciertos
+```
+
+#### **Sugerencias de Implementación:**
+
+**1. Cron Job / Scheduled Task (Recomendado):**
+```javascript
+// backend/jobs/cerrarApuestas.js
+const cron = require('node-cron');
+
+// Ejecutar cada hora
+cron.schedule('0 * * * *', async () => {
+  console.log('Verificando fechas límite de apuestas...');
+
+  // Obtener todas las fechas activas
+  const fechasActivas = await obtenerFechasConApuestasAbiertas();
+
+  for (const fecha of fechasActivas) {
+    const ahora = new Date();
+    const primerPartido = await obtenerPrimerPartido(fecha.ID_TORNEO, fecha.FECHA_TORNEO);
+    const fechaLimite = new Date(primerPartido.FECHA_PARTIDO);
+    fechaLimite.setHours(fechaLimite.getHours() - 24);
+
+    if (ahora >= fechaLimite) {
+      // Marcar fecha como cerrada
+      await cerrarApuestasFecha(fecha.ID_TORNEO, fecha.FECHA_TORNEO);
+      console.log(`✅ Apuestas cerradas para Torneo ${fecha.ID_TORNEO}, Fecha ${fecha.FECHA_TORNEO}`);
+    }
+  }
+});
+```
+
+**2. Tabla de Control (Alternativa):**
+```sql
+CREATE TABLE control_apuestas_fechas (
+  id_control INT PRIMARY KEY AUTO_INCREMENT,
+  id_torneo INT NOT NULL,
+  fecha_torneo INT NOT NULL,
+  fecha_apertura DATETIME NOT NULL,
+  fecha_cierre DATETIME NOT NULL,
+  apuestas_abiertas BOOLEAN DEFAULT TRUE,
+  primer_partido_id INT,
+  FOREIGN KEY (id_torneo) REFERENCES DIM_TORNEO(ID_TORNEO),
+  FOREIGN KEY (primer_partido_id) REFERENCES HECHOS_RESULTADOS(ID_PARTIDO),
+  UNIQUE KEY (id_torneo, fecha_torneo)
+);
+```
+
+**3. Endpoint de Verificación:**
+```javascript
+// GET /api/apuestas/estado-fecha/:idTorneo/:fecha
+app.get('/api/apuestas/estado-fecha/:idTorneo/:fecha', async (req, res) => {
+  const { idTorneo, fecha } = req.params;
+  const ahora = new Date();
+
+  const primerPartido = await obtenerPrimerPartido(idTorneo, fecha);
+  const fechaLimite = new Date(primerPartido.FECHA_PARTIDO);
+  fechaLimite.setHours(fechaLimite.getHours() - 24);
+
+  const apuestasAbiertas = ahora < fechaLimite;
+  const tiempoRestante = apuestasAbiertas ? fechaLimite - ahora : 0;
+
+  res.json({
+    apuestas_abiertas: apuestasAbiertas,
+    fecha_cierre: fechaLimite,
+    primer_partido: primerPartido.FECHA_PARTIDO,
+    tiempo_restante_ms: tiempoRestante,
+    mensaje: apuestasAbiertas
+      ? `Apuestas abiertas hasta ${fechaLimite.toLocaleString('es-CL')}`
+      : `Apuestas cerradas desde ${fechaLimite.toLocaleString('es-CL')}`
+  });
+});
+```
+
+**4. Componente Frontend con Countdown:**
+```javascript
+// frontend/src/components/apuestas/CountdownCierre.js
+const CountdownCierre = ({ fechaCierre }) => {
+  const [timeLeft, setTimeLeft] = useState(calcularTiempoRestante());
+
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setTimeLeft(calcularTiempoRestante());
+    }, 1000);
+    return () => clearInterval(timer);
+  }, []);
+
+  function calcularTiempoRestante() {
+    const ahora = new Date();
+    const cierre = new Date(fechaCierre);
+    const diff = cierre - ahora;
+
+    if (diff <= 0) return null;
+
+    const hours = Math.floor(diff / (1000 * 60 * 60));
+    const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+    const seconds = Math.floor((diff % (1000 * 60)) / 1000);
+
+    return { hours, minutes, seconds };
+  }
+
+  if (!timeLeft) {
+    return <div className="alert alert-danger">⛔ Apuestas cerradas</div>;
+  }
+
+  return (
+    <div className="countdown-box">
+      ⏱️ Cierre de apuestas en:
+      <strong>{timeLeft.hours}h {timeLeft.minutes}m {timeLeft.seconds}s</strong>
+    </div>
+  );
+};
+```
+
 ### Limpieza de Apuestas por Usuario (Solo Admin)
 
 Los administradores pueden eliminar todas las apuestas de un usuario específico en el torneo activo usando:
