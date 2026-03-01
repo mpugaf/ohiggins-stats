@@ -62,7 +62,7 @@ exports.getConfig = async (req, res) => {
  */
 exports.updateConfig = async (req, res) => {
   try {
-    const { apuestas_habilitadas, torneo_activo_id, fecha_habilitada } = req.body;
+    const { apuestas_habilitadas, torneo_activo_id, fecha_habilitada, criterio_desempate } = req.body;
 
     // Actualizar apuestas_habilitadas
     if (apuestas_habilitadas !== undefined) {
@@ -85,6 +85,18 @@ exports.updateConfig = async (req, res) => {
       await executeQuery(
         'UPDATE config_apuestas SET valor = ? WHERE clave = ?',
         [fecha_habilitada || '', 'fecha_habilitada']
+      );
+    }
+
+    // Actualizar criterio_desempate (upsert porque puede no existir aún)
+    if (criterio_desempate !== undefined) {
+      const valoresPermitidos = ['porcentaje_aciertos', 'apuestas_ganadas', 'miembro_antiguo', 'miembro_reciente'];
+      const valorFinal = valoresPermitidos.includes(criterio_desempate) ? criterio_desempate : 'porcentaje_aciertos';
+      await executeQuery(
+        `INSERT INTO config_apuestas (clave, valor, descripcion)
+         VALUES ('criterio_desempate', ?, 'Criterio de desempate en tabla de posiciones cuando los puntos son iguales')
+         ON DUPLICATE KEY UPDATE valor = ?`,
+        [valorFinal, valorFinal]
       );
     }
 

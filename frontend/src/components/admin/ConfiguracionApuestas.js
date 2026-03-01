@@ -14,7 +14,8 @@ const ConfiguracionApuestas = () => {
   const [config, setConfig] = useState({
     apuestas_habilitadas: false,
     torneo_activo_id: '',
-    fecha_habilitada: ''
+    fecha_habilitada: '',
+    criterio_desempate: 'porcentaje_aciertos'
   });
 
   const [torneos, setTorneos] = useState([]);
@@ -62,7 +63,8 @@ const ConfiguracionApuestas = () => {
       setConfig({
         apuestas_habilitadas: configData.config.apuestas_habilitadas === 'true',
         torneo_activo_id: configData.config.torneo_activo_id || '',
-        fecha_habilitada: configData.config.fecha_habilitada || ''
+        fecha_habilitada: configData.config.fecha_habilitada || '',
+        criterio_desempate: configData.config.criterio_desempate || 'porcentaje_aciertos'
       });
 
       setTorneos(torneosData.torneos || []);
@@ -111,11 +113,26 @@ const ConfiguracionApuestas = () => {
     }));
   };
 
+  // Partidos sin cuotas que aún no han finalizado
+  const partidosSinCuotas = partidos.filter(
+    p => !p.tiene_cuotas && p.ESTADO_PARTIDO !== 'FINALIZADO'
+  );
+  const hayPartidosSinCuotas = partidosSinCuotas.length > 0;
+
   const handleGuardar = async () => {
     try {
       setSaving(true);
       setError('');
       setSuccess('');
+
+      // Bloquear si se intenta habilitar apuestas sin cuotas completas
+      if (config.apuestas_habilitadas && hayPartidosSinCuotas) {
+        setError(
+          `No se puede habilitar: ${partidosSinCuotas.length} partido(s) no tienen cuotas configuradas. Ingresa las cuotas faltantes antes de guardar.`
+        );
+        setSaving(false);
+        return;
+      }
 
       const response = await configApuestasService.updateConfig(config);
       const data = await handleResponse(response);
@@ -375,12 +392,99 @@ const ConfiguracionApuestas = () => {
           </ul>
         </div>
 
+        <hr className="divider" />
+
+        {/* Criterio de Desempate */}
+        <h2>🏆 Criterio de Desempate</h2>
+        <div className="config-section">
+          <p className="info-text">
+            Cuando dos o más usuarios tienen los mismos puntos, este criterio determina quién queda primero en la Tabla de Posiciones.
+          </p>
+          <div className="desempate-options">
+            {[
+              {
+                value: 'porcentaje_aciertos',
+                label: 'Mayor porcentaje de aciertos',
+                desc: 'Gana quien acertó más proporcionalmente (ej: 3/4 > 2/3)'
+              },
+              {
+                value: 'apuestas_ganadas',
+                label: 'Mayor número de apuestas ganadas',
+                desc: 'Gana quien más partidos acertó en términos absolutos'
+              },
+              {
+                value: 'miembro_antiguo',
+                label: 'Miembro más antiguo',
+                desc: 'Gana quien se registró primero en el sistema'
+              },
+              {
+                value: 'miembro_reciente',
+                label: 'Miembro más reciente',
+                desc: 'Gana quien se registró más recientemente'
+              }
+            ].map(opcion => (
+              <label
+                key={opcion.value}
+                className={`desempate-option ${config.criterio_desempate === opcion.value ? 'desempate-option--selected' : ''}`}
+              >
+                <input
+                  type="radio"
+                  name="criterio_desempate"
+                  value={opcion.value}
+                  checked={config.criterio_desempate === opcion.value}
+                  onChange={(e) => setConfig({ ...config, criterio_desempate: e.target.value })}
+                />
+                <div className="desempate-option-content">
+                  <span className="desempate-option-label">{opcion.label}</span>
+                  <span className="desempate-option-desc">{opcion.desc}</span>
+                </div>
+              </label>
+            ))}
+          </div>
+        </div>
+
+        {/* Panel de advertencia: cuotas faltantes al intentar habilitar */}
+        {config.apuestas_habilitadas && hayPartidosSinCuotas && (
+          <div className="cuotas-pendientes-panel">
+            <div className="cuotas-pendientes-header">
+              <span className="cuotas-pendientes-icon">⚠️</span>
+              <div>
+                <h4>Se requieren cuotas para habilitar las apuestas</h4>
+                <p>
+                  {partidosSinCuotas.length === 1
+                    ? '1 partido no tiene cuotas configuradas.'
+                    : `${partidosSinCuotas.length} partidos no tienen cuotas configuradas.`}
+                  {' '}Ingresa las cuotas faltantes antes de guardar.
+                </p>
+              </div>
+            </div>
+            <ul className="cuotas-pendientes-lista">
+              {partidosSinCuotas.map(partido => (
+                <li key={partido.ID_PARTIDO} className="cuota-pendiente-item">
+                  <span className="cuota-pendiente-partido">
+                    <strong>{partido.equipo_local}</strong>
+                    <span className="vs-mini">vs</span>
+                    <strong>{partido.equipo_visita}</strong>
+                    <span className="cuota-pendiente-fecha">{formatFechaCorta(partido.FECHA_PARTIDO)}</span>
+                  </span>
+                  <button
+                    className="btn-cuota-rapida"
+                    onClick={() => abrirModalCuotas(partido)}
+                  >
+                    ➕ Ingresar cuotas
+                  </button>
+                </li>
+              ))}
+            </ul>
+          </div>
+        )}
+
         {/* Botones de acción */}
         <div className="config-actions">
           <button
             onClick={handleGuardar}
             className="btn-primary"
-            disabled={saving}
+            disabled={saving || (config.apuestas_habilitadas && hayPartidosSinCuotas)}
           >
             {saving ? 'Guardando...' : 'Guardar Configuración'}
           </button>
