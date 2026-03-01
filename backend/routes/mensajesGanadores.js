@@ -7,6 +7,9 @@ const { authenticateToken } = require('../middleware/auth');
 // Todas las rutas requieren autenticación
 router.use(authenticateToken);
 
+// Obtener todas las jornadas de todos los torneos (orden cronológico)
+router.get('/todas-jornadas', mensajesGanadoresController.getTodasLasJornadas);
+
 // Obtener ganadores de cada jornada de un torneo
 router.get('/ganadores/:idTorneo', mensajesGanadoresController.getGanadoresPorJornada);
 

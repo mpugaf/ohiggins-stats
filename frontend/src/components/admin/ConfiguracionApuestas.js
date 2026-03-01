@@ -14,8 +14,7 @@ const ConfiguracionApuestas = () => {
   const [config, setConfig] = useState({
     apuestas_habilitadas: false,
     torneo_activo_id: '',
-    fecha_habilitada: '',
-    criterio_desempate: 'porcentaje_aciertos'
+    fecha_habilitada: ''
   });
 
   const [torneos, setTorneos] = useState([]);
@@ -63,8 +62,7 @@ const ConfiguracionApuestas = () => {
       setConfig({
         apuestas_habilitadas: configData.config.apuestas_habilitadas === 'true',
         torneo_activo_id: configData.config.torneo_activo_id || '',
-        fecha_habilitada: configData.config.fecha_habilitada || '',
-        criterio_desempate: configData.config.criterio_desempate || 'porcentaje_aciertos'
+        fecha_habilitada: configData.config.fecha_habilitada || ''
       });
 
       setTorneos(torneosData.torneos || []);
@@ -392,56 +390,6 @@ const ConfiguracionApuestas = () => {
           </ul>
         </div>
 
-        <hr className="divider" />
-
-        {/* Criterio de Desempate */}
-        <h2>🏆 Criterio de Desempate</h2>
-        <div className="config-section">
-          <p className="info-text">
-            Cuando dos o más usuarios tienen los mismos puntos, este criterio determina quién queda primero en la Tabla de Posiciones.
-          </p>
-          <div className="desempate-options">
-            {[
-              {
-                value: 'porcentaje_aciertos',
-                label: 'Mayor porcentaje de aciertos',
-                desc: 'Gana quien acertó más proporcionalmente (ej: 3/4 > 2/3)'
-              },
-              {
-                value: 'apuestas_ganadas',
-                label: 'Mayor número de apuestas ganadas',
-                desc: 'Gana quien más partidos acertó en términos absolutos'
-              },
-              {
-                value: 'miembro_antiguo',
-                label: 'Miembro más antiguo',
-                desc: 'Gana quien se registró primero en el sistema'
-              },
-              {
-                value: 'miembro_reciente',
-                label: 'Miembro más reciente',
-                desc: 'Gana quien se registró más recientemente'
-              }
-            ].map(opcion => (
-              <label
-                key={opcion.value}
-                className={`desempate-option ${config.criterio_desempate === opcion.value ? 'desempate-option--selected' : ''}`}
-              >
-                <input
-                  type="radio"
-                  name="criterio_desempate"
-                  value={opcion.value}
-                  checked={config.criterio_desempate === opcion.value}
-                  onChange={(e) => setConfig({ ...config, criterio_desempate: e.target.value })}
-                />
-                <div className="desempate-option-content">
-                  <span className="desempate-option-label">{opcion.label}</span>
-                  <span className="desempate-option-desc">{opcion.desc}</span>
-                </div>
-              </label>
-            ))}
-          </div>
-        </div>
 
         {/* Panel de advertencia: cuotas faltantes al intentar habilitar */}
         {config.apuestas_habilitadas && hayPartidosSinCuotas && (

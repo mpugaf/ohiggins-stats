@@ -275,6 +275,8 @@ export const tokensInvitacionService = {
 };
 
 export const mensajesGanadoresService = {
+  // Todas las jornadas de todos los torneos, orden cronológico
+  getTodasLasJornadas: () => api.get('/api/mensajes-ganadores/todas-jornadas'),
   // Obtener ganadores de cada jornada de un torneo
   getGanadores: (idTorneo) => api.get(`/api/mensajes-ganadores/ganadores/${idTorneo}`),
   // Obtener todos los mensajes de un torneo

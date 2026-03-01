@@ -75,6 +75,110 @@ exports.getGanadoresPorJornada = async (req, res) => {
 };
 
 /**
+ * Obtener todas las jornadas de todos los torneos con ganadores y mensajes,
+ * ordenadas cronológicamente por el primer partido de cada fecha
+ * GET /api/mensajes-ganadores/todas-jornadas
+ */
+exports.getTodasLasJornadas = async (req, res) => {
+  try {
+    // 1. Puntos por (torneo, jornada, usuario) para determinar ganador
+    const todosPuntos = await executeQuery(`
+      SELECT
+        a.id_torneo,
+        t.NOMBRE as nombre_torneo,
+        t.TEMPORADA,
+        p.NUMERO_JORNADA as numero_jornada,
+        a.id_usuario,
+        u.username,
+        u.nombre_completo,
+        u.fecha_creacion,
+        SUM(a.puntos_ganados) as puntos_jornada,
+        COUNT(a.id_apuesta) as apuestas_jornada
+      FROM apuestas_usuarios a
+      INNER JOIN HECHOS_RESULTADOS p ON a.id_partido = p.ID_PARTIDO
+      INNER JOIN DIM_TORNEO t ON a.id_torneo = t.ID_TORNEO
+      INNER JOIN usuarios u ON a.id_usuario = u.id_usuario
+      WHERE a.estado IN ('ganada', 'perdida')
+        AND p.NUMERO_JORNADA IS NOT NULL
+      GROUP BY a.id_torneo, t.NOMBRE, t.TEMPORADA, p.NUMERO_JORNADA,
+               a.id_usuario, u.username, u.nombre_completo, u.fecha_creacion
+      ORDER BY puntos_jornada DESC, u.fecha_creacion ASC
+    `);
+
+    // 2. Primer partido y estado de finalización por (torneo, jornada)
+    const estadoFechas = await executeQuery(`
+      SELECT
+        ID_TORNEO as id_torneo,
+        NUMERO_JORNADA as numero_jornada,
+        MIN(FECHA_PARTIDO) as fecha_primer_partido,
+        CASE
+          WHEN COUNT(*) = SUM(CASE WHEN ESTADO_PARTIDO = 'FINALIZADO' THEN 1 ELSE 0 END)
+          THEN 1 ELSE 0
+        END as todos_finalizados
+      FROM HECHOS_RESULTADOS
+      WHERE NUMERO_JORNADA IS NOT NULL
+      GROUP BY ID_TORNEO, NUMERO_JORNADA
+    `);
+
+    const estadoMap = {};
+    for (const f of estadoFechas) {
+      estadoMap[`${f.id_torneo}_${f.numero_jornada}`] = {
+        fecha_primer_partido: f.fecha_primer_partido,
+        todos_finalizados: f.todos_finalizados === 1
+      };
+    }
+
+    // 3. Todos los mensajes
+    const mensajes = await executeQuery(`
+      SELECT id_torneo, numero_jornada, id_usuario_ganador, mensaje
+      FROM mensajes_ganadores_jornada
+    `);
+
+    const mensajesMap = {};
+    for (const m of mensajes) {
+      mensajesMap[`${m.id_torneo}_${m.numero_jornada}`] = m.mensaje;
+    }
+
+    // 4. Determinar ganador por (torneo, jornada) — primer resultado por grupo
+    const ganadoresMap = {};
+    for (const row of todosPuntos) {
+      const key = `${row.id_torneo}_${row.numero_jornada}`;
+      if (!ganadoresMap[key]) {
+        const estado = estadoMap[key] || {};
+        ganadoresMap[key] = {
+          id_torneo: row.id_torneo,
+          nombre_torneo: row.nombre_torneo,
+          temporada: row.TEMPORADA,
+          numero_jornada: row.numero_jornada,
+          fecha_primer_partido: estado.fecha_primer_partido || null,
+          todos_finalizados: estado.todos_finalizados || false,
+          id_usuario_ganador: row.id_usuario,
+          username: row.username,
+          nombre_completo: row.nombre_completo,
+          puntos_jornada: row.puntos_jornada,
+          apuestas_jornada: row.apuestas_jornada,
+          mensaje: mensajesMap[key] || null
+        };
+      }
+    }
+
+    // 5. Ordenar por fecha_primer_partido ASC
+    const jornadas = Object.values(ganadoresMap)
+      .filter(j => j.fecha_primer_partido !== null)
+      .sort((a, b) => new Date(a.fecha_primer_partido) - new Date(b.fecha_primer_partido));
+
+    res.json({ success: true, jornadas });
+
+  } catch (error) {
+    console.error('[MENSAJES_GANADORES] Error al obtener todas las jornadas:', error);
+    res.status(500).json({
+      error: 'Error al obtener jornadas',
+      detalle: error.message
+    });
+  }
+};
+
+/**
  * Obtener todos los mensajes de un torneo
  */
 exports.getMensajesTorneo = async (req, res) => {

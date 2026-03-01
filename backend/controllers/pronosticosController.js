@@ -114,12 +114,6 @@ exports.getTablaPosiciones = async (req, res) => {
     // Verificar si el usuario es admin (viene del middleware authenticateToken)
     const esAdmin = req.user && req.user.role === 'admin';
 
-    // Leer criterio de desempate desde configuración
-    const [criterioConfig] = await executeQuery(
-      `SELECT valor FROM config_apuestas WHERE clave = 'criterio_desempate'`
-    );
-    const criterio = criterioConfig?.valor || 'porcentaje_aciertos';
-
     // Construir query con filtros
     let query = `
       SELECT
@@ -160,25 +154,9 @@ exports.getTablaPosiciones = async (req, res) => {
       params.push(fecha);
     }
 
-    // Construir ORDER BY según criterio de desempate configurado
-    let orderBy;
-    switch (criterio) {
-      case 'apuestas_ganadas':
-        orderBy = 'puntos_totales DESC, apuestas_ganadas DESC, porcentaje_aciertos DESC';
-        break;
-      case 'miembro_antiguo':
-        orderBy = 'puntos_totales DESC, u.fecha_creacion ASC';
-        break;
-      case 'miembro_reciente':
-        orderBy = 'puntos_totales DESC, u.fecha_creacion DESC';
-        break;
-      default: // porcentaje_aciertos
-        orderBy = 'puntos_totales DESC, porcentaje_aciertos DESC, apuestas_ganadas DESC';
-    }
-
     query += `
       GROUP BY u.id_usuario, u.username, u.nombre_completo, u.fecha_creacion
-      ORDER BY ${orderBy}
+      ORDER BY puntos_totales DESC, u.fecha_creacion ASC
     `;
 
     const tabla = await executeQuery(query, params);
@@ -193,8 +171,7 @@ exports.getTablaPosiciones = async (req, res) => {
       success: true,
       tabla: tablaConPosicion,
       torneo: idTorneo,
-      fecha: fecha || 'todas',
-      criterio_desempate: criterio
+      fecha: fecha || 'todas'
     });
 
   } catch (error) {

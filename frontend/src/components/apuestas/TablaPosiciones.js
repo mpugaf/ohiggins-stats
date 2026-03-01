@@ -15,10 +15,8 @@ const TablaPosiciones = () => {
   const [error, setError] = useState('');
 
   // Mensajes de ganadores
-  const [ganadoresJornadas, setGanadoresJornadas] = useState([]);
-  const [mensajesGanadores, setMensajesGanadores] = useState({});
+  const [todasJornadas, setTodasJornadas] = useState([]);
   const [loadingMensajes, setLoadingMensajes] = useState(false);
-  const [jornadasFinalizadas, setJornadasFinalizadas] = useState({});
 
   // Filtros
   const [torneos, setTorneos] = useState([]);
@@ -162,105 +160,53 @@ const TablaPosiciones = () => {
     setFechaSeleccionada(e.target.value);
   };
 
-  // Verificar si todos los partidos de una jornada están finalizados
-  const verificarJornadaFinalizada = async (idTorneo, numeroJornada) => {
-    try {
-      const response = await configApuestasService.getPartidosPorTorneoFecha(idTorneo, numeroJornada);
-      const data = await handleResponse(response);
-
-      if (data.success && data.partidos) {
-        // Verificar que TODOS los partidos estén finalizados
-        const todosFinalizados = data.partidos.every(
-          partido => partido.ESTADO_PARTIDO === 'FINALIZADO'
-        );
-        return todosFinalizados;
-      }
-      return false;
-    } catch (err) {
-      console.error(`Error verificando jornada ${numeroJornada}:`, err);
-      return false;
-    }
-  };
-
-  // Funciones para mensajes de ganadores
-  const cargarMensajesGanadores = async (idTorneo) => {
-    if (!idTorneo) return;
-
+  // Mensajes de ganadores: carga global de todos los torneos
+  const cargarTodasLasJornadas = async () => {
     try {
       setLoadingMensajes(true);
-
-      // Cargar ganadores de cada jornada
-      const ganadoresResponse = await mensajesGanadoresService.getGanadores(idTorneo);
-      const ganadoresData = await handleResponse(ganadoresResponse);
-
-      if (ganadoresData.success) {
-        setGanadoresJornadas(ganadoresData.ganadores || []);
-
-        // Verificar cuáles jornadas están completamente finalizadas
-        const jornadasStatus = {};
-        for (const ganador of ganadoresData.ganadores) {
-          const jornada = ganador.numero_jornada;
-          const estaFinalizada = await verificarJornadaFinalizada(idTorneo, jornada);
-          jornadasStatus[jornada] = estaFinalizada;
-        }
-        setJornadasFinalizadas(jornadasStatus);
+      const response = await mensajesGanadoresService.getTodasLasJornadas();
+      const data = await handleResponse(response);
+      if (data.success) {
+        setTodasJornadas(data.jornadas || []);
       }
-
-      // Cargar mensajes existentes
-      const mensajesResponse = await mensajesGanadoresService.getMensajes(idTorneo);
-      const mensajesData = await handleResponse(mensajesResponse);
-
-      if (mensajesData.success) {
-        // Convertir array de mensajes a objeto por jornada
-        const mensajesPorJornada = {};
-        mensajesData.mensajes.forEach(msg => {
-          mensajesPorJornada[msg.numero_jornada] = msg.mensaje;
-        });
-        setMensajesGanadores(mensajesPorJornada);
-      }
-
     } catch (err) {
-      console.error('Error cargando mensajes de ganadores:', err);
+      console.error('Error cargando jornadas de ganadores:', err);
     } finally {
       setLoadingMensajes(false);
     }
   };
 
-  const guardarMensajeGanador = async (numeroJornada, mensaje) => {
-    if (!torneoSeleccionado || !mensaje || mensaje.trim().length === 0) {
-      return;
-    }
+  const guardarMensajeGanador = async (idTorneo, numeroJornada, mensaje) => {
+    if (!idTorneo || !mensaje || mensaje.trim().length === 0) return;
 
     try {
       const response = await mensajesGanadoresService.guardarMensaje(
-        torneoSeleccionado,
+        idTorneo,
         numeroJornada,
         mensaje.trim()
       );
-
       const data = await handleResponse(response);
-
       if (data.success) {
         alert('Mensaje guardado exitosamente');
-        // Actualizar estado local
-        setMensajesGanadores(prev => ({
-          ...prev,
-          [numeroJornada]: mensaje.trim()
-        }));
+        // Actualizar el estado local directamente
+        setTodasJornadas(prev =>
+          prev.map(j =>
+            j.id_torneo === idTorneo && j.numero_jornada === numeroJornada
+              ? { ...j, mensaje: mensaje.trim() }
+              : j
+          )
+        );
       }
-
     } catch (err) {
       console.error('Error guardando mensaje:', err);
       alert('Error al guardar mensaje: ' + err.message);
     }
   };
 
-  // Efecto para cargar mensajes cuando cambia el torneo
+  // Cargar mensajes una vez al montar
   useEffect(() => {
-    if (torneoSeleccionado) {
-      cargarMensajesGanadores(torneoSeleccionado);
-    }
-  }, [torneoSeleccionado]);
+    cargarTodasLasJornadas();
+  }, []);
 
   const cargarApuestasPorPartido = async (torneoId = null, fecha = null) => {
     try {
@@ -924,72 +870,74 @@ const TablaPosiciones = () => {
       )}
 
       {/* Sección de Mensajes de Ganadores por Jornada */}
-      {torneoSeleccionado && ganadoresJornadas.length > 0 && (
-        <div className="mensajes-ganadores-section">
-          <h3 className="mensajes-titulo">💬 Mensajes de Ganadores por Jornada</h3>
-          <p className="mensajes-subtitulo">
-            El ganador de cada jornada puede dejar un mensaje único que quedará registrado para siempre.
-          </p>
+      <div className="mensajes-ganadores-section">
+        <h3 className="mensajes-titulo">💬 Mensajes de Ganadores por Jornada</h3>
+        <p className="mensajes-subtitulo">
+          El ganador de cada jornada puede dejar un mensaje único que quedará registrado para siempre.
+        </p>
 
-          {loadingMensajes ? (
-            <div className="loading-mensajes">Cargando mensajes...</div>
-          ) : (
-            <div className="mensajes-grid">
-              {ganadoresJornadas.map((ganador) => {
-                const jornada = ganador.numero_jornada;
-                const mensajeExistente = mensajesGanadores[jornada];
-                const esGanador = user && user.id_usuario === ganador.id_usuario_ganador;
-                const jornadaFinalizada = jornadasFinalizadas[jornada] === true;
-                const puedeEscribir = esGanador && !mensajeExistente && jornadaFinalizada;
+        {loadingMensajes ? (
+          <div className="loading-mensajes">Cargando mensajes...</div>
+        ) : todasJornadas.length === 0 ? (
+          <div className="loading-mensajes">No hay jornadas con resultados aún.</div>
+        ) : (
+          <div className="mensajes-grid">
+            {todasJornadas.map((jornada) => {
+              const esGanador = user && user.id_usuario === jornada.id_usuario_ganador;
+              const puedeEscribir = esGanador && !jornada.mensaje && jornada.todos_finalizados;
+              const fechaFormateada = jornada.fecha_primer_partido
+                ? new Date(jornada.fecha_primer_partido).toLocaleDateString('es-CL', {
+                    day: '2-digit', month: '2-digit', year: 'numeric'
+                  })
+                : '';
 
-                return (
-                  <div key={jornada} className="mensaje-card">
-                    <div className="mensaje-header">
-                      <span className="jornada-numero">Jornada {jornada}</span>
-                      {ganador.nombre_completo ? (
-                        <span className="ganador-nombre">🏆 {ganador.nombre_completo}</span>
-                      ) : (
-                        <span className="ganador-nombre">🏆 {ganador.username}</span>
-                      )}
-                      <span className="puntos-ganador">{Math.round(ganador.puntos_jornada)} pts</span>
+              return (
+                <div key={`${jornada.id_torneo}_${jornada.numero_jornada}`} className="mensaje-card">
+                  <div className="mensaje-header">
+                    <div className="mensaje-header-meta">
+                      <span className="mensaje-torneo-nombre">{jornada.nombre_torneo} {jornada.temporada}</span>
+                      <span className="jornada-numero">Fecha {jornada.numero_jornada} · {fechaFormateada}</span>
                     </div>
-
-                    <div className="mensaje-body">
-                      {mensajeExistente ? (
-                        <div className="mensaje-guardado">
-                          <div className="mensaje-icono">💭</div>
-                          <div className="mensaje-texto">"{mensajeExistente}"</div>
-                        </div>
-                      ) : puedeEscribir ? (
-                        <MensajeInput
-                          jornada={jornada}
-                          onGuardar={guardarMensajeGanador}
-                        />
-                      ) : (
-                        <div className="mensaje-vacio">
-                          <span className="mensaje-pendiente">
-                            {esGanador && !jornadaFinalizada
-                              ? '⏳ Esperando finalización de todos los partidos de la jornada...'
-                              : esGanador
-                              ? '✍️ Deja tu mensaje aquí'
-                              : '⏳ El ganador aún no ha dejado su mensaje'}
-                          </span>
-                        </div>
-                      )}
-                    </div>
+                    <span className="ganador-nombre">
+                      🏆 {jornada.nombre_completo || jornada.username}
+                    </span>
+                    <span className="puntos-ganador">{Math.round(jornada.puntos_jornada)} pts</span>
                   </div>
-                );
-              })}
-            </div>
-          )}
-        </div>
-      )}
+
+                  <div className="mensaje-body">
+                    {jornada.mensaje ? (
+                      <div className="mensaje-guardado">
+                        <div className="mensaje-icono">💭</div>
+                        <div className="mensaje-texto">"{jornada.mensaje}"</div>
+                      </div>
+                    ) : puedeEscribir ? (
+                      <MensajeInput
+                        idTorneo={jornada.id_torneo}
+                        jornada={jornada.numero_jornada}
+                        onGuardar={guardarMensajeGanador}
+                      />
+                    ) : (
+                      <div className="mensaje-vacio">
+                        <span className="mensaje-pendiente">
+                          {esGanador && !jornada.todos_finalizados
+                            ? '⏳ Esperando finalización de todos los partidos de la jornada...'
+                            : '⏳ El ganador aún no ha dejado su mensaje'}
+                        </span>
+                      </div>
+                    )}
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        )}
+      </div>
     </div>
   );
 };
 
 // Componente para ingresar mensaje
-const MensajeInput = ({ jornada, onGuardar }) => {
+const MensajeInput = ({ idTorneo, jornada, onGuardar }) => {
   const [mensaje, setMensaje] = useState('');
   const [guardando, setGuardando] = useState(false);
 
@@ -1007,7 +955,7 @@ const MensajeInput = ({ jornada, onGuardar }) => {
     }
 
     setGuardando(true);
-    await onGuardar(jornada, mensaje);
+    await onGuardar(idTorneo, jornada, mensaje);
     setGuardando(false);
   };
 
