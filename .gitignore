@@ -12,6 +12,9 @@
 .env.test.local
 .env.production.local
 .env.production
+# Variantes con sufijo (ej: .env-ori, .env-backup, .env-old)
+.env-*
+**/.env-*
 
 # Archivos de ejemplo con credenciales (NO deben subirse al repo)
 # Crear manualmente con tus datos reales sin subirlos
@@ -123,8 +126,10 @@ coverage/
 # =====================================
 # 🗄️ BASES DE DATOS
 # =====================================
-# Dumps de base de datos grandes (comentar si quieres versionarlos)
-# ufc_analytics.sql está actualmente en 64KB, es manejable
+# Dumps completos de base de datos (archivos grandes generados, no schema)
+OHI_STATS.sql
+ufc_analytics.sql
+
 # Archivos SQLite temporales
 *.sqlite
 *.sqlite3
@@ -233,6 +238,23 @@ test-results/
 .cache/
 .pytest_cache/
 .tox/
+
+# =====================================
+# 📦 BINARIOS & PAQUETES DEL SISTEMA
+# =====================================
+# Paquetes Debian/RPM descargados manualmente (no pertenecen al repo)
+*.deb
+*.rpm
+*.pkg
+*.exe
+*.dmg
+
+# =====================================
+# ☁️ VERCEL (Deployment)
+# =====================================
+# Directorio generado por la CLI de Vercel (contiene IDs del proyecto)
+.vercel/
+# vercel.json SÍ debe versionarse si existe (config de build/routing)
 
 # =====================================
 # 🔧 OTROS TEMPORALES
