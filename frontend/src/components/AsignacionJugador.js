@@ -10,6 +10,9 @@ import {
 import TeamLogo from './common/TeamLogo';
 import './AsignacionJugador.css';
 
+// Orden para mostrar posiciones en el select
+const ORDEN_POSICION_DISPLAY = ['GK', 'DF', 'CB', 'FB', 'LB', 'RB', 'LWB', 'RWB', 'DM', 'CDM', 'MF', 'CM', 'AM', 'CAM', 'W', 'LW', 'RW', 'LM', 'RM', 'FW', 'ST', 'CF'];
+
 // Hook personalizado para debounce
 function useDebounce(value, delay) {
   const [debouncedValue, setDebouncedValue] = useState(value);
@@ -54,6 +57,10 @@ const AsignacionJugador = () => {
   const [error, setError] = useState('');
   const [successMessage, setSuccessMessage] = useState('');
 
+  // Estados para posición
+  const [posicionesDisponibles, setPosicionesDisponibles] = useState([]);
+  const [posicionSeleccionada, setPosicionSeleccionada] = useState('');
+
   // Filtros
   const [searchTerm, setSearchTerm] = useState(''); // Término de búsqueda sin debounce
   const [filtroJugadorTexto, setFiltroJugadorTexto] = useState(''); // Filtro final con debounce
@@ -86,11 +93,12 @@ const AsignacionJugador = () => {
 
       console.log('🔄 Cargando datos para AsignacionJugador...');
 
-      const [asignacionesRes, jugadoresRes, torneosRes, equiposRes] = await Promise.all([
+      const [asignacionesRes, jugadoresRes, torneosRes, equiposRes, posicionesRes] = await Promise.all([
         torneoJugadorService.getAsignaciones().then(handleResponse),
         playersService.getAll().then(handleResponse),
         torneosService.getAll().then(handleResponse),
-        equiposService.getAll().then(handleResponse)
+        equiposService.getAll().then(handleResponse),
+        playersService.getPositions().then(handleResponse)
       ]);
 
       console.log('📊 Datos cargados:', {
@@ -104,6 +112,7 @@ const AsignacionJugador = () => {
       setJugadores(jugadoresRes || []);
       setTorneos(torneosRes || []);
       setEquipos(equiposRes || []);
+      setPosicionesDisponibles(posicionesRes || []);
 
       console.log('✅ Estados actualizados:', {
         totalJugadores: jugadoresRes?.length || 0,
@@ -146,6 +155,19 @@ const AsignacionJugador = () => {
   const handleJugadorChange = async (e) => {
     const idJugador = e.target.value;
     setForm({ ...form, idJugador });
+
+    // Pre-poblar posición desde el jugador ya cargado
+    if (idJugador) {
+      const jugadorData = jugadores.find(j => j.ID_JUGADOR === parseInt(idJugador));
+      if (jugadorData && jugadorData.posiciones && jugadorData.posiciones.length > 0) {
+        // codigo = CODIGO_POSICION, que coincide con codigo_posicion en posicionesDisponibles
+        setPosicionSeleccionada(jugadorData.posiciones[0].codigo);
+      } else {
+        setPosicionSeleccionada('');
+      }
+    } else {
+      setPosicionSeleccionada('');
+    }
 
     // Si seleccionó un jugador, cargar su última asignación
     if (idJugador && !editando) {
@@ -285,6 +307,7 @@ const AsignacionJugador = () => {
         });
         setMantenerEquipoActual(false);
         setUltimaAsignacion(null);
+        setPosicionSeleccionada('');
 
         setTimeout(() => setSuccessMessage(''), 5000);
 
@@ -347,7 +370,8 @@ const AsignacionJugador = () => {
         idEquipo: parseInt(form.idEquipo, 10),
         numeroCamiseta: form.numeroCamiseta ? parseInt(form.numeroCamiseta, 10) : null,
         fechaIncorporacion: form.fechaIncorporacion || null,
-        estado: form.estado
+        estado: form.estado,
+        codigoPosicion: posicionSeleccionada || null
       };
 
       // Verificar que los parseInt fueron exitosos con mensajes específicos
@@ -418,6 +442,7 @@ const AsignacionJugador = () => {
       });
       setMantenerEquipoActual(false);
       setUltimaAsignacion(null);
+      setPosicionSeleccionada('');
 
       await cargarDatos();
 
@@ -467,6 +492,7 @@ const AsignacionJugador = () => {
     setEditando(null);
     setMantenerEquipoActual(false);
     setUltimaAsignacion(null);
+    setPosicionSeleccionada('');
     setForm({
       idJugador: '',
       idTorneo: '',
@@ -724,6 +750,55 @@ const AsignacionJugador = () => {
                   ✓ Fecha original del jugador en este equipo
                 </small>
               )}
+            </div>
+
+            <div className="form-group">
+              <label>🎯 Posición</label>
+              {form.idJugador && (() => {
+                const jug = jugadores.find(j => j.ID_JUGADOR === parseInt(form.idJugador));
+                return jug?.posiciones?.length > 0 ? (
+                  <small style={{ display: 'block', color: '#28a745', marginBottom: '4px', fontStyle: 'italic' }}>
+                    Posiciones actuales: {jug.posiciones.map(p => p.codigo).join(', ')}
+                  </small>
+                ) : (
+                  <small style={{ display: 'block', color: '#dc3545', marginBottom: '4px', fontStyle: 'italic' }}>
+                    Sin posición registrada — asignar aquí
+                  </small>
+                );
+              })()}
+              <select
+                value={posicionSeleccionada}
+                onChange={(e) => setPosicionSeleccionada(e.target.value)}
+                disabled={loading}
+              >
+                <option value="">-- Sin posición --</option>
+                {posicionesDisponibles
+                  .slice()
+                  .sort((a, b) => {
+                    const iA = ORDEN_POSICION_DISPLAY.indexOf(a.codigo_posicion);
+                    const iB = ORDEN_POSICION_DISPLAY.indexOf(b.codigo_posicion);
+                    return (iA === -1 ? 99 : iA) - (iB === -1 ? 99 : iB);
+                  })
+                  .map(p => (
+                    <option key={p.posicion_id} value={p.codigo_posicion}>
+                      {p.codigo_posicion}{p.nombre_posicion ? ` - ${p.nombre_posicion}` : ''}
+                    </option>
+                  ))
+                }
+              </select>
+              {posicionSeleccionada && form.idJugador && (() => {
+                const jug = jugadores.find(j => j.ID_JUGADOR === parseInt(form.idJugador));
+                const yaTiene = jug?.posiciones?.some(p => p.codigo === posicionSeleccionada);
+                return yaTiene ? (
+                  <small style={{ color: '#6c757d', marginTop: '4px', display: 'block', fontStyle: 'italic' }}>
+                    ✓ El jugador ya tiene esta posición
+                  </small>
+                ) : (
+                  <small style={{ color: '#007bff', marginTop: '4px', display: 'block', fontStyle: 'italic' }}>
+                    Se asignará esta posición al jugador
+                  </small>
+                );
+              })()}
             </div>
 
             <div className="form-group">

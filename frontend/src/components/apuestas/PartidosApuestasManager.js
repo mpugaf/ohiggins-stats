@@ -3,7 +3,6 @@ import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import ApuestasPendientes from './ApuestasPendientes';
 import MisApuestas from './MisApuestas';
-import EstadisticasUsuario from './EstadisticasUsuario';
 import TablaPosiciones from './TablaPosiciones';
 import PartidosHistoricosPlus from './PartidosHistoricosPlus';
 import RosterJugadores from '../consultas/RosterJugadores';
@@ -26,18 +25,12 @@ function PartidosApuestasManager() {
 
   return (
     <div className="apuestas-manager">
-      {/* Estadísticas del usuario */}
-      <section className="stats-section">
-        <EstadisticasUsuario key={refreshKey} />
-      </section>
-
       {/* Tabs de navegación - Rediseñadas */}
       <nav className="tabs-navigation-modern">
         <button
           className={`tab-button-modern ${tabActiva === 'pendientes' ? 'active' : ''}`}
           onClick={() => setTabActiva('pendientes')}
         >
-          <div className="tab-icon-modern">⏳</div>
           <div className="tab-content-text">
             <span className="tab-label-modern">Apuestas Pendientes</span>
             <span className="tab-description">Ver tus apuestas activas</span>
@@ -48,7 +41,6 @@ function PartidosApuestasManager() {
           className={`tab-button-modern ${tabActiva === 'historial' ? 'active' : ''}`}
           onClick={() => setTabActiva('historial')}
         >
-          <div className="tab-icon-modern">📋</div>
           <div className="tab-content-text">
             <span className="tab-label-modern">Historial Completo</span>
             <span className="tab-description">Mis apuestas anteriores</span>
@@ -59,7 +51,6 @@ function PartidosApuestasManager() {
           className={`tab-button-modern ${tabActiva === 'tabla' ? 'active' : ''}`}
           onClick={() => setTabActiva('tabla')}
         >
-          <div className="tab-icon-modern">🏆</div>
           <div className="tab-content-text">
             <span className="tab-label-modern">Tabla de Posiciones</span>
             <span className="tab-description">Ranking de usuarios</span>
@@ -70,7 +61,6 @@ function PartidosApuestasManager() {
           className={`tab-button-modern ${tabActiva === 'historico' ? 'active' : ''}`}
           onClick={() => setTabActiva('historico')}
         >
-          <div className="tab-icon-modern">📊</div>
           <div className="tab-content-text">
             <span className="tab-label-modern">Partidos Históricos</span>
             <span className="tab-description">Resultados finalizados</span>
@@ -81,7 +71,6 @@ function PartidosApuestasManager() {
           className={`tab-button-modern ${tabActiva === 'roster' ? 'active' : ''}`}
           onClick={() => setTabActiva('roster')}
         >
-          <div className="tab-icon-modern">👥</div>
           <div className="tab-content-text">
             <span className="tab-label-modern">Roster de Jugadores</span>
             <span className="tab-description">Consultar planteles</span>

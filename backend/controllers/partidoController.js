@@ -264,9 +264,9 @@ const obtenerPartidos = async (req, res) => {
     }
 
     // Ordenar primero por número de jornada, luego por fecha del partido
-    query += ' ORDER BY hr.NUMERO_JORNADA ASC, hr.FECHA_PARTIDO ASC';
-    query += ' LIMIT ? OFFSET ?';
-    params.push(parseInt(limit), parseInt(offset));
+    const limitInt = parseInt(limit) || 50;
+    const offsetInt = parseInt(offset) || 0;
+    query += ` ORDER BY hr.NUMERO_JORNADA ASC, hr.FECHA_PARTIDO ASC LIMIT ${limitInt} OFFSET ${offsetInt}`;
 
     const partidos = await executeQuery(query, params);
 

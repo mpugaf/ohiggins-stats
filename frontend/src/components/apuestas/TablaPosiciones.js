@@ -2,12 +2,13 @@ import React, { useState, useEffect } from 'react';
 import { pronosticosService, configApuestasService, mensajesGanadoresService, handleResponse } from '../../services/apiService';
 import { useAuth } from '../../context/AuthContext';
 import TeamLogo from '../common/TeamLogo';
+import EstadisticasUsuario from './EstadisticasUsuario';
 import './TablaPosiciones.css';
 import './MensajesGanadores.css';
 
 const TablaPosiciones = () => {
   const { user } = useAuth();
-  const [vistaActiva, setVistaActiva] = useState('tabla'); // 'tabla' o 'apuestas'
+  const [vistaActiva, setVistaActiva] = useState('tabla'); // 'tabla', 'apuestas' o 'estadisticas'
 
   // Tabla de posiciones
   const [tabla, setTabla] = useState([]);
@@ -396,6 +397,13 @@ const TablaPosiciones = () => {
           <span className="tab-icon">👥</span>
           <span className="tab-label">Apuestas por Partido</span>
           {apuestasHabilitadas && <span className="tab-lock">🔒</span>}
+        </button>
+        <button
+          className={`tab-btn ${vistaActiva === 'estadisticas' ? 'active' : ''}`}
+          onClick={() => handleCambiarVista('estadisticas')}
+        >
+          <span className="tab-icon">📊</span>
+          <span className="tab-label">Mis Estadísticas</span>
         </button>
       </div>
 
@@ -867,6 +875,11 @@ const TablaPosiciones = () => {
             </>
           )}
         </>
+      )}
+
+      {/* Vista: Mis Estadísticas */}
+      {vistaActiva === 'estadisticas' && (
+        <EstadisticasUsuario />
       )}
 
       {/* Sección de Mensajes de Ganadores por Jornada */}

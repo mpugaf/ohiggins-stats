@@ -133,7 +133,7 @@ exports.getUltimaAsignacion = async (req, res) => {
  * Body: { idJugador, idEquipo, idTorneo, numeroCamiseta?, fechaIncorporacion?, estado? }
  */
 exports.crearAsignacion = async (req, res) => {
-  const { idJugador, idEquipo, idTorneo, numeroCamiseta, fechaIncorporacion, estado } = req.body;
+  const { idJugador, idEquipo, idTorneo, numeroCamiseta, fechaIncorporacion, estado, codigoPosicion } = req.body;
 
   console.log('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
   console.log('[CREAR_ASIGNACION] Datos recibidos:');
@@ -143,6 +143,7 @@ exports.crearAsignacion = async (req, res) => {
   console.log('  - Número Camiseta:', numeroCamiseta || 'N/A');
   console.log('  - Fecha Incorporación:', fechaIncorporacion || 'N/A');
   console.log('  - Estado:', estado || 'N/A');
+  console.log('  - Posición:', codigoPosicion || 'N/A');
   console.log('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
 
   // Validar campos requeridos
@@ -224,6 +225,36 @@ exports.crearAsignacion = async (req, res) => {
         WHERE ID_TORNEO_JUGADOR = ?
       `, [idEquipo, numeroCamiseta || null, fechaIncorporacion || null, estado || 'ACTIVO', asignacionExistente.ID_TORNEO_JUGADOR]);
 
+      // Guardar posición en reasignación si se proporcionó
+      if (codigoPosicion) {
+        try {
+          const [posicion] = await executeQuery(
+            'SELECT ID_POSICION FROM DIM_POSICION WHERE NOMBRE = ?',
+            [codigoPosicion]
+          );
+          if (posicion) {
+            const [existePosicion] = await executeQuery(
+              'SELECT ID_JUGADOR_POSICION FROM DIM_JUGADOR_POSICION WHERE ID_JUGADOR = ? AND ID_POSICION = ?',
+              [idJugador, posicion.ID_POSICION]
+            );
+            if (!existePosicion) {
+              const [countResult] = await executeQuery(
+                'SELECT COUNT(*) as total FROM DIM_JUGADOR_POSICION WHERE ID_JUGADOR = ?',
+                [idJugador]
+              );
+              const esPrincipal = countResult.total === 0 ? 1 : 0;
+              const orden = parseInt(countResult.total) + 1;
+              await executeQuery(
+                'INSERT INTO DIM_JUGADOR_POSICION (ID_JUGADOR, ID_POSICION, ES_POSICION_PRINCIPAL, ORDEN_PREFERENCIA) VALUES (?, ?, ?, ?)',
+                [idJugador, posicion.ID_POSICION, esPrincipal, orden]
+              );
+            }
+          }
+        } catch (posicionError) {
+          console.warn('[TORNEO_JUGADOR] No se pudo asignar posición en reasignación:', posicionError.message);
+        }
+      }
+
       return res.status(200).json({
         message: 'Jugador reasignado exitosamente al nuevo equipo',
         id: asignacionExistente.ID_TORNEO_JUGADOR,
@@ -287,6 +318,37 @@ exports.crearAsignacion = async (req, res) => {
     } catch (updateError) {
       console.warn('[TORNEO_JUGADOR] No se pudo actualizar asignación anterior:', updateError.message);
       // No fallar la creación si no se puede actualizar la anterior
+    }
+
+    // Guardar posición si se proporcionó y el jugador no la tiene aún
+    if (codigoPosicion) {
+      try {
+        const [posicion] = await executeQuery(
+          'SELECT ID_POSICION FROM DIM_POSICION WHERE NOMBRE = ?',
+          [codigoPosicion]
+        );
+        if (posicion) {
+          const [existePosicion] = await executeQuery(
+            'SELECT ID_JUGADOR_POSICION FROM DIM_JUGADOR_POSICION WHERE ID_JUGADOR = ? AND ID_POSICION = ?',
+            [idJugador, posicion.ID_POSICION]
+          );
+          if (!existePosicion) {
+            const [countResult] = await executeQuery(
+              'SELECT COUNT(*) as total FROM DIM_JUGADOR_POSICION WHERE ID_JUGADOR = ?',
+              [idJugador]
+            );
+            const esPrincipal = countResult.total === 0 ? 1 : 0;
+            const orden = parseInt(countResult.total) + 1;
+            await executeQuery(
+              'INSERT INTO DIM_JUGADOR_POSICION (ID_JUGADOR, ID_POSICION, ES_POSICION_PRINCIPAL, ORDEN_PREFERENCIA) VALUES (?, ?, ?, ?)',
+              [idJugador, posicion.ID_POSICION, esPrincipal, orden]
+            );
+            console.log(`[TORNEO_JUGADOR] Posición ${codigoPosicion} asignada al jugador ${idJugador}`);
+          }
+        }
+      } catch (posicionError) {
+        console.warn('[TORNEO_JUGADOR] No se pudo asignar posición:', posicionError.message);
+      }
     }
 
     res.status(201).json({
