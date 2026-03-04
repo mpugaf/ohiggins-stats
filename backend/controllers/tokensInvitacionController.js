@@ -46,6 +46,21 @@ const generarToken = () => {
   return crypto.randomBytes(32).toString('hex');
 };
 
+// Obtener la URL del frontend apropiada según el origen de la request
+const getFrontendUrl = (req) => {
+  const allowedUrls = (process.env.FRONTEND_URL || 'http://192.168.100.16:3001')
+    .split(',')
+    .map(u => u.trim());
+
+  const origin = req.headers.origin || req.headers.referer;
+  if (origin) {
+    const match = allowedUrls.find(url => origin.startsWith(url));
+    if (match) return match;
+  }
+
+  return allowedUrls[0];
+};
+
 // Generar nuevo token de invitación (solo admin)
 const crearTokenInvitacion = async (req, res) => {
   try {
@@ -68,8 +83,8 @@ const crearTokenInvitacion = async (req, res) => {
 
     console.log(`✅ Token creado exitosamente: ${token.substring(0, 10)}...`);
 
-    // Construir URL completa del link de invitación
-    const frontendUrl = process.env.FRONTEND_URL || 'http://192.168.100.16:3001';
+    // Construir URL completa del link de invitación usando el origen de la request
+    const frontendUrl = getFrontendUrl(req);
     const invitationLink = `${frontendUrl}/register?token=${token}`;
 
     res.status(201).json({
@@ -200,7 +215,7 @@ const listarTokens = async (req, res) => {
     console.log(`✅ Se encontraron ${tokens.length} tokens`);
 
     // Agregar información de estado y link
-    const frontendUrl = process.env.FRONTEND_URL || 'http://192.168.100.16:3001';
+    const frontendUrl = getFrontendUrl(req);
     const tokensConEstado = tokens.map(token => {
       let estado = 'activo';
       if (token.usado) {
