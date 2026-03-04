@@ -4,6 +4,22 @@ import { torneosService, api, handleResponse } from '../../services/apiService';
 import { useAuth } from '../../context/AuthContext';
 import '../../styles/RosterJugadores.css';
 
+// Caché a nivel de módulo: persiste entre navegaciones sin refetch
+const _cache = {
+  torneos: null,
+  posiciones: null,
+  equiposPorTorneo: {}, // { torneoId: equipos[] }
+};
+
+// Skeleton row para la tabla
+const SkeletonRow = () => (
+  <tr className="skeleton-row">
+    {[...Array(7)].map((_, i) => (
+      <td key={i}><div className="skeleton-cell" style={{ width: i === 1 ? '80%' : i === 3 ? '60%' : '40%' }} /></td>
+    ))}
+  </tr>
+);
+
 const RosterJugadores = () => {
   const { user, isAdmin } = useAuth();
   const [torneos, setTorneos] = useState([]);
@@ -53,14 +69,15 @@ const RosterJugadores = () => {
   }, [selectedTorneo, selectedEquipo2]);
 
   const cargarTorneos = async () => {
+    if (_cache.torneos) {
+      setTorneos(_cache.torneos);
+      return;
+    }
     try {
       setLoading(true);
-      console.log('🔄 Cargando torneos...');
-
       const response = await torneosService.getAll();
       const data = await handleResponse(response);
-
-      console.log('✅ Torneos cargados:', data);
+      _cache.torneos = data;
       setTorneos(data);
       setError(null);
     } catch (error) {
@@ -72,11 +89,14 @@ const RosterJugadores = () => {
   };
 
   const cargarEquipos = async (torneoId) => {
+    if (_cache.equiposPorTorneo[torneoId]) {
+      setEquipos(_cache.equiposPorTorneo[torneoId]);
+      return;
+    }
     try {
-      console.log('🔄 Cargando equipos del torneo:', torneoId);
       const response = await torneosService.getEquipos(torneoId);
       const data = await handleResponse(response);
-      console.log('✅ Equipos cargados:', data);
+      _cache.equiposPorTorneo[torneoId] = data;
       setEquipos(data);
     } catch (error) {
       console.error('❌ Error al cargar equipos:', error);
@@ -85,9 +105,14 @@ const RosterJugadores = () => {
   };
 
   const cargarPosiciones = async () => {
+    if (_cache.posiciones) {
+      setPosiciones(_cache.posiciones);
+      return;
+    }
     try {
       const response = await torneosService.getPositions();
       const data = await handleResponse(response);
+      _cache.posiciones = data;
       setPosiciones(data);
     } catch (error) {
       console.error('Error al cargar posiciones:', error);
@@ -308,9 +333,23 @@ const RosterJugadores = () => {
   const renderTablaJugadores = (listaJugadores, equipoInfo, isLoading, equipoLabel = '') => {
     if (isLoading) {
       return (
-        <div className="loading-spinner">
-          <div className="spinner"></div>
-          <p>Cargando {equipoLabel}...</p>
+        <div className="tabla-container">
+          <table className="tabla-jugadores">
+            <thead>
+              <tr>
+                <th>#</th>
+                <th>Nombre</th>
+                <th>Apodo</th>
+                <th>Posiciones</th>
+                <th>Nac.</th>
+                <th>Pie</th>
+                <th>Edad</th>
+              </tr>
+            </thead>
+            <tbody>
+              {[...Array(10)].map((_, i) => <SkeletonRow key={i} />)}
+            </tbody>
+          </table>
         </div>
       );
     }

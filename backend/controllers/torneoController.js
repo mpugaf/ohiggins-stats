@@ -736,59 +736,35 @@ const getEquiposByTorneo = async (req, res) => {
   try {
     const { torneoId } = req.params;
 
-    // ESTRATEGIA 1: Intentar obtener equipos desde PARTIDOS (más confiable)
-    // Incluye equipos locales, visitantes, extranjeros, segunda división, etc.
-    const queryPartidos = `
+    // Combinar SIEMPRE equipos con partidos y equipos con jugadores asignados
+    // Esto garantiza que un equipo con asignación aparezca aunque el torneo tenga partidos de otros equipos
+    const queryCombinado = `
       SELECT DISTINCT
         e.ID_EQUIPO as id,
         e.NOMBRE as nombre,
         e.APODO as apodo,
         e.CIUDAD as ciudad,
         e.IMAGEN as imagen,
-        'partidos' as fuente
+        'combinado' as fuente
       FROM DIM_EQUIPO e
       WHERE e.ID_EQUIPO IN (
         SELECT DISTINCT ID_EQUIPO_LOCAL FROM HECHOS_RESULTADOS WHERE ID_TORNEO = ?
         UNION
         SELECT DISTINCT ID_EQUIPO_VISITA FROM HECHOS_RESULTADOS WHERE ID_TORNEO = ?
+        UNION
+        SELECT DISTINCT ID_EQUIPO FROM DIM_TORNEO_JUGADOR WHERE ID_TORNEO = ?
       )
       ORDER BY e.NOMBRE
     `;
 
-    let equipos = await executeQuery(queryPartidos, [torneoId, torneoId]);
+    let equipos = await executeQuery(queryCombinado, [torneoId, torneoId, torneoId]);
 
     if (equipos.length > 0) {
-      console.log(`✅ [ESTRATEGIA 1] Se encontraron ${equipos.length} equipos con partidos en el torneo ${torneoId}`);
+      console.log(`✅ [COMBINADO] Se encontraron ${equipos.length} equipos (partidos + asignaciones) en el torneo ${torneoId}`);
       return res.json(equipos);
     }
 
-    console.log(`⚠️ [ESTRATEGIA 1] No hay partidos en el torneo ${torneoId}. Probando estrategia 2...`);
-
-    // ESTRATEGIA 2: Obtener equipos que tienen jugadores asignados
-    const queryJugadores = `
-      SELECT DISTINCT
-        e.ID_EQUIPO as id,
-        e.NOMBRE as nombre,
-        e.APODO as apodo,
-        e.CIUDAD as ciudad,
-        e.IMAGEN as imagen,
-        COUNT(tj.ID_JUGADOR) as total_jugadores,
-        'jugadores_asignados' as fuente
-      FROM DIM_EQUIPO e
-      INNER JOIN DIM_TORNEO_JUGADOR tj ON e.ID_EQUIPO = tj.ID_EQUIPO
-      WHERE tj.ID_TORNEO = ?
-      GROUP BY e.ID_EQUIPO, e.NOMBRE, e.APODO, e.CIUDAD, e.IMAGEN
-      ORDER BY e.NOMBRE
-    `;
-
-    equipos = await executeQuery(queryJugadores, [torneoId]);
-
-    if (equipos.length > 0) {
-      console.log(`✅ [ESTRATEGIA 2] Se encontraron ${equipos.length} equipos con jugadores asignados en el torneo ${torneoId}`);
-      return res.json(equipos);
-    }
-
-    console.log(`⚠️ [ESTRATEGIA 2] No hay jugadores asignados en el torneo ${torneoId}. Usando estrategia 3...`);
+    console.log(`⚠️ [COMBINADO] No hay equipos con partidos ni asignaciones en el torneo ${torneoId}. Usando estrategia fallback...`);
 
     // ESTRATEGIA 3: Devolver TODOS los equipos disponibles
     // Esto permite empezar a asignar jugadores en torneos nuevos

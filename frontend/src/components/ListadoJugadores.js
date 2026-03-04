@@ -251,11 +251,17 @@ const ListadoJugadores = () => {
                 onChange={(e) => setSelectedTorneo(e.target.value)}
               >
                 <option value="">Selecciona un torneo</option>
-                {torneos.map(torneo => (
-                  <option key={torneo.id} value={torneo.id}>
-                    {torneo.nombre_completo || `${torneo.NOMBRE} ${torneo.TEMPORADA} - ${torneo.RUEDA} rueda`}
-                  </option>
-                ))}
+                {torneos.map(torneo => {
+                  const torneoId = torneo.ID_TORNEO || torneo.id;
+                  return (
+                    <option key={torneoId} value={torneoId}>
+                      {torneo.nombre_completo ||
+                        (torneo.RUEDA
+                          ? `${torneo.NOMBRE} ${torneo.TEMPORADA} - ${torneo.RUEDA}`
+                          : `${torneo.NOMBRE} ${torneo.TEMPORADA}`)}
+                    </option>
+                  );
+                })}
               </select>
             </div>
 

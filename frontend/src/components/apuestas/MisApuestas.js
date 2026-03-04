@@ -73,9 +73,13 @@ function MisApuestas({ filtroInicial = '' }) {
       if (!torneoInicialCargado && data.torneoActivo) {
         setFiltroTorneo(String(data.torneoActivo));
         setTorneoInicialCargado(true);
+      } else {
+        // Sin torneo activo con apuestas: fetchApuestas no se llamará, detener el spinner
+        setLoading(false);
       }
     } catch (err) {
       console.error('Error al cargar torneos y fechas:', err);
+      setLoading(false);
     }
   };
 
@@ -183,6 +187,26 @@ function MisApuestas({ filtroInicial = '' }) {
     return (
       <div className="apuestas-container">
         <div className="error-message">{error}</div>
+      </div>
+    );
+  }
+
+  if (!loading && torneos.length === 0) {
+    return (
+      <div className="apuestas-container">
+        <div className="sin-historial-state">
+          <div className="sin-historial-icono">🎯</div>
+          <h2 className="sin-historial-titulo">¡Aún no tienes apuestas!</h2>
+          <p className="sin-historial-subtitulo">
+            Tu historial está esperando ser escrito...
+          </p>
+          <p className="sin-historial-entusiasta">
+            ¡Muy pronto llegará tu primera apuesta y comenzará la emoción! ⚽🔥
+          </p>
+          <p className="sin-historial-hint">
+            Revisa los partidos disponibles y anímate a predecir el resultado
+          </p>
+        </div>
       </div>
     );
   }

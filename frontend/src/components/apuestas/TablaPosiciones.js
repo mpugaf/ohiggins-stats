@@ -195,18 +195,16 @@ const TablaPosiciones = () => {
       const data = await handleResponse(response);
       if (data.success) {
         alert('Mensaje guardado exitosamente');
-        // Actualizar el estado local directamente
-        setTodasJornadas(prev =>
-          prev.map(j =>
-            j.id_torneo === idTorneo && j.numero_jornada === numeroJornada
-              ? { ...j, mensaje: mensaje.trim() }
-              : j
-          )
-        );
+        await cargarTodasLasJornadas();
       }
     } catch (err) {
       console.error('Error guardando mensaje:', err);
-      alert('Error al guardar mensaje: ' + err.message);
+      // Si el mensaje ya existe (409), refrescar para ocultar el formulario
+      if (err.message && err.message.includes('Ya existe')) {
+        await cargarTodasLasJornadas();
+      } else {
+        alert('Error al guardar mensaje: ' + err.message);
+      }
     }
   };
 

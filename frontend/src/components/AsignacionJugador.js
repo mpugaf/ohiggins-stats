@@ -10,9 +10,6 @@ import {
 import TeamLogo from './common/TeamLogo';
 import './AsignacionJugador.css';
 
-// Orden para mostrar posiciones en el select
-const ORDEN_POSICION_DISPLAY = ['GK', 'DF', 'CB', 'FB', 'LB', 'RB', 'LWB', 'RWB', 'DM', 'CDM', 'MF', 'CM', 'AM', 'CAM', 'W', 'LW', 'RW', 'LM', 'RM', 'FW', 'ST', 'CF'];
-
 // Hook personalizado para debounce
 function useDebounce(value, delay) {
   const [debouncedValue, setDebouncedValue] = useState(value);
@@ -57,10 +54,6 @@ const AsignacionJugador = () => {
   const [error, setError] = useState('');
   const [successMessage, setSuccessMessage] = useState('');
 
-  // Estados para posición
-  const [posicionesDisponibles, setPosicionesDisponibles] = useState([]);
-  const [posicionSeleccionada, setPosicionSeleccionada] = useState('');
-
   // Filtros
   const [searchTerm, setSearchTerm] = useState(''); // Término de búsqueda sin debounce
   const [filtroJugadorTexto, setFiltroJugadorTexto] = useState(''); // Filtro final con debounce
@@ -73,6 +66,12 @@ const AsignacionJugador = () => {
   // Estados para copiar asignación anterior
   const [mantenerEquipoActual, setMantenerEquipoActual] = useState(false);
   const [ultimaAsignacion, setUltimaAsignacion] = useState(null);
+
+  // Autocomplete jugador y equipo
+  const [jugadorSearchText, setJugadorSearchText] = useState('');
+  const [equipoSearchText, setEquipoSearchText] = useState('');
+  const [showJugadorDropdown, setShowJugadorDropdown] = useState(false);
+  const [showEquipoDropdown, setShowEquipoDropdown] = useState(false);
 
   // Debounce del searchTerm (espera 300ms después de que usuario deja de escribir)
   const debouncedSearch = useDebounce(searchTerm, 300);
@@ -93,12 +92,11 @@ const AsignacionJugador = () => {
 
       console.log('🔄 Cargando datos para AsignacionJugador...');
 
-      const [asignacionesRes, jugadoresRes, torneosRes, equiposRes, posicionesRes] = await Promise.all([
+      const [asignacionesRes, jugadoresRes, torneosRes, equiposRes] = await Promise.all([
         torneoJugadorService.getAsignaciones().then(handleResponse),
         playersService.getAll().then(handleResponse),
         torneosService.getAll().then(handleResponse),
-        equiposService.getAll().then(handleResponse),
-        playersService.getPositions().then(handleResponse)
+        equiposService.getAll().then(handleResponse)
       ]);
 
       console.log('📊 Datos cargados:', {
@@ -112,7 +110,6 @@ const AsignacionJugador = () => {
       setJugadores(jugadoresRes || []);
       setTorneos(torneosRes || []);
       setEquipos(equiposRes || []);
-      setPosicionesDisponibles(posicionesRes || []);
 
       console.log('✅ Estados actualizados:', {
         totalJugadores: jugadoresRes?.length || 0,
@@ -152,30 +149,12 @@ const AsignacionJugador = () => {
     }
   };
 
-  const handleJugadorChange = async (e) => {
-    const idJugador = e.target.value;
-    setForm({ ...form, idJugador });
-
-    // Pre-poblar posición desde el jugador ya cargado
-    if (idJugador) {
-      const jugadorData = jugadores.find(j => j.ID_JUGADOR === parseInt(idJugador));
-      if (jugadorData && jugadorData.posiciones && jugadorData.posiciones.length > 0) {
-        // codigo = CODIGO_POSICION, que coincide con codigo_posicion en posicionesDisponibles
-        setPosicionSeleccionada(jugadorData.posiciones[0].codigo);
-      } else {
-        setPosicionSeleccionada('');
-      }
-    } else {
-      setPosicionSeleccionada('');
-    }
-
-    // Si seleccionó un jugador, cargar su última asignación
-    if (idJugador && !editando) {
-      await cargarUltimaAsignacion(idJugador);
-    } else {
-      setUltimaAsignacion(null);
-      setMantenerEquipoActual(false);
-    }
+  const handleJugadorSelect = async (jugador) => {
+    const displayName = `${jugador.NOMBRE_COMPLETO}${jugador.APODO ? ` "${jugador.APODO}"` : ''}`;
+    setJugadorSearchText(displayName);
+    setShowJugadorDropdown(false);
+    setForm(prev => ({ ...prev, idJugador: jugador.ID_JUGADOR }));
+    if (!editando) await cargarUltimaAsignacion(jugador.ID_JUGADOR);
   };
 
   const handleMantenerEquipoChange = async (e) => {
@@ -305,9 +284,10 @@ const AsignacionJugador = () => {
           fechaIncorporacion: '',
           estado: 'ACTIVO'
         });
+        setJugadorSearchText('');
+        setEquipoSearchText('');
         setMantenerEquipoActual(false);
         setUltimaAsignacion(null);
-        setPosicionSeleccionada('');
 
         setTimeout(() => setSuccessMessage(''), 5000);
 
@@ -329,6 +309,7 @@ const AsignacionJugador = () => {
         estado: 'ACTIVO',
         idTorneo: ''
       });
+      setEquipoSearchText('');
     }
   };
 
@@ -370,8 +351,7 @@ const AsignacionJugador = () => {
         idEquipo: parseInt(form.idEquipo, 10),
         numeroCamiseta: form.numeroCamiseta ? parseInt(form.numeroCamiseta, 10) : null,
         fechaIncorporacion: form.fechaIncorporacion || null,
-        estado: form.estado,
-        codigoPosicion: posicionSeleccionada || null
+        estado: form.estado
       };
 
       // Verificar que los parseInt fueron exitosos con mensajes específicos
@@ -440,9 +420,10 @@ const AsignacionJugador = () => {
         fechaIncorporacion: '',
         estado: 'ACTIVO'
       });
+      setJugadorSearchText('');
+      setEquipoSearchText('');
       setMantenerEquipoActual(false);
       setUltimaAsignacion(null);
-      setPosicionSeleccionada('');
 
       await cargarDatos();
 
@@ -466,6 +447,8 @@ const AsignacionJugador = () => {
       fechaIncorporacion: asignacion.FECHA_INCORPORACION ? asignacion.FECHA_INCORPORACION.split('T')[0] : '',
       estado: asignacion.ESTADO || 'ACTIVO'
     });
+    setJugadorSearchText(asignacion.jugador_nombre || '');
+    setEquipoSearchText(asignacion.equipo_nombre || '');
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
@@ -492,7 +475,8 @@ const AsignacionJugador = () => {
     setEditando(null);
     setMantenerEquipoActual(false);
     setUltimaAsignacion(null);
-    setPosicionSeleccionada('');
+    setJugadorSearchText('');
+    setEquipoSearchText('');
     setForm({
       idJugador: '',
       idTorneo: '',
@@ -516,6 +500,25 @@ const AsignacionJugador = () => {
       return matchJugador && matchTorneo;
     });
   }, [asignaciones, filtroJugadorTexto, filtroTorneo]);
+
+  // Listas filtradas para autocomplete del formulario
+  const jugadoresFiltradosForm = useMemo(() => {
+    if (!jugadorSearchText) return jugadores.slice(0, 8);
+    const lower = jugadorSearchText.toLowerCase();
+    return jugadores.filter(j =>
+      j.NOMBRE_COMPLETO.toLowerCase().includes(lower) ||
+      (j.APODO && j.APODO.toLowerCase().includes(lower))
+    ).slice(0, 8);
+  }, [jugadores, jugadorSearchText]);
+
+  const equiposFiltradosForm = useMemo(() => {
+    if (!equipoSearchText) return equipos.slice(0, 8);
+    const lower = equipoSearchText.toLowerCase();
+    return equipos.filter(e =>
+      e.NOMBRE.toLowerCase().includes(lower) ||
+      (e.APODO && e.APODO.toLowerCase().includes(lower))
+    ).slice(0, 8);
+  }, [equipos, equipoSearchText]);
 
   // ✅ OPTIMIZACIÓN: Paginación (solo renderiza items de la página actual)
   const asignacionesPaginadas = useMemo(() => {
@@ -648,26 +651,52 @@ const AsignacionJugador = () => {
           <div className="form-row">
             <div className="form-group">
               <label>👤 Jugador *</label>
-              <select
-                value={form.idJugador}
-                onChange={handleJugadorChange}
-                required
-                disabled={loading || editando}
-              >
-                <option value="">
-                  {loading ? 'Cargando jugadores...' :
-                   jugadores.length === 0 ? 'No hay jugadores disponibles' :
-                   '-- Seleccione un jugador --'}
-                </option>
-                {jugadores.map(j => (
-                  <option key={j.ID_JUGADOR} value={j.ID_JUGADOR}>
-                    {j.NOMBRE_COMPLETO} {j.APODO && `"${j.APODO}"`}
-                  </option>
-                ))}
-              </select>
-              {jugadores.length === 0 && !loading && (
-                <small style={{color: '#dc3545', marginTop: '5px', display: 'block'}}>
-                  No se encontraron jugadores en la base de datos
+              <div className="autocomplete-wrapper">
+                <input
+                  type="text"
+                  value={jugadorSearchText}
+                  onChange={(e) => {
+                    setJugadorSearchText(e.target.value);
+                    setForm(prev => ({ ...prev, idJugador: '' }));
+                    setShowJugadorDropdown(true);
+                  }}
+                  onFocus={() => setShowJugadorDropdown(true)}
+                  onBlur={() => setTimeout(() => setShowJugadorDropdown(false), 150)}
+                  placeholder={loading ? 'Cargando...' : 'Escribir nombre o apodo...'}
+                  disabled={loading || !!editando}
+                  autoComplete="off"
+                />
+                {form.idJugador && !editando && (
+                  <button type="button" className="autocomplete-clear" onClick={() => {
+                    setJugadorSearchText('');
+                    setForm(prev => ({ ...prev, idJugador: '' }));
+                    setUltimaAsignacion(null);
+                    setMantenerEquipoActual(false);
+                  }}>×</button>
+                )}
+                {showJugadorDropdown && jugadoresFiltradosForm.length > 0 && (
+                  <div className="autocomplete-dropdown">
+                    {jugadoresFiltradosForm.map(j => (
+                      <div
+                        key={j.ID_JUGADOR}
+                        className="autocomplete-item"
+                        onMouseDown={() => handleJugadorSelect(j)}
+                      >
+                        <strong>{j.NOMBRE_COMPLETO}</strong>
+                        {j.APODO && <span className="autocomplete-apodo"> "{j.APODO}"</span>}
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
+              {form.idJugador && (
+                <small style={{color: '#28a745', marginTop: '4px', display: 'block'}}>
+                  ✓ Jugador seleccionado
+                </small>
+              )}
+              {!form.idJugador && jugadorSearchText && !showJugadorDropdown && (
+                <small style={{color: '#dc3545', marginTop: '4px', display: 'block'}}>
+                  Seleccione un jugador de la lista
                 </small>
               )}
             </div>
@@ -694,25 +723,61 @@ const AsignacionJugador = () => {
 
             <div className="form-group">
               <label>⚽ Equipo *</label>
-              <select
-                value={form.idEquipo}
-                onChange={(e) => setForm({ ...form, idEquipo: e.target.value })}
-                required
-                disabled={loading || mantenerEquipoActual}
-              >
-                <option value="">-- Seleccione un equipo --</option>
-                {equipos.map(e => {
-                  const equipoId = e.ID_EQUIPO || e.id; // Manejar ambos formatos
-                  return (
-                    <option key={equipoId} value={equipoId}>
-                      {e.NOMBRE} {e.APODO && `(${e.APODO})`}
-                    </option>
-                  );
-                })}
-              </select>
-              {mantenerEquipoActual && (
-                <small style={{color: '#28a745', marginTop: '5px', display: 'block', fontStyle: 'italic'}}>
+              {mantenerEquipoActual ? (
+                <small style={{color: '#28a745', display: 'block', fontStyle: 'italic', padding: '8px 0'}}>
                   ✓ Usando equipo actual: {ultimaAsignacion?.equipo_nombre}
+                </small>
+              ) : (
+                <div className="autocomplete-wrapper">
+                  <input
+                    type="text"
+                    value={equipoSearchText}
+                    onChange={(e) => {
+                      setEquipoSearchText(e.target.value);
+                      setForm(prev => ({ ...prev, idEquipo: '' }));
+                      setShowEquipoDropdown(true);
+                    }}
+                    onFocus={() => setShowEquipoDropdown(true)}
+                    onBlur={() => setTimeout(() => setShowEquipoDropdown(false), 150)}
+                    placeholder="Escribir nombre de equipo..."
+                    disabled={loading}
+                    autoComplete="off"
+                  />
+                  {form.idEquipo && (
+                    <button type="button" className="autocomplete-clear" onClick={() => {
+                      setEquipoSearchText('');
+                      setForm(prev => ({ ...prev, idEquipo: '' }));
+                    }}>×</button>
+                  )}
+                  {showEquipoDropdown && equiposFiltradosForm.length > 0 && (
+                    <div className="autocomplete-dropdown">
+                      {equiposFiltradosForm.map(eq => (
+                        <div
+                          key={eq.ID_EQUIPO || eq.id}
+                          className="autocomplete-item"
+                          onMouseDown={() => {
+                            const displayName = `${eq.NOMBRE}${eq.APODO ? ` (${eq.APODO})` : ''}`;
+                            setEquipoSearchText(displayName);
+                            setShowEquipoDropdown(false);
+                            setForm(prev => ({ ...prev, idEquipo: eq.ID_EQUIPO || eq.id }));
+                          }}
+                        >
+                          <strong>{eq.NOMBRE}</strong>
+                          {eq.APODO && <span className="autocomplete-apodo"> ({eq.APODO})</span>}
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              )}
+              {!mantenerEquipoActual && form.idEquipo && (
+                <small style={{color: '#28a745', marginTop: '4px', display: 'block'}}>
+                  ✓ Equipo seleccionado
+                </small>
+              )}
+              {!mantenerEquipoActual && !form.idEquipo && equipoSearchText && !showEquipoDropdown && (
+                <small style={{color: '#dc3545', marginTop: '4px', display: 'block'}}>
+                  Seleccione un equipo de la lista
                 </small>
               )}
             </div>
@@ -750,55 +815,6 @@ const AsignacionJugador = () => {
                   ✓ Fecha original del jugador en este equipo
                 </small>
               )}
-            </div>
-
-            <div className="form-group">
-              <label>🎯 Posición</label>
-              {form.idJugador && (() => {
-                const jug = jugadores.find(j => j.ID_JUGADOR === parseInt(form.idJugador));
-                return jug?.posiciones?.length > 0 ? (
-                  <small style={{ display: 'block', color: '#28a745', marginBottom: '4px', fontStyle: 'italic' }}>
-                    Posiciones actuales: {jug.posiciones.map(p => p.codigo).join(', ')}
-                  </small>
-                ) : (
-                  <small style={{ display: 'block', color: '#dc3545', marginBottom: '4px', fontStyle: 'italic' }}>
-                    Sin posición registrada — asignar aquí
-                  </small>
-                );
-              })()}
-              <select
-                value={posicionSeleccionada}
-                onChange={(e) => setPosicionSeleccionada(e.target.value)}
-                disabled={loading}
-              >
-                <option value="">-- Sin posición --</option>
-                {posicionesDisponibles
-                  .slice()
-                  .sort((a, b) => {
-                    const iA = ORDEN_POSICION_DISPLAY.indexOf(a.codigo_posicion);
-                    const iB = ORDEN_POSICION_DISPLAY.indexOf(b.codigo_posicion);
-                    return (iA === -1 ? 99 : iA) - (iB === -1 ? 99 : iB);
-                  })
-                  .map(p => (
-                    <option key={p.posicion_id} value={p.codigo_posicion}>
-                      {p.codigo_posicion}{p.nombre_posicion ? ` - ${p.nombre_posicion}` : ''}
-                    </option>
-                  ))
-                }
-              </select>
-              {posicionSeleccionada && form.idJugador && (() => {
-                const jug = jugadores.find(j => j.ID_JUGADOR === parseInt(form.idJugador));
-                const yaTiene = jug?.posiciones?.some(p => p.codigo === posicionSeleccionada);
-                return yaTiene ? (
-                  <small style={{ color: '#6c757d', marginTop: '4px', display: 'block', fontStyle: 'italic' }}>
-                    ✓ El jugador ya tiene esta posición
-                  </small>
-                ) : (
-                  <small style={{ color: '#007bff', marginTop: '4px', display: 'block', fontStyle: 'italic' }}>
-                    Se asignará esta posición al jugador
-                  </small>
-                );
-              })()}
             </div>
 
             <div className="form-group">

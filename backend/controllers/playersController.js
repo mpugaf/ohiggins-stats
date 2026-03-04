@@ -509,7 +509,7 @@ const playersController = {
     console.log('📋 Obteniendo posiciones disponibles...');
 
     try {
-      const query = 'SELECT ID_POSICION as posicion_id, NOMBRE as codigo_posicion, DESCRIPCION as nombre_posicion FROM DIM_POSICION ORDER BY NOMBRE';
+      const query = 'SELECT ID_POSICION as posicion_id, CODIGO_POSICION as codigo_posicion, NOMBRE as nombre_posicion FROM DIM_POSICION ORDER BY CODIGO_POSICION';
       const posiciones = await executeQuery(query);
       
       console.log(`✅ Se encontraron ${posiciones.length} posiciones`);

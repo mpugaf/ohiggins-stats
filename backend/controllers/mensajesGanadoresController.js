@@ -305,6 +305,7 @@ exports.guardarMensaje = async (req, res) => {
       WHERE a.id_torneo = ?
         AND p.NUMERO_JORNADA = ?
         AND a.estado IN ('ganada', 'perdida')
+        AND u.activo = 1
       GROUP BY u.id_usuario
       ORDER BY puntos_jornada DESC, u.fecha_creacion ASC
       LIMIT 1

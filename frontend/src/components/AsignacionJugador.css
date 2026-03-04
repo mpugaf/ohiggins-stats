@@ -622,3 +622,73 @@
   box-shadow: none;
   transform: none;
 }
+
+/* Autocomplete jugador y equipo */
+.autocomplete-wrapper {
+  position: relative;
+}
+
+.autocomplete-wrapper input {
+  padding-right: 30px;
+}
+
+.autocomplete-dropdown {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  background: #fff;
+  border: 1px solid #adb5bd;
+  border-top: none;
+  border-radius: 0 0 8px 8px;
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.18);
+  z-index: 1000;
+  max-height: 240px;
+  overflow-y: auto;
+}
+
+.autocomplete-item {
+  padding: 10px 14px;
+  cursor: pointer;
+  border-bottom: 1px solid #e9ecef;
+  font-size: 14px;
+  color: #212529;
+  transition: background 0.12s;
+}
+
+.autocomplete-item strong {
+  color: #212529;
+}
+
+.autocomplete-item:hover {
+  background: #dbeeff;
+  color: #212529;
+}
+
+.autocomplete-item:last-child {
+  border-bottom: none;
+  border-radius: 0 0 8px 8px;
+}
+
+.autocomplete-apodo {
+  color: #495057;
+  font-size: 13px;
+}
+
+.autocomplete-clear {
+  position: absolute;
+  right: 8px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: none;
+  border: none;
+  color: #adb5bd;
+  font-size: 20px;
+  line-height: 1;
+  cursor: pointer;
+  padding: 0 2px;
+}
+
+.autocomplete-clear:hover {
+  color: #dc3545;
+}
