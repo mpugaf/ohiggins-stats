@@ -31,11 +31,24 @@ const ListaUsuarios = () => {
   };
 
   const handleEliminar = async (usuario) => {
-    if (window.confirm(`¿Está seguro que desea eliminar el usuario "${usuario.username}"?\n\nEsta acción no se puede deshacer.`)) {
+    const advertencia =
+      `⚠️ ELIMINAR USUARIO: "${usuario.username}"\n\n` +
+      `Esta acción eliminará PERMANENTEMENTE:\n` +
+      `  • El usuario y sus datos de acceso\n` +
+      `  • Todas sus apuestas registradas\n` +
+      `  • Todo su historial de puntos\n\n` +
+      `Esta acción NO se puede deshacer.\n\n` +
+      `¿Confirma que desea continuar?`;
+
+    if (window.confirm(advertencia)) {
       try {
         const response = await usuariosService.delete(usuario.id_usuario);
         const data = await handleResponse(response);
-        alert(data.message || 'Usuario eliminado exitosamente');
+        const { apuestas = 0, historial_puntos = 0 } = data.registros_eliminados || {};
+        const detalle = (apuestas > 0 || historial_puntos > 0)
+          ? `\n\nRegistros eliminados:\n  • Apuestas: ${apuestas}\n  • Historial de puntos: ${historial_puntos}`
+          : '';
+        alert((data.message || 'Usuario eliminado exitosamente') + detalle);
         cargarUsuarios();
       } catch (error) {
         console.error('Error:', error);

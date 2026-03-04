@@ -239,11 +239,23 @@ const deleteUsuario = async (req, res) => {
             });
         }
 
-        // Eliminar usuario (esto podría disparar cascadas en apuestas, etc.)
-        const result = await executeQuery(
-            'DELETE FROM usuarios WHERE id_usuario = ?',
+        // Contar registros asociados antes de eliminar
+        const [{ total_apuestas }] = await executeQuery(
+            'SELECT COUNT(*) AS total_apuestas FROM apuestas_usuarios WHERE id_usuario = ?',
             [id]
         );
+        const [{ total_puntos }] = await executeQuery(
+            'SELECT COUNT(*) AS total_puntos FROM historial_puntos WHERE id_usuario = ?',
+            [id]
+        );
+
+        // Eliminar en cascada respetando el orden de FK:
+        // 1. historial_puntos referencia tanto a usuarios como a apuestas_usuarios
+        await executeQuery('DELETE FROM historial_puntos WHERE id_usuario = ?', [id]);
+        // 2. apuestas_usuarios referencia a usuarios
+        await executeQuery('DELETE FROM apuestas_usuarios WHERE id_usuario = ?', [id]);
+        // 3. Eliminar el usuario
+        const result = await executeQuery('DELETE FROM usuarios WHERE id_usuario = ?', [id]);
 
         if (result.affectedRows === 0) {
             return res.status(500).json({
@@ -254,20 +266,15 @@ const deleteUsuario = async (req, res) => {
 
         res.json({
             success: true,
-            message: `Usuario "${usuario[0].username}" eliminado exitosamente`
+            message: `Usuario "${usuario[0].username}" eliminado exitosamente`,
+            registros_eliminados: {
+                apuestas: total_apuestas,
+                historial_puntos: total_puntos
+            }
         });
 
     } catch (error) {
         console.error('Error al eliminar usuario:', error);
-
-        // Manejar error de foreign key constraint
-        if (error.code === 'ER_ROW_IS_REFERENCED_2') {
-            return res.status(400).json({
-                success: false,
-                message: 'No se puede eliminar el usuario porque tiene registros asociados (apuestas, puntos, etc.)'
-            });
-        }
-
         res.status(500).json({
             success: false,
             message: 'Error al eliminar usuario',
