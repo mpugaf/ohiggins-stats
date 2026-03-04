@@ -398,6 +398,12 @@ const Dashboard = () => {
                 <button onClick={() => handleNavigation('/admin/configuracion-apuestas')} className="action-btn primary">
                   ⚙️ Configurar Apuestas
                 </button>
+                <button onClick={() => handleNavigation('/admin/ranking')} className="action-btn primary">
+                  🏆 Ranking y Mensajes
+                </button>
+                <button onClick={() => handleNavigation('/partidos-apuestas')} className="action-btn secondary">
+                  👥 Apuestas por Partido
+                </button>
                 <button onClick={() => handleNavigation('/admin/limpiar-apuestas-usuario')} className="action-btn warning">
                   🗑️ Limpiar Apuestas Usuario
                 </button>
@@ -413,7 +419,7 @@ const Dashboard = () => {
                   <li>✅ Limpiar apuestas específicas (usuario + torneo + fecha)</li>
                   <li>✅ Limpiar resultados de partidos (modo replay)</li>
                   <li>✅ Permitir apuestas en fechas pasadas</li>
-                  <li>✅ Ver tabla de posiciones de usuarios</li>
+                  <li>✅ Ver ranking completo con usuarios inactivos y mensajes de ganadores</li>
                   <li>✅ Control total del sistema de apuestas</li>
                 </ul>
               </div>

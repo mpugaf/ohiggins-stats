@@ -31,6 +31,7 @@ exports.getGanadoresPorJornada = async (req, res) => {
       WHERE a.id_torneo = ?
         AND a.estado IN ('ganada', 'perdida')
         AND p.NUMERO_JORNADA IS NOT NULL
+        AND u.activo = 1
       GROUP BY p.NUMERO_JORNADA, u.id_usuario, u.username, u.nombre_completo
       ORDER BY p.NUMERO_JORNADA ASC, puntos_jornada DESC, u.fecha_creacion ASC
     `;
@@ -81,7 +82,11 @@ exports.getGanadoresPorJornada = async (req, res) => {
  */
 exports.getTodasLasJornadas = async (req, res) => {
   try {
+    const esAdmin = req.user && req.user.role === 'admin';
+
     // 1. Puntos por (torneo, jornada, usuario) para determinar ganador
+    // Admin ve todos (incluyendo desactivados), usuario regular solo ve activos
+    const filtroActivo = esAdmin ? '' : 'AND u.activo = 1';
     const todosPuntos = await executeQuery(`
       SELECT
         a.id_torneo,
@@ -91,6 +96,7 @@ exports.getTodasLasJornadas = async (req, res) => {
         a.id_usuario,
         u.username,
         u.nombre_completo,
+        u.activo,
         u.fecha_creacion,
         SUM(a.puntos_ganados) as puntos_jornada,
         COUNT(a.id_apuesta) as apuestas_jornada
@@ -100,8 +106,9 @@ exports.getTodasLasJornadas = async (req, res) => {
       INNER JOIN usuarios u ON a.id_usuario = u.id_usuario
       WHERE a.estado IN ('ganada', 'perdida')
         AND p.NUMERO_JORNADA IS NOT NULL
+        ${filtroActivo}
       GROUP BY a.id_torneo, t.NOMBRE, t.TEMPORADA, p.NUMERO_JORNADA,
-               a.id_usuario, u.username, u.nombre_completo, u.fecha_creacion
+               a.id_usuario, u.username, u.nombre_completo, u.activo, u.fecha_creacion
       ORDER BY puntos_jornada DESC, u.fecha_creacion ASC
     `);
 
@@ -155,6 +162,7 @@ exports.getTodasLasJornadas = async (req, res) => {
           id_usuario_ganador: row.id_usuario,
           username: row.username,
           nombre_completo: row.nombre_completo,
+          usuario_activo: row.activo === 1,
           puntos_jornada: row.puntos_jornada,
           apuestas_jornada: row.apuestas_jornada,
           mensaje: mensajesMap[key] || null
@@ -223,6 +231,34 @@ exports.getMensajesTorneo = async (req, res) => {
     console.error('[MENSAJES_GANADORES] Error al obtener mensajes:', error);
     res.status(500).json({
       error: 'Error al obtener mensajes del torneo',
+      detalle: error.message
+    });
+  }
+};
+
+/**
+ * Eliminar todos los mensajes de un usuario (solo admin)
+ * Se usa al desactivar un usuario
+ * DELETE /api/mensajes-ganadores/usuario/:idUsuario
+ */
+exports.deleteMensajesByUsuario = async (req, res) => {
+  try {
+    const { idUsuario } = req.params;
+
+    const result = await executeQuery(
+      'DELETE FROM mensajes_ganadores_jornada WHERE id_usuario_ganador = ?',
+      [idUsuario]
+    );
+
+    res.json({
+      success: true,
+      mensajes_eliminados: result.affectedRows
+    });
+
+  } catch (error) {
+    console.error('[MENSAJES_GANADORES] Error al eliminar mensajes de usuario:', error);
+    res.status(500).json({
+      error: 'Error al eliminar mensajes del usuario',
       detalle: error.message
     });
   }

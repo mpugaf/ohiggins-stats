@@ -80,6 +80,20 @@
   text-align: center;
 }
 
+.badge-usuario-deshabilitado {
+  display: inline-block;
+  margin-left: 7px;
+  padding: 2px 7px;
+  font-size: 10px;
+  font-weight: 600;
+  color: #fff;
+  background-color: #e07b00;
+  border-radius: 4px;
+  vertical-align: middle;
+  text-transform: uppercase;
+  letter-spacing: 0.4px;
+}
+
 .puntos-ganador {
   font-size: 13px;
   font-weight: 700;
@@ -104,6 +118,12 @@
   align-items: flex-start;
   gap: 12px;
   width: 100%;
+}
+
+.mensaje-auto .mensaje-texto {
+  color: #6c757d;
+  font-style: italic;
+  opacity: 0.8;
 }
 
 .mensaje-icono {

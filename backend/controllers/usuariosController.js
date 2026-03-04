@@ -487,10 +487,20 @@ const toggleUsuarioActivo = async (req, res) => {
             [nuevoEstado, id]
         );
 
+        // Al desactivar: eliminar mensajes de ganador del usuario
+        let mensajesEliminados = 0;
+        if (!nuevoEstado) {
+            const resultMensajes = await executeQuery(
+                'DELETE FROM mensajes_ganadores_jornada WHERE id_usuario_ganador = ?',
+                [id]
+            );
+            mensajesEliminados = resultMensajes.affectedRows;
+        }
+
         res.json({
             success: true,
             message: `Usuario "${usuario[0].username}" ${nuevoEstado ? 'activado' : 'desactivado'} exitosamente`,
-            data: { activo: nuevoEstado }
+            data: { activo: nuevoEstado, mensajes_eliminados: mensajesEliminados }
         });
 
     } catch (error) {

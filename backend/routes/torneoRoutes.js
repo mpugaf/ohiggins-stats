@@ -153,7 +153,7 @@ const actualizarAsignacionCompleta = async (req, res) => {
         numero_camiseta,
         fecha_incorporacion,
         estado,
-        posiciones_actualizadas: posiciones_ids?.length || 0
+        posiciones_actualizadas: (posiciones_ids && posiciones_ids.length) || 0
       }
     });
 

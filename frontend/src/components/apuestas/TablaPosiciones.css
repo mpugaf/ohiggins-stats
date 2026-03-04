@@ -181,6 +181,20 @@
   font-weight: 500;
 }
 
+.badge-inactivo-tabla {
+  display: inline-block;
+  margin-left: 6px;
+  padding: 1px 6px;
+  font-size: 10px;
+  font-weight: 600;
+  color: #fff;
+  background-color: #6c757d;
+  border-radius: 4px;
+  vertical-align: middle;
+  text-transform: uppercase;
+  letter-spacing: 0.4px;
+}
+
 /* Badges */
 .badge {
   display: inline-block;

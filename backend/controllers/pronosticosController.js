@@ -222,16 +222,25 @@ exports.getFechasTorneo = async (req, res) => {
     const { idTorneo } = req.params;
 
     const fechas = await executeQuery(`
-      SELECT DISTINCT p.NUMERO_JORNADA as fecha
+      SELECT
+        p.NUMERO_JORNADA as fecha,
+        CASE
+          WHEN COUNT(*) = SUM(CASE WHEN p.ESTADO_PARTIDO = 'FINALIZADO' THEN 1 ELSE 0 END)
+          THEN 1 ELSE 0
+        END as todos_finalizados
       FROM HECHOS_RESULTADOS p
       INNER JOIN apuestas_usuarios a ON p.ID_PARTIDO = a.id_partido
       WHERE a.id_torneo = ?
+      GROUP BY p.NUMERO_JORNADA
       ORDER BY p.NUMERO_JORNADA DESC
     `, [idTorneo]);
 
     res.json({
       success: true,
-      fechas: fechas.map(f => f.fecha)
+      fechas: fechas.map(f => ({
+        fecha: f.fecha,
+        todos_finalizados: f.todos_finalizados === 1
+      }))
     });
 
   } catch (error) {
@@ -298,7 +307,7 @@ exports.getApuestasPorPartido = async (req, res) => {
       `SELECT valor FROM config_apuestas WHERE clave = 'apuestas_habilitadas'`
     );
 
-    if (config && config.valor === 'true') {
+    if (config && config.valor === 'true' && req.user.role !== 'admin') {
       return res.status(403).json({
         success: false,
         error: 'Las apuestas de los usuarios solo están disponibles cuando las apuestas están cerradas'

@@ -2,7 +2,7 @@
 const express = require('express');
 const router = express.Router();
 const mensajesGanadoresController = require('../controllers/mensajesGanadoresController');
-const { authenticateToken } = require('../middleware/auth');
+const { authenticateToken, requireAdmin } = require('../middleware/auth');
 
 // Todas las rutas requieren autenticación
 router.use(authenticateToken);
@@ -18,5 +18,8 @@ router.get('/mensajes/:idTorneo', mensajesGanadoresController.getMensajesTorneo)
 
 // Guardar mensaje de ganador (solo el ganador puede escribir)
 router.post('/mensajes/:idTorneo/:numeroJornada', mensajesGanadoresController.guardarMensaje);
+
+// Eliminar todos los mensajes de un usuario (solo admin)
+router.delete('/usuario/:idUsuario', requireAdmin, mensajesGanadoresController.deleteMensajesByUsuario);
 
 module.exports = router;

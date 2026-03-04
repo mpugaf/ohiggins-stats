@@ -142,8 +142,9 @@ exports.login = async (req, res) => {
       return res.status(401).json({ error: 'Credenciales inválidas' });
     }
 
+    // Si el usuario existe pero está inactivo
     if (!user.activo) {
-      return res.status(403).json({ error: 'Usuario inactivo. Contacta al administrador.' });
+      return res.status(403).json({ error: 'Credenciales inválidas' });
     }
 
     // Verificar password

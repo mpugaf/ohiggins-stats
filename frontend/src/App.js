@@ -28,6 +28,7 @@ import LimpiarResultados from './components/admin/LimpiarResultados';
 import ConfiguracionApuestas from './components/admin/ConfiguracionApuestas';
 import GestionTokens from './components/admin/GestionTokens';
 import GestionProgramas from './components/admin/GestionProgramas';
+import RankingAdmin from './components/admin/RankingAdmin';
 
 // Original Management Components (Admin Only)
 import NuevoEstadio from './components/NuevoEstadio';
@@ -152,6 +153,16 @@ function App() {
               element={
                 <ProtectedRoute requireAdmin={true}>
                   <GestionProgramas />
+                </ProtectedRoute>
+              }
+            />
+
+            {/* Ranking completo (Admin) */}
+            <Route
+              path="/admin/ranking"
+              element={
+                <ProtectedRoute requireAdmin={true}>
+                  <RankingAdmin />
                 </ProtectedRoute>
               }
             />

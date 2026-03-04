@@ -121,8 +121,8 @@ exports.crearApuestasBatch = async (req, res) => {
       // Validar campos
       if (!idPartido || !tipo) {
         fallidas.push({
-          equipoLocal: partidoInfo?.equipoLocal || 'Desconocido',
-          equipoVisita: partidoInfo?.equipoVisita || 'Desconocido',
+          equipoLocal: (partidoInfo && partidoInfo.equipoLocal) || 'Desconocido',
+          equipoVisita: (partidoInfo && partidoInfo.equipoVisita) || 'Desconocido',
           tipoApuesta: tipo || 'N/A',
           error: 'Datos incompletos'
         });
@@ -137,8 +137,8 @@ exports.crearApuestasBatch = async (req, res) => {
 
       if (!partido || partido.ESTADO_PARTIDO !== 'PROGRAMADO') {
         fallidas.push({
-          equipoLocal: partidoInfo?.equipoLocal || 'Desconocido',
-          equipoVisita: partidoInfo?.equipoVisita || 'Desconocido',
+          equipoLocal: (partidoInfo && partidoInfo.equipoLocal) || 'Desconocido',
+          equipoVisita: (partidoInfo && partidoInfo.equipoVisita) || 'Desconocido',
           tipoApuesta: tipo,
           error: 'Partido no disponible para apostar'
         });
@@ -153,8 +153,8 @@ exports.crearApuestasBatch = async (req, res) => {
 
       if (apuestaExistente) {
         fallidas.push({
-          equipoLocal: partidoInfo?.equipoLocal || 'Desconocido',
-          equipoVisita: partidoInfo?.equipoVisita || 'Desconocido',
+          equipoLocal: (partidoInfo && partidoInfo.equipoLocal) || 'Desconocido',
+          equipoVisita: (partidoInfo && partidoInfo.equipoVisita) || 'Desconocido',
           tipoApuesta: tipo,
           error: 'Ya apostaste en este partido'
         });
@@ -169,8 +169,8 @@ exports.crearApuestasBatch = async (req, res) => {
 
       if (!cuotaData) {
         fallidas.push({
-          equipoLocal: partidoInfo?.equipoLocal || 'Desconocido',
-          equipoVisita: partidoInfo?.equipoVisita || 'Desconocido',
+          equipoLocal: (partidoInfo && partidoInfo.equipoLocal) || 'Desconocido',
+          equipoVisita: (partidoInfo && partidoInfo.equipoVisita) || 'Desconocido',
           tipoApuesta: tipo,
           error: 'Cuota no disponible'
         });
@@ -189,16 +189,16 @@ exports.crearApuestasBatch = async (req, res) => {
       );
 
       exitosas.push({
-        equipoLocal: partidoInfo?.equipoLocal || 'Desconocido',
-        equipoVisita: partidoInfo?.equipoVisita || 'Desconocido',
+        equipoLocal: (partidoInfo && partidoInfo.equipoLocal) || 'Desconocido',
+        equipoVisita: (partidoInfo && partidoInfo.equipoVisita) || 'Desconocido',
         tipoApuesta: tipo
       });
 
     } catch (error) {
       console.error('[APUESTAS BATCH] Error en apuesta:', error);
       fallidas.push({
-        equipoLocal: apuesta.partidoInfo?.equipoLocal || 'Desconocido',
-        equipoVisita: apuesta.partidoInfo?.equipoVisita || 'Desconocido',
+        equipoLocal: (apuesta.partidoInfo && apuesta.partidoInfo.equipoLocal) || 'Desconocido',
+        equipoVisita: (apuesta.partidoInfo && apuesta.partidoInfo.equipoVisita) || 'Desconocido',
         tipoApuesta: apuesta.tipo || 'N/A',
         error: 'Error al procesar'
       });
@@ -621,12 +621,12 @@ exports.getEstadisticasUsuario = async (req, res) => {
     const stats = results && results.length > 0 ? results[0] : null;
 
     const estadisticas = {
-      total_apuestas: stats?.total_apuestas || 0,
-      apuestas_ganadas: stats?.apuestas_ganadas || 0,
-      apuestas_perdidas: stats?.apuestas_perdidas || 0,
-      apuestas_pendientes: stats?.apuestas_pendientes || 0,
-      total_puntos: parseFloat(stats?.total_puntos || 0),
-      porcentaje_aciertos: parseFloat(stats?.porcentaje_aciertos || 0)
+      total_apuestas: (stats && stats.total_apuestas) || 0,
+      apuestas_ganadas: (stats && stats.apuestas_ganadas) || 0,
+      apuestas_perdidas: (stats && stats.apuestas_perdidas) || 0,
+      apuestas_pendientes: (stats && stats.apuestas_pendientes) || 0,
+      total_puntos: parseFloat((stats && stats.total_puntos) || 0),
+      porcentaje_aciertos: parseFloat((stats && stats.porcentaje_aciertos) || 0)
     };
 
     console.log(`[APUESTAS] Estadísticas obtenidas:`, estadisticas);

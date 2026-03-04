@@ -32,7 +32,7 @@ const TablaPosiciones = () => {
   const [usuarioSeleccionado, setUsuarioSeleccionado] = useState('');
   const [usuarios, setUsuarios] = useState([]);
   const [torneoApuestas, setTorneoApuestas] = useState('');
-  const [fechaApuestas, setFechaApuestas] = useState('todas');
+  const [fechaApuestas, setFechaApuestas] = useState('');
   const [fechasApuestas, setFechasApuestas] = useState([]);
 
   // Config
@@ -48,6 +48,12 @@ const TablaPosiciones = () => {
       cargarTabla();
     }
   }, [torneoSeleccionado, fechaSeleccionada]);
+
+  const getUltimaFechaFinalizada = (fechasArr) => {
+    const finalizadas = (fechasArr || []).filter(f => f.todos_finalizados);
+    if (finalizadas.length > 0) return finalizadas[0].fecha; // sorted DESC → más reciente primero
+    return (fechasArr && fechasArr.length > 0) ? fechasArr[0].fecha : null;
+  };
 
   const cargarConfiguracion = async () => {
     try {
@@ -269,7 +275,7 @@ const TablaPosiciones = () => {
   const handleCambioTorneoApuestas = async (e) => {
     const nuevoTorneo = e.target.value;
     setTorneoApuestas(nuevoTorneo);
-    setFechaApuestas('todas');
+    setFechaApuestas('');
     setFechasApuestas([]);
     setUsuarioSeleccionado('');
     setPartidos([]);
@@ -279,9 +285,11 @@ const TablaPosiciones = () => {
         const response = await pronosticosService.getFechasTorneo(nuevoTorneo);
         const data = await handleResponse(response);
         if (data.success) {
-          setFechasApuestas(data.fechas || []);
-          // Cargar apuestas automáticamente
-          cargarApuestasPorPartido(nuevoTorneo, 'todas');
+          const nuevasFechas = data.fechas || [];
+          setFechasApuestas(nuevasFechas);
+          const defaultFecha = getUltimaFechaFinalizada(nuevasFechas);
+          setFechaApuestas(defaultFecha ? defaultFecha.toString() : '');
+          cargarApuestasPorPartido(nuevoTorneo, defaultFecha);
         }
       } catch (err) {
         console.error('Error cargando fechas del torneo:', err);
@@ -309,8 +317,11 @@ const TablaPosiciones = () => {
           .then(response => handleResponse(response))
           .then(data => {
             if (data.success) {
-              setFechasApuestas(data.fechas || []);
-              cargarApuestasPorPartido(torneoSeleccionado, 'todas');
+              const nuevasFechas = data.fechas || [];
+              setFechasApuestas(nuevasFechas);
+              const defaultFecha = getUltimaFechaFinalizada(nuevasFechas);
+              setFechaApuestas(defaultFecha ? defaultFecha.toString() : '');
+              cargarApuestasPorPartido(torneoSeleccionado, defaultFecha);
             }
           })
           .catch(err => console.error('Error cargando fechas:', err));
@@ -389,14 +400,20 @@ const TablaPosiciones = () => {
           <span className="tab-label">Tabla de Posiciones</span>
         </button>
         <button
-          className={`tab-btn ${vistaActiva === 'apuestas' ? 'active' : ''} ${apuestasHabilitadas ? 'disabled' : ''}`}
-          onClick={() => !apuestasHabilitadas && handleCambiarVista('apuestas')}
-          disabled={apuestasHabilitadas}
-          title={apuestasHabilitadas ? 'Solo disponible cuando las apuestas están cerradas' : 'Ver apuestas de todos los usuarios'}
+          className={`tab-btn ${vistaActiva === 'apuestas' ? 'active' : ''} ${(apuestasHabilitadas && user.role !== 'admin') ? 'disabled' : ''}`}
+          onClick={() => (user.role === 'admin' || !apuestasHabilitadas) && handleCambiarVista('apuestas')}
+          disabled={apuestasHabilitadas && user.role !== 'admin'}
+          title={
+            user.role === 'admin'
+              ? 'Ver apuestas de todos los usuarios'
+              : apuestasHabilitadas
+                ? 'Solo disponible cuando las apuestas están cerradas'
+                : 'Ver apuestas de todos los usuarios'
+          }
         >
           <span className="tab-icon">👥</span>
           <span className="tab-label">Apuestas por Partido</span>
-          {apuestasHabilitadas && <span className="tab-lock">🔒</span>}
+          {apuestasHabilitadas && user.role !== 'admin' && <span className="tab-lock">🔒</span>}
         </button>
         <button
           className={`tab-btn ${vistaActiva === 'estadisticas' ? 'active' : ''}`}
@@ -448,9 +465,9 @@ const TablaPosiciones = () => {
                 disabled={loading || !torneoSeleccionado}
               >
                 <option value="todas">Todas las fechas</option>
-                {fechas.map((fecha) => (
-                  <option key={fecha} value={fecha}>
-                    Fecha {fecha}
+                {fechas.map((f) => (
+                  <option key={f.fecha} value={f.fecha}>
+                    Fecha {f.fecha}
                   </option>
                 ))}
               </select>
@@ -515,7 +532,12 @@ const TablaPosiciones = () => {
                         </td>
                         <td className="col-usuario">
                           <div className="usuario-info">
-                            <span className="usuario-username">{usuario.username}</span>
+                            <span className="usuario-username">
+                              {usuario.username}
+                              {user.role === 'admin' && !usuario.activo && (
+                                <span className="badge-inactivo-tabla">Desactivado</span>
+                              )}
+                            </span>
                             {usuario.nombre_completo && (
                               <span className="usuario-nombre">{usuario.nombre_completo}</span>
                             )}
@@ -582,7 +604,6 @@ const TablaPosiciones = () => {
                 className="filtro-select"
                 disabled={loadingApuestas}
               >
-                <option value="">-- Selecciona un torneo --</option>
                 {torneos.map((torneo) => (
                   <option key={torneo.ID_TORNEO} value={torneo.ID_TORNEO}>
                     {torneo.NOMBRE} {torneo.TEMPORADA}
@@ -603,10 +624,9 @@ const TablaPosiciones = () => {
                   className="filtro-select"
                   disabled={loadingApuestas}
                 >
-                  <option value="todas">Todas las fechas (agrupadas)</option>
-                  {fechasApuestas.map((fecha) => (
-                    <option key={fecha} value={fecha}>
-                      Fecha {fecha}
+                  {fechasApuestas.map((f) => (
+                    <option key={f.fecha} value={f.fecha}>
+                      Fecha {f.fecha}
                     </option>
                   ))}
                 </select>
@@ -913,6 +933,9 @@ const TablaPosiciones = () => {
                     </div>
                     <span className="ganador-nombre">
                       🏆 {jornada.nombre_completo || jornada.username}
+                      {user.role === 'admin' && !jornada.usuario_activo && (
+                        <span className="badge-usuario-deshabilitado">Deshabilitado</span>
+                      )}
                     </span>
                     <span className="puntos-ganador">{Math.round(jornada.puntos_jornada)} pts</span>
                   </div>
@@ -929,13 +952,18 @@ const TablaPosiciones = () => {
                         jornada={jornada.numero_jornada}
                         onGuardar={guardarMensajeGanador}
                       />
-                    ) : (
+                    ) : esGanador && !jornada.todos_finalizados ? (
                       <div className="mensaje-vacio">
                         <span className="mensaje-pendiente">
-                          {esGanador && !jornada.todos_finalizados
-                            ? '⏳ Esperando finalización de todos los partidos de la jornada...'
-                            : '⏳ El ganador aún no ha dejado su mensaje'}
+                          ⏳ Esperando finalización de todos los partidos de la jornada...
                         </span>
+                      </div>
+                    ) : (
+                      <div className="mensaje-guardado mensaje-auto">
+                        <div className="mensaje-icono">💭</div>
+                        <div className="mensaje-texto">
+                          "Fecha {jornada.numero_jornada}, {jornada.nombre_torneo} {jornada.temporada}."
+                        </div>
                       </div>
                     )}
                   </div>
