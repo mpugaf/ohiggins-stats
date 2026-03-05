@@ -296,96 +296,111 @@
 }
 
 /* ==============================================
-   TABS NAVIGATION MODERN - Estilo O'Higgins
+   TABS NAVIGATION MODERN - Barra horizontal
    ============================================== */
 
 .tabs-navigation-modern {
-  max-width: 1400px;
-  margin: 0 auto;
-  padding: 30px 20px;
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-  gap: 20px;
+  width: 100%;
+  background: linear-gradient(135deg, #001833 0%, #002b52 100%);
+  border-bottom: 3px solid rgba(0, 191, 255, 0.5);
+  display: flex;
+  flex-direction: row;
+  overflow-x: auto;
+  /* Ocultar scrollbar pero mantener funcionalidad */
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
+  /* Forzar una sola fila sin wrap */
+  flex-wrap: nowrap;
+  padding: 0;
+  margin: 0;
+}
+
+.tabs-navigation-modern::-webkit-scrollbar {
+  display: none;
 }
 
 .tab-button-modern {
+  flex: 1;
+  min-width: 130px;
   display: flex;
+  flex-direction: column;
   align-items: center;
-  gap: 16px;
-  padding: 20px 24px;
-  background: linear-gradient(135deg, rgba(255, 255, 255, 0.95) 0%, rgba(248, 249, 250, 0.95) 100%);
-  border: 3px solid transparent;
-  border-radius: 16px;
+  justify-content: center;
+  gap: 3px;
+  padding: 14px 16px;
+  background: transparent;
+  border: none;
+  /* Divisor derecho visible entre botones */
+  border-right: 1px solid rgba(255, 255, 255, 0.12);
+  border-bottom: 3px solid transparent;
   cursor: pointer;
-  transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
-  box-shadow:
-    0 4px 16px rgba(0, 0, 0, 0.1),
-    inset 0 1px 0 rgba(255, 255, 255, 0.8);
+  transition: background 0.2s ease, border-bottom-color 0.2s ease;
+  white-space: nowrap;
   position: relative;
-  overflow: hidden;
 }
 
-.tab-button-modern::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: -100%;
-  width: 100%;
-  height: 100%;
-  background: linear-gradient(90deg, transparent, rgba(0, 191, 255, 0.15), transparent);
-  transition: left 0.6s ease;
-}
-
-.tab-button-modern:hover::before {
-  left: 100%;
+.tab-button-modern:last-child {
+  border-right: none;
 }
 
 .tab-button-modern:hover {
-  transform: translateY(-6px);
-  border-color: rgba(0, 191, 255, 0.4);
-  box-shadow:
-    0 8px 30px rgba(0, 191, 255, 0.3),
-    inset 0 1px 0 rgba(255, 255, 255, 1);
+  background: rgba(0, 191, 255, 0.1);
 }
 
+.tab-button-modern:hover .tab-label-modern {
+  color: #00BFFF;
+}
+
+.tab-button-modern:hover .tab-description {
+  color: rgba(255, 255, 255, 0.7);
+}
+
+/* Indicador inferior para tab activa */
 .tab-button-modern.active {
-  background: linear-gradient(135deg, #00BFFF 0%, #0099CC 100%);
-  border-color: #00BFFF;
-  transform: translateY(-4px);
-  box-shadow:
-    0 10px 40px rgba(0, 191, 255, 0.5),
-    0 0 60px rgba(0, 191, 255, 0.3);
+  background: rgba(0, 191, 255, 0.15);
+  border-bottom-color: #00BFFF;
 }
 
-.tab-button-modern.active .tab-label-modern,
+.tab-button-modern.active .tab-label-modern {
+  color: #00BFFF;
+  text-shadow: 0 0 12px rgba(0, 191, 255, 0.6);
+}
+
 .tab-button-modern.active .tab-description {
-  color: white;
-  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+  color: rgba(0, 191, 255, 0.8);
 }
 
-.tab-content-text {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
+/* Punto indicador activo debajo del label */
+.tab-button-modern.active::after {
+  content: '';
+  position: absolute;
+  bottom: -3px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 32px;
+  height: 3px;
+  background: #00BFFF;
+  border-radius: 2px 2px 0 0;
+  box-shadow: 0 0 8px rgba(0, 191, 255, 0.8);
 }
 
 .tab-label-modern {
-  font-size: 16px;
-  font-weight: 900;
-  color: #000000;
+  font-size: 13px;
+  font-weight: 800;
+  color: rgba(255, 255, 255, 0.75);
   text-transform: uppercase;
-  letter-spacing: 0.5px;
+  letter-spacing: 0.8px;
   line-height: 1.2;
-  transition: all 0.3s ease;
+  transition: color 0.2s ease;
 }
 
 .tab-description {
-  font-size: 12px;
-  font-weight: 600;
-  color: #6c757d;
-  line-height: 1.3;
-  transition: all 0.3s ease;
+  font-size: 10px;
+  font-weight: 500;
+  color: rgba(255, 255, 255, 0.4);
+  line-height: 1.2;
+  transition: color 0.2s ease;
 }
 
 .tab-content-modern {
@@ -398,82 +413,45 @@
 
 .tab-wrapper-modern {
   background: white;
-  border-radius: 20px;
+  border-radius: 0 0 16px 16px;
   box-shadow:
     0 8px 32px rgba(0, 0, 0, 0.12),
     0 0 100px rgba(0, 191, 255, 0.05);
   overflow: hidden;
-  border: 2px solid rgba(0, 191, 255, 0.1);
+  border: 1px solid rgba(0, 191, 255, 0.1);
+  border-top: none;
 }
 
-/* Responsive para tabs modernas */
-@media (max-width: 1024px) {
-  .tabs-navigation-modern {
-    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-    gap: 16px;
-    padding: 24px 16px;
-  }
-
-  .tab-button-modern {
-    padding: 16px;
-    gap: 12px;
-  }
-
-  .tab-label-modern {
-    font-size: 14px;
-  }
-
-  .tab-description {
-    font-size: 11px;
-  }
-}
-
+/* Responsive */
 @media (max-width: 768px) {
-  .tabs-navigation-modern {
-    grid-template-columns: 1fr 1fr;
-    gap: 10px;
-    padding: 16px 12px;
-  }
-
   .tab-button-modern {
-    padding: 12px 14px;
-    gap: 8px;
-    border-radius: 12px;
-    border-width: 2px;
-  }
-
-  .tab-label-modern {
-    font-size: 13px;
-    letter-spacing: 0;
-  }
-
-  .tab-description {
-    font-size: 10px;
-  }
-}
-
-@media (max-width: 480px) {
-  .tabs-navigation-modern {
-    grid-template-columns: 1fr 1fr;
-    gap: 8px;
-    padding: 12px 10px;
-  }
-
-  .tab-button-modern {
-    padding: 10px 10px;
-    text-align: center;
-    justify-content: center;
-  }
-
-  .tab-content-text {
-    align-items: center;
+    min-width: 110px;
+    padding: 12px 12px;
+    gap: 2px;
   }
 
   .tab-label-modern {
     font-size: 11px;
+    letter-spacing: 0.4px;
   }
 
   .tab-description {
     font-size: 9px;
+  }
+}
+
+@media (max-width: 480px) {
+  .tab-button-modern {
+    min-width: 90px;
+    padding: 10px 8px;
+  }
+
+  .tab-label-modern {
+    font-size: 10px;
+    letter-spacing: 0.2px;
+  }
+
+  .tab-description {
+    display: none;
   }
 }

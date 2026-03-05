@@ -11,7 +11,7 @@ const AppHeader = () => {
   const { user, logout } = useAuth();
 
   // No mostrar header en páginas públicas - VERIFICAR PRIMERO
-  const publicRoutes = ['/login', '/register', '/'];
+  const publicRoutes = ['/login', '/register', '/invitaciones', '/'];
   const isPublicRoute = publicRoutes.includes(location.pathname);
 
   const [configApuestas, setConfigApuestas] = useState(null);

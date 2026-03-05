@@ -31,50 +31,40 @@ function PartidosApuestasManager() {
           className={`tab-button-modern ${tabActiva === 'pendientes' ? 'active' : ''}`}
           onClick={() => setTabActiva('pendientes')}
         >
-          <div className="tab-content-text">
-            <span className="tab-label-modern">Apuestas Pendientes</span>
-            <span className="tab-description">Ver tus apuestas activas</span>
-          </div>
+          <span className="tab-label-modern">Apuestas</span>
+          <span className="tab-description">Partidos activos</span>
         </button>
 
         <button
           className={`tab-button-modern ${tabActiva === 'historial' ? 'active' : ''}`}
           onClick={() => setTabActiva('historial')}
         >
-          <div className="tab-content-text">
-            <span className="tab-label-modern">Historial Completo</span>
-            <span className="tab-description">Mis apuestas anteriores</span>
-          </div>
+          <span className="tab-label-modern">Mis Apuestas</span>
+          <span className="tab-description">Mi historial</span>
         </button>
 
         <button
           className={`tab-button-modern ${tabActiva === 'tabla' ? 'active' : ''}`}
           onClick={() => setTabActiva('tabla')}
         >
-          <div className="tab-content-text">
-            <span className="tab-label-modern">Tabla de Posiciones</span>
-            <span className="tab-description">Ranking de usuarios</span>
-          </div>
+          <span className="tab-label-modern">Clasificacion</span>
+          <span className="tab-description">Ranking de usuarios</span>
         </button>
 
         <button
           className={`tab-button-modern ${tabActiva === 'historico' ? 'active' : ''}`}
           onClick={() => setTabActiva('historico')}
         >
-          <div className="tab-content-text">
-            <span className="tab-label-modern">Partidos Históricos</span>
-            <span className="tab-description">Resultados finalizados</span>
-          </div>
+          <span className="tab-label-modern">Eventos</span>
+          <span className="tab-description">Partidos historicos</span>
         </button>
 
         <button
           className={`tab-button-modern ${tabActiva === 'roster' ? 'active' : ''}`}
           onClick={() => setTabActiva('roster')}
         >
-          <div className="tab-content-text">
-            <span className="tab-label-modern">Roster de Jugadores</span>
-            <span className="tab-description">Consultar planteles</span>
-          </div>
+          <span className="tab-label-modern">Roster</span>
+          <span className="tab-description">Planteles</span>
         </button>
       </nav>
 
