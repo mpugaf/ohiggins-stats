@@ -16,6 +16,7 @@ const AppHeader = () => {
 
   const [configApuestas, setConfigApuestas] = useState(null);
   const [isPasswordModalOpen, setIsPasswordModalOpen] = useState(false);
+  const [isInstruccionesOpen, setIsInstruccionesOpen] = useState(false);
 
   useEffect(() => {
     // Solo cargar si NO es ruta pública
@@ -161,6 +162,16 @@ const AppHeader = () => {
 
           {/* Lado Derecho */}
           <div className="app-header-right-modern">
+            {user?.role !== 'admin' && (
+              <button
+                onClick={() => setIsInstruccionesOpen(true)}
+                className="btn-instrucciones-modern"
+                title="Ver instrucciones del sistema"
+              >
+                <span className="btn-text">Instrucciones</span>
+              </button>
+            )}
+
             <div
               className="user-card-modern"
               onClick={() => setIsPasswordModalOpen(true)}
@@ -203,6 +214,88 @@ const AppHeader = () => {
         onClose={() => setIsPasswordModalOpen(false)}
         username={user?.username || ''}
       />
+
+      {/* Modal de Instrucciones */}
+      {isInstruccionesOpen && (
+        <div className="instrucciones-overlay" onClick={() => setIsInstruccionesOpen(false)}>
+          <div className="instrucciones-modal" onClick={e => e.stopPropagation()}>
+            <div className="instrucciones-bg-image">
+              <img src="/images/equipos/ohiggins.png" alt="" aria-hidden="true" />
+            </div>
+            <div className="instrucciones-content">
+              <div className="instrucciones-header">
+                <h2 className="instrucciones-title">Instrucciones — O'Higgins Stats-Bet</h2>
+                <button className="instrucciones-close" onClick={() => setIsInstruccionesOpen(false)} title="Cerrar">✕</button>
+              </div>
+
+              <div className="instrucciones-body">
+                <p>
+                  <strong>O'Higgins Stats-Bet</strong> es un proyecto para hinchas cuyo objetivo es descubrir
+                  quién sabe más, a través de apuestas <strong>sin dinero real</strong>, pero con la misma emoción
+                  de predecir resultados que aún no ocurren. Las ganancias simuladas se suman en una
+                  <strong> tabla de posiciones por usuario</strong>, visible para todos.
+                </p>
+
+                <h3>¿Cómo funciona cada apuesta?</h3>
+                <p>
+                  Por cada partido de la fecha en juego se entregan <strong>$10.000 pesos virtuales</strong> para apostar
+                  por el equipo local, el equipo visita o por empate. Cada pronóstico tiene una cuota visible
+                  en el partido; si aciertas, tus $10.000 se multiplican por esa cuota.
+                </p>
+
+                <h3>Fechas y torneos</h3>
+                <p>
+                  Las apuestas son por fecha/jornada y están disponibles para cada torneo que dispute O'Higgins.
+                  Se habilitan una vez que las cuotas están definidas y se cierran antes del inicio del
+                  primer partido de la fecha. Mientras están abiertas, <strong>nadie puede ver las apuestas de otro usuario</strong>.
+                  Una vez cerradas, todos los pronósticos quedan visibles para transparencia y entendimiento
+                  del puntaje de cada jugador.
+                </p>
+
+                <h3>Premio del ganador de cada fecha</h3>
+                <p>
+                  El ganador de cada fecha tendrá un espacio en el módulo de <strong>Tabla de Posiciones</strong> para
+                  escribir un texto libre que celebre su triunfo. Estos mensajes se acumulan de forma
+                  secuencial, formando un <em>mural de campeones</em>.
+                </p>
+
+                <h3>Registro y privacidad</h3>
+                <p>
+                  Para mantener la comunidad controlada, la única forma de registrarse es mediante un
+                  <strong> link de uso único</strong> enviado por el administrador. No se solicita correo electrónico;
+                  la contraseña es tuya y solo tuya, protegida con JWT.
+                </p>
+
+                <h3>Módulos disponibles</h3>
+                <ul>
+                  <li>
+                    <strong>Historial completo:</strong> Revisa tus apuestas anteriores filtrando por torneo
+                    y fecha, con ganancia o pérdida de cada una.
+                  </li>
+                  <li>
+                    <strong>Tabla de posiciones:</strong> Ranking global o por fecha de cada torneo.
+                    Incluye sub-módulo de <em>Apuestas por partido</em> (visible solo con apuestas cerradas)
+                    y <em>Mis estadísticas</em> con apuestas ganadas, perdidas, pendientes, ganancia acumulada
+                    y porcentaje de aciertos.
+                  </li>
+                  <li>
+                    <strong>Partidos históricos:</strong> Reporte de todos los partidos registrados.
+                    Filtra por torneo, equipo, fecha puntual o rango de fechas.
+                  </li>
+                  <li>
+                    <strong>Roster de jugadores:</strong> Consulta la plantilla de un equipo o activa el
+                    <em> modo comparación</em> para comparar dos plantillas lado a lado, ordenadas por posición.
+                  </li>
+                </ul>
+
+                <p className="instrucciones-slogan">
+                  ¡A DEMOSTRAR QUIÉN ES EL CAPO QUE MÁS SABE!
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </>
   );
 };
