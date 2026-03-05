@@ -27,6 +27,7 @@ const verificarControlador = () => {
     'crearTokenInvitacion',
     'validarToken',
     'listarTokens',
+    'listarTokensPublico',
     'eliminarToken'
   ];
 
@@ -41,6 +42,12 @@ const verificarControlador = () => {
 verificarControlador();
 
 // Rutas públicas (sin autenticación)
+// Listar tokens activos (público, sin datos sensibles)
+router.get('/publico', (req, res) => {
+  console.log('GET /tokens-invitacion/publico');
+  tokensController.listarTokensPublico(req, res);
+});
+
 // Validar token de invitación
 router.get('/validar/:token', (req, res) => {
   console.log('GET /tokens-invitacion/validar/:token');

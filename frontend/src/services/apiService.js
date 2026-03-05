@@ -266,6 +266,8 @@ export const torneoJugadorService = {
 export const tokensInvitacionService = {
   // Obtener todos los tokens (solo admin)
   getAll: () => api.get('/api/tokens-invitacion'),
+  // Listar tokens activos sin auth (público)
+  getPublico: () => api.get('/api/tokens-invitacion/publico'),
   // Crear nuevo token (solo admin)
   create: () => api.post('/api/tokens-invitacion', {}),
   // Validar token (público)

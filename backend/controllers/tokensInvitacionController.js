@@ -242,6 +242,42 @@ const listarTokens = async (req, res) => {
   }
 };
 
+// Listar tokens activos públicamente (sin datos sensibles)
+const listarTokensPublico = async (req, res) => {
+  try {
+    console.log('📋 Listando tokens activos (público)...');
+
+    const tokens = await executeQuery(
+      `SELECT
+        id_token,
+        token,
+        fecha_expiracion
+       FROM tokens_invitacion
+       WHERE usado = 0
+         AND fecha_expiracion > NOW()
+       ORDER BY fecha_creacion ASC`
+    );
+
+    const frontendUrl = getFrontendUrl(req);
+    const tokensPublico = tokens.map((t, index) => ({
+      id_token: t.id_token,
+      numero: index + 1,
+      invitationLink: `${frontendUrl}/register?token=${t.token}`,
+      fecha_expiracion: t.fecha_expiracion
+    }));
+
+    console.log(`✅ Se encontraron ${tokensPublico.length} tokens activos`);
+    res.json(tokensPublico);
+
+  } catch (error) {
+    console.error('❌ Error al listar tokens públicos:', error);
+    res.status(500).json({
+      error: 'Error al listar invitaciones',
+      detalle: error.message
+    });
+  }
+};
+
 // Eliminar token (solo admin)
 const eliminarToken = async (req, res) => {
   try {
@@ -290,5 +326,6 @@ module.exports = {
   validarToken,
   marcarTokenComoUsado,
   listarTokens,
+  listarTokensPublico,
   eliminarToken
 };

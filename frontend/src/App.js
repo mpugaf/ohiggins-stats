@@ -11,6 +11,7 @@ import AppHeader from './components/common/AppHeader';
 // Authentication Components
 import Login from './components/Login';
 import Register from './components/Register';
+import ListaInvitaciones from './components/ListaInvitaciones';
 import ProtectedRoute from './components/ProtectedRoute';
 
 // Betting System Components (User)
@@ -65,6 +66,7 @@ function App() {
             {/* ==================== PUBLIC ROUTES ==================== */}
             <Route path="/login" element={<Login />} />
             <Route path="/register" element={<Register />} />
+            <Route path="/invitaciones" element={<ListaInvitaciones />} />
 
             {/* ==================== USER ROUTES (AUTHENTICATED) ==================== */}
             {/* Main Betting Interface */}
