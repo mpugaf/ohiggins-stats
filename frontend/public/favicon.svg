@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">
+  <circle cx="50" cy="50" r="47" fill="white" stroke="#222" stroke-width="3"/>
+  <!-- Pentagono central -->
+  <polygon points="50,18 63,29 58,45 42,45 37,29" fill="#222"/>
+  <!-- Hexagonos laterales -->
+  <polygon points="63,29 78,30 82,46 70,55 58,45" fill="#222"/>
+  <polygon points="82,46 79,62 66,68 58,58 70,55" fill="#222"/>
+  <polygon points="66,68 55,79 43,74 43,61 58,58" fill="#222"/>
+  <polygon points="43,74 30,68 22,54 34,45 43,61" fill="#222"/>
+  <polygon points="22,54 18,38 32,28 42,45 34,45" fill="#222"/>
+</svg>
