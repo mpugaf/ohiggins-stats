@@ -256,7 +256,7 @@ const AppHeader = () => {
                 <p>
                   El ganador de cada fecha tendrá un espacio en el módulo de <strong>Tabla de Posiciones</strong> para
                   escribir un texto libre que celebre su triunfo. Estos mensajes se acumulan de forma
-                  secuencial, formando un <em>mural de campeones</em>.
+                  secuencial, formando un <em>mural de campeones</em>. El criterio se basa en dos factores: Puntos obtenidos, y en caso de empate, ganará el usuario que se haya registrado primero.
                 </p>
 
                 <h3>Registro y privacidad</h3>
