@@ -55,6 +55,29 @@ const TablaPosiciones = () => {
     return (fechasArr && fechasArr.length > 0) ? fechasArr[0].fecha : null;
   };
 
+  // Devuelve el número de jornada cuyo partido más temprano es el más cercano a hoy
+  const getFechaMasCercana = (fechasArr) => {
+    if (!fechasArr || fechasArr.length === 0) return null;
+    const ahora = new Date();
+    let mejorFecha = null;
+    let menorDiff = Infinity;
+    fechasArr.forEach(f => {
+      if (!f.fecha_min_partido) return;
+      const diff = Math.abs(new Date(f.fecha_min_partido) - ahora);
+      if (diff < menorDiff) {
+        menorDiff = diff;
+        mejorFecha = f.fecha;
+      }
+    });
+    return mejorFecha;
+  };
+
+  // Selector de fecha por defecto según estado de apuestas
+  const getDefaultFecha = (fechasArr) => {
+    if (!apuestasHabilitadas) return getFechaMasCercana(fechasArr);
+    return getUltimaFechaFinalizada(fechasArr);
+  };
+
   const cargarConfiguracion = async () => {
     try {
       const response = await configApuestasService.getConfig();
@@ -286,7 +309,7 @@ const TablaPosiciones = () => {
         if (data.success) {
           const nuevasFechas = data.fechas || [];
           setFechasApuestas(nuevasFechas);
-          const defaultFecha = getUltimaFechaFinalizada(nuevasFechas);
+          const defaultFecha = getDefaultFecha(nuevasFechas);
           setFechaApuestas(defaultFecha ? defaultFecha.toString() : '');
           cargarApuestasPorPartido(nuevoTorneo, defaultFecha);
         }
@@ -318,7 +341,7 @@ const TablaPosiciones = () => {
             if (data.success) {
               const nuevasFechas = data.fechas || [];
               setFechasApuestas(nuevasFechas);
-              const defaultFecha = getUltimaFechaFinalizada(nuevasFechas);
+              const defaultFecha = getDefaultFecha(nuevasFechas);
               setFechaApuestas(defaultFecha ? defaultFecha.toString() : '');
               cargarApuestasPorPartido(torneoSeleccionado, defaultFecha);
             }

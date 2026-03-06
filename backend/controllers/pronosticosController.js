@@ -224,6 +224,7 @@ exports.getFechasTorneo = async (req, res) => {
     const fechas = await executeQuery(`
       SELECT
         p.NUMERO_JORNADA as fecha,
+        MIN(p.FECHA_PARTIDO) as fecha_min_partido,
         CASE
           WHEN COUNT(*) = SUM(CASE WHEN p.ESTADO_PARTIDO = 'FINALIZADO' THEN 1 ELSE 0 END)
           THEN 1 ELSE 0
@@ -239,6 +240,7 @@ exports.getFechasTorneo = async (req, res) => {
       success: true,
       fechas: fechas.map(f => ({
         fecha: f.fecha,
+        fecha_min_partido: f.fecha_min_partido,
         todos_finalizados: f.todos_finalizados === 1
       }))
     });
