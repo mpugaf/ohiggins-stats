@@ -302,7 +302,13 @@ const getUsuariosConPermiso = async (req, res) => {
          ti.usado,
          ti.fecha_expiracion
        FROM usuarios u
-       LEFT JOIN v_resumen_usuarios  r  ON r.id_usuario  = u.id_usuario
+       LEFT JOIN (
+         SELECT id_usuario,
+                COALESCE(SUM(puntos_ganados), 0) AS total_puntos,
+                COUNT(*)                          AS total_apuestas
+         FROM apuestas_usuarios
+         GROUP BY id_usuario
+       ) r  ON r.id_usuario  = u.id_usuario
        LEFT JOIN permisos_invitacion pi ON pi.id_usuario = u.id_usuario
        LEFT JOIN tokens_invitacion   ti ON ti.id_token   = pi.id_token
        WHERE u.role   = 'usuario'
