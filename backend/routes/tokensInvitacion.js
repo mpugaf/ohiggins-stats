@@ -28,7 +28,10 @@ const verificarControlador = () => {
     'validarToken',
     'listarTokens',
     'listarTokensPublico',
-    'eliminarToken'
+    'eliminarToken',
+    'getUsuariosConPermiso',
+    'togglePermisoUsuario',
+    'getMiTokenAsignado'
   ];
 
   for (const metodo of metodos) {
@@ -71,6 +74,26 @@ router.get('/', authenticateToken, requireAdmin, (req, res) => {
 router.delete('/:idToken', authenticateToken, requireAdmin, (req, res) => {
   console.log('DELETE /tokens-invitacion/:idToken - Eliminar token');
   tokensController.eliminarToken(req, res);
+});
+
+// ── Módulo de permisos de invitación ──────────────────────────
+
+// Usuario autenticado: consulta su propio token asignado
+router.get('/mi-token', authenticateToken, (req, res) => {
+  console.log('GET /tokens-invitacion/mi-token');
+  tokensController.getMiTokenAsignado(req, res);
+});
+
+// Admin: listar usuarios con estado de permiso (ordenados por puntos)
+router.get('/permisos/usuarios', authenticateToken, requireAdmin, (req, res) => {
+  console.log('GET /tokens-invitacion/permisos/usuarios');
+  tokensController.getUsuariosConPermiso(req, res);
+});
+
+// Admin: habilitar o revocar permiso de un usuario
+router.put('/permisos/:idUsuario', authenticateToken, requireAdmin, (req, res) => {
+  console.log(`PUT /tokens-invitacion/permisos/${req.params.idUsuario}`);
+  tokensController.togglePermisoUsuario(req, res);
 });
 
 console.log('✅ Rutas de tokens de invitación configuradas correctamente');

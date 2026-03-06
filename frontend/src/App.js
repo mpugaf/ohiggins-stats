@@ -28,6 +28,7 @@ import LimpiarApuestasUsuario from './components/admin/LimpiarApuestasUsuario';
 import LimpiarResultados from './components/admin/LimpiarResultados';
 import ConfiguracionApuestas from './components/admin/ConfiguracionApuestas';
 import GestionTokens from './components/admin/GestionTokens';
+import AsignacionTokensUsuarios from './components/admin/AsignacionTokensUsuarios';
 import GestionProgramas from './components/admin/GestionProgramas';
 import RankingAdmin from './components/admin/RankingAdmin';
 
@@ -145,6 +146,16 @@ function App() {
               element={
                 <ProtectedRoute requireAdmin={true}>
                   <GestionTokens />
+                </ProtectedRoute>
+              }
+            />
+
+            {/* Asignación de Tokens a Usuarios (Admin) */}
+            <Route
+              path="/admin/asignacion-tokens"
+              element={
+                <ProtectedRoute requireAdmin={true}>
+                  <AsignacionTokensUsuarios />
                 </ProtectedRoute>
               }
             />

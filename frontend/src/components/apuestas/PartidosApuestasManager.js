@@ -1,6 +1,7 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
+import { tokensInvitacionService, handleResponse } from '../../services/apiService';
 import ApuestasPendientes from './ApuestasPendientes';
 import MisApuestas from './MisApuestas';
 import TablaPosiciones from './TablaPosiciones';
@@ -13,9 +14,31 @@ function PartidosApuestasManager() {
   const navigate = useNavigate();
   const [tabActiva, setTabActiva] = useState('pendientes');
   const [refreshKey, setRefreshKey] = useState(0);
+  const [miToken, setMiToken] = useState(null);
+  const [copiado, setCopiado] = useState(false);
+
+  useEffect(() => {
+    const cargarMiToken = async () => {
+      try {
+        const res = await tokensInvitacionService.getMiToken();
+        const data = await handleResponse(res);
+        if (data.tiene_token) setMiToken(data);
+      } catch {
+        // Sin token asignado, no mostrar nada
+      }
+    };
+    cargarMiToken();
+  }, []);
+
+  const handleCopiar = () => {
+    if (!miToken) return;
+    navigator.clipboard.writeText(miToken.invitationLink).then(() => {
+      setCopiado(true);
+      setTimeout(() => setCopiado(false), 2500);
+    });
+  };
 
   const handleApuestaCreada = () => {
-    // Forzar refresh de componentes
     setRefreshKey(prev => prev + 1);
   };
 
@@ -67,6 +90,25 @@ function PartidosApuestasManager() {
           <span className="tab-description">Planteles</span>
         </button>
       </nav>
+
+      {/* Banner: token de invitación asignado al usuario */}
+      {miToken && (
+        <div className="token-invitacion-banner">
+          <div className="tib-texto">
+            <span className="tib-icono">🎟️</span>
+            <div>
+              <strong>Tienes un token de invitacion activo</strong>
+              <span className="tib-desc">Comparte este link para invitar a un amigo a jugar</span>
+            </div>
+          </div>
+          <div className="tib-acciones">
+            <span className="tib-link">{miToken.invitationLink}</span>
+            <button className="tib-btn-copiar" onClick={handleCopiar}>
+              {copiado ? '✓ Copiado' : 'Copiar link'}
+            </button>
+          </div>
+        </div>
+      )}
 
       {/* Contenido de tabs */}
       <main className="tab-content-modern">

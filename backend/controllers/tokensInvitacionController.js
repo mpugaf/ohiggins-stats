@@ -278,6 +278,155 @@ const listarTokensPublico = async (req, res) => {
   }
 };
 
+// ================================================================
+// MÓDULO DE PERMISOS DE INVITACIÓN
+// ================================================================
+
+// Listar usuarios tipo "usuario" con su estado de permiso,
+// ordenados por puntos (para el módulo admin de asignación)
+const getUsuariosConPermiso = async (req, res) => {
+  try {
+    console.log('📋 Listando usuarios con estado de permiso de invitación...');
+
+    const usuarios = await executeQuery(
+      `SELECT
+         u.id_usuario,
+         u.username,
+         u.nombre_completo,
+         COALESCE(r.total_puntos,   0) AS total_puntos,
+         COALESCE(r.total_apuestas, 0) AS total_apuestas,
+         pi.habilitado,
+         pi.id_token,
+         pi.fecha_asignacion,
+         ti.token,
+         ti.usado,
+         ti.fecha_expiracion
+       FROM usuarios u
+       LEFT JOIN v_resumen_usuarios  r  ON r.id_usuario  = u.id_usuario
+       LEFT JOIN permisos_invitacion pi ON pi.id_usuario = u.id_usuario
+       LEFT JOIN tokens_invitacion   ti ON ti.id_token   = pi.id_token
+       WHERE u.role   = 'usuario'
+         AND u.activo = 1
+       ORDER BY COALESCE(r.total_puntos, 0) DESC,
+                u.fecha_creacion            ASC`
+    );
+
+    console.log(`✅ ${usuarios.length} usuarios encontrados`);
+    res.json(usuarios);
+  } catch (error) {
+    console.error('❌ Error en getUsuariosConPermiso:', error);
+    res.status(500).json({ error: 'Error al listar usuarios', detalle: error.message });
+  }
+};
+
+// Toggle de permiso (admin)
+// body: { habilitado: true | false }
+const togglePermisoUsuario = async (req, res) => {
+  try {
+    const { idUsuario } = req.params;
+    const { habilitado } = req.body;
+    const adminId = req.user.id_usuario;
+
+    // Verificar que el usuario existe y es tipo "usuario"
+    const userRows = await executeQuery(
+      `SELECT id_usuario FROM usuarios WHERE id_usuario = ? AND role = 'usuario' AND activo = 1`,
+      [idUsuario]
+    );
+    if (userRows.length === 0) {
+      return res.status(404).json({ error: 'Usuario no encontrado' });
+    }
+
+    // Verificar si ya tiene un registro en permisos_invitacion
+    const permisoExistente = await executeQuery(
+      'SELECT id_usuario, id_token, habilitado FROM permisos_invitacion WHERE id_usuario = ?',
+      [idUsuario]
+    );
+
+    if (habilitado) {
+      // ── HABILITAR ──────────────────────────────────────────
+      if (permisoExistente.length > 0) {
+        // Ya tiene registro: solo re-habilitar (conserva el token)
+        await executeQuery(
+          'UPDATE permisos_invitacion SET habilitado = 1 WHERE id_usuario = ?',
+          [idUsuario]
+        );
+        console.log(`✅ Permiso re-habilitado para usuario ${idUsuario}`);
+      } else {
+        // Sin registro: crear token nuevo y dar permiso
+        const nuevoToken = generarToken();
+        const fechaExpiracion = new Date();
+        fechaExpiracion.setDate(fechaExpiracion.getDate() + 365); // 1 año
+
+        await executeQuery(
+          `INSERT INTO tokens_invitacion (token, creado_por, fecha_expiracion)
+           VALUES (?, ?, ?)`,
+          [nuevoToken, adminId, fechaExpiracion]
+        );
+
+        const [tokenRow] = await executeQuery(
+          'SELECT id_token FROM tokens_invitacion WHERE token = ?',
+          [nuevoToken]
+        );
+
+        await executeQuery(
+          `INSERT INTO permisos_invitacion (id_usuario, id_token, habilitado)
+           VALUES (?, ?, 1)`,
+          [idUsuario, tokenRow.id_token]
+        );
+        console.log(`✅ Token creado y permiso asignado a usuario ${idUsuario}`);
+      }
+    } else {
+      // ── DESHABILITAR (revocar) ─────────────────────────────
+      if (permisoExistente.length > 0) {
+        await executeQuery(
+          'UPDATE permisos_invitacion SET habilitado = 0 WHERE id_usuario = ?',
+          [idUsuario]
+        );
+        console.log(`✅ Permiso revocado para usuario ${idUsuario}`);
+      }
+      // Si no existía, no hay nada que revocar
+    }
+
+    res.json({ success: true, habilitado: !!habilitado });
+  } catch (error) {
+    console.error('❌ Error en togglePermisoUsuario:', error);
+    res.status(500).json({ error: 'Error al actualizar permiso', detalle: error.message });
+  }
+};
+
+// El usuario autenticado consulta su propio token de invitación asignado
+const getMiTokenAsignado = async (req, res) => {
+  try {
+    const userId = req.user.id_usuario;
+
+    const rows = await executeQuery(
+      `SELECT ti.token, ti.fecha_expiracion, ti.usado
+       FROM permisos_invitacion pi
+       JOIN tokens_invitacion   ti ON ti.id_token = pi.id_token
+       WHERE pi.id_usuario = ?
+         AND pi.habilitado  = 1
+         AND ti.usado       = 0
+         AND ti.fecha_expiracion > NOW()
+       LIMIT 1`,
+      [userId]
+    );
+
+    if (rows.length === 0) {
+      return res.json({ tiene_token: false });
+    }
+
+    const frontendUrl = getFrontendUrl(req);
+    res.json({
+      tiene_token: true,
+      invitationLink: `${frontendUrl}/register?token=${rows[0].token}`,
+      fecha_expiracion: rows[0].fecha_expiracion
+    });
+  } catch (error) {
+    console.error('❌ Error en getMiTokenAsignado:', error);
+    res.status(500).json({ error: 'Error al consultar token', detalle: error.message });
+  }
+};
+
 // Eliminar token (solo admin)
 const eliminarToken = async (req, res) => {
   try {
@@ -327,5 +476,8 @@ module.exports = {
   marcarTokenComoUsado,
   listarTokens,
   listarTokensPublico,
-  eliminarToken
+  eliminarToken,
+  getUsuariosConPermiso,
+  togglePermisoUsuario,
+  getMiTokenAsignado
 };

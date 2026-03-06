@@ -296,6 +296,95 @@
 }
 
 /* ==============================================
+   BANNER TOKEN DE INVITACIÓN
+   ============================================== */
+
+.token-invitacion-banner {
+  background: linear-gradient(135deg, #0a3d1f 0%, #155724 100%);
+  border-bottom: 2px solid rgba(40, 167, 69, 0.5);
+  padding: 12px 20px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.tib-texto {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  color: white;
+}
+
+.tib-icono {
+  font-size: 1.4rem;
+  flex-shrink: 0;
+}
+
+.tib-texto > div {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.tib-texto strong {
+  font-size: 0.9rem;
+  font-weight: 800;
+  color: #fff;
+}
+
+.tib-desc {
+  font-size: 0.78rem;
+  color: rgba(255, 255, 255, 0.7);
+}
+
+.tib-acciones {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.tib-link {
+  font-size: 0.75rem;
+  color: rgba(255, 255, 255, 0.6);
+  font-family: monospace;
+  background: rgba(0,0,0,0.25);
+  padding: 4px 10px;
+  border-radius: 6px;
+  max-width: 280px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.tib-btn-copiar {
+  background: #28a745;
+  color: white;
+  border: none;
+  padding: 7px 16px;
+  border-radius: 8px;
+  font-size: 0.82rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background 0.2s ease;
+  white-space: nowrap;
+}
+
+.tib-btn-copiar:hover {
+  background: #218838;
+}
+
+@media (max-width: 600px) {
+  .token-invitacion-banner {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  .tib-link { max-width: 100%; }
+}
+
+/* ==============================================
    TABS NAVIGATION MODERN - Barra horizontal
    ============================================== */
 

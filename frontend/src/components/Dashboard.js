@@ -367,6 +367,9 @@ const Dashboard = () => {
                 <button onClick={() => handleNavigation('/admin/tokens-invitacion')} className="action-btn secondary">
                   🎟️ Gestión de Tokens
                 </button>
+                <button onClick={() => handleNavigation('/admin/asignacion-tokens')} className="action-btn secondary">
+                  🎫 Asignar Tokens a Usuarios
+                </button>
                 <button onClick={() => handleNavigation('/admin/gestion-programas')} className="action-btn info">
                   🎙️ Gestión de Programas
                 </button>

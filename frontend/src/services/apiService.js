@@ -273,7 +273,14 @@ export const tokensInvitacionService = {
   // Validar token (público)
   validar: (token) => api.get(`/api/tokens-invitacion/validar/${token}`),
   // Eliminar token (solo admin)
-  delete: (idToken) => api.delete(`/api/tokens-invitacion/${idToken}`)
+  delete: (idToken) => api.delete(`/api/tokens-invitacion/${idToken}`),
+  // Admin: listar usuarios con estado de permiso (ordenados por puntos)
+  getUsuariosConPermiso: () => api.get('/api/tokens-invitacion/permisos/usuarios'),
+  // Admin: habilitar o revocar permiso de un usuario
+  togglePermiso: (idUsuario, habilitado) =>
+    api.put(`/api/tokens-invitacion/permisos/${idUsuario}`, { habilitado }),
+  // Usuario: consultar su propio token asignado
+  getMiToken: () => api.get('/api/tokens-invitacion/mi-token')
 };
 
 export const mensajesGanadoresService = {
