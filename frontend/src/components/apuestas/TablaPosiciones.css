@@ -181,6 +181,7 @@
   font-weight: 500;
 }
 
+.badge-usuario-deshabilitado,
 .badge-inactivo-tabla {
   display: inline-block;
   margin-left: 6px;

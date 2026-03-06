@@ -251,7 +251,8 @@ const TablaPosiciones = () => {
             usuariosUnicos.set(apuesta.id_usuario, {
               id: apuesta.id_usuario,
               username: apuesta.username,
-              nombre_completo: apuesta.nombre_completo
+              nombre_completo: apuesta.nombre_completo,
+              activo: apuesta.activo
             });
           }
         });
@@ -646,6 +647,7 @@ const TablaPosiciones = () => {
                   {usuarios.map((usuario) => (
                     <option key={usuario.id} value={usuario.id}>
                       {usuario.nombre_completo || usuario.username}
+                      {user.role === 'admin' && !usuario.activo ? ' (Deshabilitado)' : ''}
                     </option>
                   ))}
                 </select>
@@ -694,6 +696,7 @@ const TablaPosiciones = () => {
                         apuestasPorUsuario[userId] = {
                           usuario: apuesta.nombre_completo || apuesta.username,
                           username: apuesta.username,
+                          activo: apuesta.activo,
                           apuestas: []
                         };
                       }
@@ -712,6 +715,9 @@ const TablaPosiciones = () => {
                     <div key={userId} className="grupo-usuario">
                       <h3 className="grupo-usuario-titulo">
                         👤 {userData.usuario}
+                        {user.role === 'admin' && !userData.activo && (
+                          <span className="badge-usuario-deshabilitado">Deshabilitado</span>
+                        )}
                         <span className="total-apuestas-usuario">
                           ({userData.apuestas.length} apuesta{userData.apuestas.length !== 1 ? 's' : ''})
                         </span>

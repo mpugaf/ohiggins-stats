@@ -391,11 +391,13 @@ exports.getApuestasPorPartido = async (req, res) => {
     const partidosConApuestas = [];
 
     for (const partido of partidos) {
+      const esAdmin = req.user.role === 'admin';
       const apuestas = await executeQuery(
         `SELECT
           u.id_usuario,
           u.username,
           u.nombre_completo,
+          u.activo,
           a.tipo_apuesta,
           a.valor_cuota,
           a.retorno_potencial,
@@ -407,6 +409,7 @@ exports.getApuestasPorPartido = async (req, res) => {
         INNER JOIN usuarios u ON a.id_usuario = u.id_usuario
         LEFT JOIN DIM_EQUIPO ep ON a.id_equipo_predicho = ep.ID_EQUIPO
         WHERE a.id_partido = ?
+          ${esAdmin ? '' : 'AND u.activo = 1'}
         ORDER BY a.fecha_apuesta ASC`,
         [partido.ID_PARTIDO]
       );
